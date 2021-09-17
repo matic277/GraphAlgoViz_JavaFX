@@ -1,0 +1,12 @@
+.button {
+    //-fx-background-color: "lightpink"
+}
+
+.icon-button {
+    -fx-content-display: graphic-only;
+    -fx-shape: "M12,4 L12,8 L10,8 L10,4 L8,4 L11,1 L14,4 L12,4 Z"
+}
+
+.label {
+    -fx-background-color: "lightblue"
+}
