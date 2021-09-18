@@ -50,9 +50,9 @@ public class TopPane extends FlowPane {
         Button btn = new Button("import");
         //btn.getStyleClass().add("icon-button");
         btn.setOnMouseClicked((event) -> {
+            if (ImportGraphPane.isOpened) return;
             
             Parent root = new ImportGraphPane();
-            
         });
         
         this.getChildren().add(btn);
