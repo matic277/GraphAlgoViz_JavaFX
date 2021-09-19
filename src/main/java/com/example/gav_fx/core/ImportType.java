@@ -3,7 +3,6 @@ package com.example.gav_fx.core;
 
 import com.example.gav_fx.graphbuilder.*;
 import com.example.gav_fx.panes.optionpanes.*;
-import javafx.scene.layout.Pane;
 
 public enum ImportType {
     
@@ -16,13 +15,13 @@ public enum ImportType {
     
     private final int id;
     private final String description;
-    private final Pane panel;
+    private final OptionPane pane;
     private final GraphBuilder builder;
     
-    ImportType(int id, String desc, Pane panel, GraphBuilder builder) {
+    ImportType(int id, String desc, OptionPane pane, GraphBuilder builder) {
         this.id = id;
         this.description = desc;
-        this.panel = panel;
+        this.pane = pane;
         this.builder = builder;
     }
     
@@ -33,7 +32,7 @@ public enum ImportType {
         throw new RuntimeException("Unknown graph type " + desc + ".");
     }
     
-    public Pane getPanel() { return this.panel; }
+    public OptionPane getOptionPane() { return this.pane; }
     public GraphBuilder getGraphBuilder() { return this.builder; }
     
     @Override

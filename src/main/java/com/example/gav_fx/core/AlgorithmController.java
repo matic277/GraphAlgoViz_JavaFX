@@ -1,5 +1,6 @@
 package com.example.gav_fx.core;
 
+import com.example.gav_fx.graph.Edge;
 import com.example.gav_fx.graph.MyGraph;
 import com.example.gav_fx.graph.Node;
 import org.jgrapht.event.GraphEdgeChangeEvent;
@@ -228,6 +229,7 @@ public class AlgorithmController implements Runnable, StateObservable, GraphChan
     
     @Override public void onNewInformedNode() {}
     @Override public void onNewUninformedNode() {}
-    @Override public void edgeAdded(GraphEdgeChangeEvent<Node, DefaultEdge> e) {}
-    @Override public void edgeRemoved(GraphEdgeChangeEvent<Node, DefaultEdge> e) {}
+    
+    @Override public void edgeAdded(GraphEdgeChangeEvent<Node, Edge> e) {}
+    @Override public void edgeRemoved(GraphEdgeChangeEvent<Node, Edge> e) {}
 }

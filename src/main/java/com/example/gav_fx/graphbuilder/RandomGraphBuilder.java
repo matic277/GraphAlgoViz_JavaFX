@@ -9,7 +9,6 @@ public class RandomGraphBuilder extends GraphBuilder {
         super();
     }
     
-    
     /**
      * Each edge in graph exists with given probability.
      */
@@ -31,7 +30,7 @@ public class RandomGraphBuilder extends GraphBuilder {
         }
         
         this.getNodeInformator().run();
-        GraphBuilder.layoutType.getLayoutExecutor().run();
+        this.layoutType.getLayoutExecutor().run();
     }
     
 }

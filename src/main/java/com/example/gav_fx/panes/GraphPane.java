@@ -1,6 +1,9 @@
 package com.example.gav_fx.panes;
 
+import com.example.gav_fx.core.GraphChangeObserver;
+import com.example.gav_fx.graph.Edge;
 import com.example.gav_fx.graph.MyGraph;
+import com.example.gav_fx.graph.Node;
 import com.example.gav_fx.listeners.GraphPaneListener;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -11,19 +14,16 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
 import javafx.util.Duration;
+import org.jgrapht.event.GraphEdgeChangeEvent;
+import org.jgrapht.event.GraphVertexChangeEvent;
+import org.jgrapht.graph.DefaultEdge;
 
-public class GraphPane extends Pane {
+public class GraphPane extends Pane implements GraphChangeObserver {
     
     private final ScrollPane parentPane;
-    
-    private final Timeline timeline;
-    
-    public static final double DEFAULT_DELTA = 1.3d;
-    public final DoubleProperty myScale = new SimpleDoubleProperty(1.0);
-    public final DoubleProperty deltaY = new SimpleDoubleProperty(0.0);
-    
-    private final DoubleProperty zoomProperty = new SimpleDoubleProperty(1.0d);
     
     public GraphPane(ScrollPane parentPane) {
         this.parentPane = parentPane;
@@ -34,19 +34,83 @@ public class GraphPane extends Pane {
         scaleYProperty().bind(myScale);
         
         MyGraph.getInstance().setGraphPane(this);
+        MyGraph.getInstance().addObserver(this);
         
         GraphPaneListener sceneGestures = new GraphPaneListener(this);
         
-        parentPane.addEventFilter(MouseEvent.MOUSE_CLICKED, sceneGestures.ON_MOUSE_CLICK);
-        parentPane.addEventFilter(MouseEvent.MOUSE_PRESSED, sceneGestures.ON_MOUSE_PRESS);
-        parentPane.addEventFilter(MouseEvent.MOUSE_DRAGGED, sceneGestures.ON_MOUSE_DRAG);
-        parentPane.addEventFilter(ScrollEvent.ANY,          sceneGestures.ON_SCROLL);
-    
+        // TODO
+        //parentPane.addEventFilter(MouseEvent.MOUSE_CLICKED, sceneGestures.ON_MOUSE_CLICK);
+        //parentPane.addEventFilter(MouseEvent.MOUSE_PRESSED, sceneGestures.ON_MOUSE_PRESS);
+        //parentPane.addEventFilter(MouseEvent.MOUSE_DRAGGED, sceneGestures.ON_MOUSE_DRAG);
+        //parentPane.addEventFilter(ScrollEvent.ANY,          sceneGestures.ON_SCROLL);
+        
+        parentPane.setOnMouseClicked(sceneGestures.ON_MOUSE_CLICK);
+        parentPane.setOnMousePressed(sceneGestures.ON_MOUSE_PRESS);
+        parentPane.setOnMouseDragged(sceneGestures.ON_MOUSE_DRAG);
+        parentPane.setOnMouseDragged(sceneGestures.ON_MOUSE_DRAG);
+        parentPane.setOnScroll(sceneGestures.ON_SCROLL);
+        
         zoomProperty.bind(this.myScale);
         
         parentPane.setContent(this);
         this.toBack();
     }
+    
+    @Override
+    public void onGraphClear() {
+        this.getChildren().clear();
+    }
+    
+    @Override
+    public void onGraphImport() {
+        // TODO
+    }
+    
+    @Override
+    public void onNewInformedNode() {
+    
+    }
+    
+    @Override
+    public void onNewUninformedNode() {
+    
+    }
+    
+    @Override
+    public void edgeAdded(GraphEdgeChangeEvent<Node, Edge> event) {
+        this.getChildren().add(event.getEdge().getLine());
+    }
+    
+    @Override
+    public void edgeRemoved(GraphEdgeChangeEvent<Node, Edge> event) {
+        this.getChildren().remove(event.getEdge().getLine());
+    }
+    
+    @Override
+    public void vertexAdded(GraphVertexChangeEvent<Node> event) {
+        this.getChildren().add(event.getVertex());
+    }
+    
+    @Override
+    public void vertexRemoved(GraphVertexChangeEvent<Node> event) {
+        this.getChildren().remove(event.getVertex());
+    }
+    
+    
+    
+    
+    /**
+     * PANNING AND ZOOMING SECTION
+     * thanks to StackOverflow
+     */
+    
+    private final Timeline timeline;
+    
+    public static final double DEFAULT_DELTA = 1.3d;
+    public final DoubleProperty myScale = new SimpleDoubleProperty(1.0);
+    public final DoubleProperty deltaY = new SimpleDoubleProperty(0.0);
+    
+    private final DoubleProperty zoomProperty = new SimpleDoubleProperty(1.0d);
     
     public void setPivot( double x, double y, double scale) {
         // note: pivot value must be untransformed, i. e. without scaling

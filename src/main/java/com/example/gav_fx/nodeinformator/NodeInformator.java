@@ -22,6 +22,9 @@ public class NodeInformator implements Runnable {
     public void run() {
         MyGraph graph = MyGraph.getInstance();
         
+        // If used didn't specify properties then don't do anything?
+        if (properties == null) return;
+        
         // If user specified:
         //  number of informed nodes = 100
         //  but graph has less than 100 nodes

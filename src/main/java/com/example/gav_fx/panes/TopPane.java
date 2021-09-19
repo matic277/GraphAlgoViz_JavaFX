@@ -1,6 +1,7 @@
 package com.example.gav_fx.panes;
 
 import com.example.gav_fx.graph.MyGraph;
+import com.example.gav_fx.graphbuilder.GraphBuilder;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
@@ -29,7 +30,7 @@ public class TopPane extends FlowPane {
     
     private void initAddNodeButton() {
         Button btn = new Button("add node");
-        btn.setOnMouseClicked((event) -> {
+        btn.setOnMouseClicked(event -> {
             //graph.addNode();
         });
         
@@ -38,7 +39,7 @@ public class TopPane extends FlowPane {
     
     private void initDeleteGraphButton() {
         Button btn = new Button("delete");
-        btn.setOnMouseClicked((event) -> {
+        btn.setOnMouseClicked(event -> {
 
         });
         
@@ -49,10 +50,9 @@ public class TopPane extends FlowPane {
     private void initImportButton() {
         Button btn = new Button("import");
         //btn.getStyleClass().add("icon-button");
-        btn.setOnMouseClicked((event) -> {
+        btn.setOnMouseClicked(event -> {
             if (ImportGraphPane.isOpened) return;
-            
-            Parent root = new ImportGraphPane();
+            Parent root = new ImportGraphPane(this);
         });
         
         this.getChildren().add(btn);

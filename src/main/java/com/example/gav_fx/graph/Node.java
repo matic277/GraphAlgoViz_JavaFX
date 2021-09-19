@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.jgrapht.alg.drawing.model.Point2D;
+import org.w3c.dom.events.MouseEvent;
 
 public class Node extends Circle {
     
@@ -23,15 +24,41 @@ public class Node extends Circle {
     int messagesReceived = 0;
     int messagesSent = 0;
     
+    static class Delta {
+        double x, y;
+    }
+    
+    final Delta dragDelta = new Delta();
+    
+    
     @Deprecated(since = "Do not use this constructor, use MyGraph.newNode()")
     public Node(int x, int y, int id) {
         super(x, y, 30);
         this.id = id;
         
         this.setFill(Color.AQUA);
-    
+        
         states = new ArrayList<>(10);
         states.add(new State(0)); // uninformed on initialize
+    
+        // TODO implementing draggable nodes:
+        //  https://stackoverflow.com/questions/49951275/binding-line-with-circles-coordinate-doesnt-work
+        this.setOnMouseDragged(event -> {
+            System.out.println("dragg");
+            setCenterX(event.getX() + dragDelta.x);
+            setCenterY(event.getY() + dragDelta.y);
+            
+        });
+        this.setOnMouseClicked(event -> {
+            //System.out.println("clickk");
+        });
+        this.setOnMousePressed(event -> {
+            System.out.println("press on node, src=" + event.getSource().getClass());
+            dragDelta.x = getCenterX() - event.getX();
+            dragDelta.y = getCenterY() - event.getY();
+            event.consume();
+        });
+        
     }
     
     public int getNodeId() { return this.id; }

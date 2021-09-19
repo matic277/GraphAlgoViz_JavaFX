@@ -1,5 +1,8 @@
 package com.example.gav_fx.graph;
 
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.value.WritableDoubleValue;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -8,61 +11,82 @@ import org.jgrapht.graph.DefaultEdge;
 import java.util.Collection;
 import java.util.Iterator;
 
-public class Edge {
+public class Edge extends DefaultEdge {
     
     private static final MyGraph graph = MyGraph.getInstance();
     
-    Node n1, n2;
+    //Node n1, n2;
     
-    // Composition
     Line line; // drawable
-    DefaultEdge edge;
+    
+    // Note:
+    // This is a constructor for JGraphT and is only needed when calling
+    //  graph.addEdge(v1, v2).
+    // If calling graph.addEdge(v1, v2, edge), then its not needed.
+    public Edge() {
+    
+    }
     
     public Edge(Node n1, Node n2) {
-        //super(n1.getCenterX(), n1.getCenterY(), n2.getCenterX(), n2.getCenterY());
-        this.n1 = n1;
-        this.n2 = n2;
+        super();
+        
+        //this.n2 = n2;
         this.line = new Line(n1.getCenterX(), n1.getCenterY(), n2.getCenterX(), n2.getCenterY());
-        this.edge = graph.graph.addEdge(n1, n2);
+        bindEdgeToNodes(n1, n2, line);
         
         this.line.setFill(Color.BLACK);
     }
     
-    public Node getN1() { return n1; }
-    public Node getN2() { return n2; }
     public Line getLine() { return line; }
-    public DefaultEdge getEdge() { return edge; }
     
-    public static String edgesListToString(Collection<Node> col) {
-        StringBuilder sb = new StringBuilder()
-                .append("[");
-        if (col.isEmpty()) return sb.append("]").toString();
+    public void setLine(Node n1, Node n2) {
+        this.line = new Line(n1.getCenterX(), n1.getCenterY(), n2.getCenterX(), n2.getCenterY());
+        bindEdgeToNodes(n1, n2, line);
         
-        Iterator<Node> iter = col.iterator();
-        for (; iter.hasNext();) {
-            Node n = iter.next();
-            sb.append(n.id).append(iter.hasNext() ? ", " : "]");
-        }
-//        sb.append(list.get(list.size()-1).id);
-        return sb.append("]").toString();
+        this.line.setFill(Color.BLACK);
     }
     
-    @Override
-    public boolean equals(Object o) {
-        if((o == null) || (o.getClass() != this.getClass())) {
-            return false;
-        }
-        Edge e = (Edge) o;
-        
-        return (n1.id == e.n1.id || n1.id == e.n2.id) &&
-                (n2.id == e.n1.id || n2.id == e.n2.id);
-    }
+    // TODO implementing draggable nodes:
+    //  https://stackoverflow.com/questions/49951275/binding-line-with-circles-coordinate-doesnt-work
+    // Binding coords of line(edge) to nodes
+    private static void bindEdgeToNodes(Node n1, Node n2, Line l) {
+        l.startXProperty().bind(n1.centerXProperty());
+        l.startYProperty().bind(n1.centerYProperty());
     
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder()
-                .append(Math.max(n1.id, n2.id))
-                .append(Math.min(n1.id, n2.id))
-                .toHashCode();
+        l.endXProperty().bind(n2.centerXProperty());
+        l.endYProperty().bind(n2.centerYProperty());
     }
+
+//    public static String edgesListToString(Collection<Node> col) {
+//        StringBuilder sb = new StringBuilder()
+//                .append("[");
+//        if (col.isEmpty()) return sb.append("]").toString();
+//
+//        Iterator<Node> iter = col.iterator();
+//        for (; iter.hasNext();) {
+//            Node n = iter.next();
+//            sb.append(n.id).append(iter.hasNext() ? ", " : "]");
+//        }
+////        sb.append(list.get(list.size()-1).id);
+//        return sb.append("]").toString();
+//    }
+    
+    //@Override
+    //public boolean equals(Object o) {
+    //    if((o == null) || (o.getClass() != this.getClass())) {
+    //        return false;
+    //    }
+    //    Edge e = (Edge) o;
+    //
+    //    return (n1.id == e.n1.id || n1.id == e.n2.id) &&
+    //            (n2.id == e.n1.id || n2.id == e.n2.id);
+    //}
+    //
+    //@Override
+    //public int hashCode() {
+    //    return new HashCodeBuilder()
+    //            .append(Math.max(n1.id, n2.id))
+    //            .append(Math.min(n1.id, n2.id))
+    //            .toHashCode();
+    //}
 }

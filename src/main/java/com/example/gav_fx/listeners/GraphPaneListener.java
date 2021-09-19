@@ -1,5 +1,6 @@
 package com.example.gav_fx.listeners;
 
+import com.example.gav_fx.graph.Node;
 import com.example.gav_fx.panes.GraphPane;
 import javafx.event.EventHandler;
 import javafx.scene.control.ScrollPane;
@@ -19,8 +20,8 @@ public class GraphPaneListener {
         this.panAndZoomPane = canvas;
     }
     
-    public final EventHandler<MouseEvent> ON_MOUSE_CLICK = (event) -> {
-        System.out.println("CLICK");
+    public final EventHandler<MouseEvent> ON_MOUSE_CLICK = event -> {
+        //System.out.println("CLICK");
         if (event.getButton().equals(MouseButton.PRIMARY)) {
             if (event.getClickCount() == 2) {
                 panAndZoomPane.resetZoom();
@@ -33,7 +34,8 @@ public class GraphPaneListener {
         }
     };
     
-    public final EventHandler<MouseEvent> ON_MOUSE_PRESS = (event) -> {
+    public final EventHandler<MouseEvent> ON_MOUSE_PRESS = event -> {
+        
         sceneDragContext.mouseAnchorX = event.getX();
         sceneDragContext.mouseAnchorY = event.getY();
         
@@ -41,13 +43,14 @@ public class GraphPaneListener {
         sceneDragContext.translateAnchorY = panAndZoomPane.getTranslateY();
     };
     
-    public final EventHandler<MouseEvent> ON_MOUSE_DRAG = (event) -> {
+    public final EventHandler<MouseEvent> ON_MOUSE_DRAG = event -> {
+        System.out.println("dragging pane");
         panAndZoomPane.setTranslateX(sceneDragContext.translateAnchorX + event.getX() - sceneDragContext.mouseAnchorX);
         panAndZoomPane.setTranslateY(sceneDragContext.translateAnchorY + event.getY() - sceneDragContext.mouseAnchorY);
         event.consume();
     };
     
-    public final EventHandler<ScrollEvent> ON_SCROLL = (event) -> {
+    public final EventHandler<ScrollEvent> ON_SCROLL = event -> {
         double delta = GraphPane.DEFAULT_DELTA;
         double scale = panAndZoomPane.getScale(); // currently we only use Y, same value is used for X
         double oldScale = scale;

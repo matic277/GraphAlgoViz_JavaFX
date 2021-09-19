@@ -1,5 +1,6 @@
 package com.example.gav_fx;
 
+import com.example.gav_fx.graph.Edge;
 import com.example.gav_fx.graph.MyGraph;
 import com.example.gav_fx.graph.Node;
 import com.example.gav_fx.panes.BottomPane;
@@ -11,6 +12,9 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.*;
 import javafx.scene.shape.SVGPath;
 import javafx.stage.Stage;
+import org.jgrapht.Graph;
+import org.jgrapht.graph.DefaultEdge;
+import org.jgrapht.graph.DefaultUndirectedGraph;
 
 public class App extends Application {
     
@@ -19,13 +23,30 @@ public class App extends Application {
         // Container of GraphPane
         ScrollPane scrollPane = new ScrollPane();
         scrollPane.getStyleClass().add("edge-to-edge"); // removing blue border/highlight when clicked/panning
-        scrollPane.setPannable(true);
+        scrollPane.setPannable(false);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         AnchorPane.setTopAnchor(scrollPane, 10.0d);
         AnchorPane.setRightAnchor(scrollPane, 10.0d);
         AnchorPane.setBottomAnchor(scrollPane, 10.0d);
         AnchorPane.setLeftAnchor(scrollPane, 10.0d);
+        
+        
+        DefaultUndirectedGraph<Node, Edge> g = new DefaultUndirectedGraph<>(Edge.class);
+    
+        //Node n0  = MyGraph.getNode();
+        //Node n1  = MyGraph.getNode();
+        //Node n2  = MyGraph.getNode();
+        
+        //g.addVertex(n0);
+        //g.addVertex(n1);
+        //g.addVertex(n2);
+        
+        //Edge e = new Edge(n0, n1);
+        //g.addEdge(n0, n1, e);
+        //System.out.println(g.getEdge(n0, n1).getLine());
+        
+        
     
         SVGPath x = new SVGPath();
         
@@ -34,7 +55,7 @@ public class App extends Application {
         // MIDDLE
         GraphPane graphPane = new GraphPane(scrollPane);
         buildGraph();
-        graphPane.getChildren().addAll(MyGraph.getInstance().getNodes());
+        
         // BOTTOM
         BottomPane bottomPane = new BottomPane();
         

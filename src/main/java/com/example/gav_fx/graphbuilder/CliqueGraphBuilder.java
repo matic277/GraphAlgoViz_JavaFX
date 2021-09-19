@@ -28,6 +28,6 @@ public class CliqueGraphBuilder extends GraphBuilder {
         // can overwrite with empty method body so nothing happens?
         // (in this case whoever is calling this method must also call this new method mentioned above)
         this.getNodeInformator().run();
-        GraphBuilder.layoutType.getLayoutExecutor().run();
+        this.layoutType.getLayoutExecutor().run();
     }
 }

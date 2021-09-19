@@ -3,6 +3,7 @@ package com.example.gav_fx.graph;
 import com.example.gav_fx.core.AlgorithmController;
 import com.example.gav_fx.core.GraphChangeObserver;
 import com.example.gav_fx.core.GraphObservable;
+import com.example.gav_fx.graphbuilder.GraphBuilder;
 import com.example.gav_fx.panes.GraphPane;
 import org.jgrapht.Graph;
 import org.jgrapht.ListenableGraph;
@@ -26,7 +27,7 @@ public class MyGraph implements GraphObservable {
     
     public AtomicInteger informedNodes = new AtomicInteger(0);
     
-    ListenableGraph<Node, DefaultEdge> graph = new DefaultListenableGraph<>(new DefaultUndirectedGraph<>(DefaultEdge.class));
+    ListenableGraph<Node, Edge> graph = new DefaultListenableGraph<>(new DefaultUndirectedGraph<>(Edge.class));
     private final Set<GraphChangeObserver> observers = new HashSet<>(5);
     
     private GraphPane graphPane;
@@ -36,15 +37,28 @@ public class MyGraph implements GraphObservable {
     public static MyGraph getInstance() { return instance; }
     private MyGraph() { setListener(); }
     
+    public Graph<Node, Edge> getGraph() { return this.graph; }
+    
     // Problematic:
     // gets called when clearing graph, for each node, this is a pretty big problem
     // remove the listener before clearing the graph,
     // then re-add it after the graph is clear!
-    private final GraphListener<Node, DefaultEdge> GRAPH_LISTENER = new GraphListener<>() {
-        @Override public void edgeRemoved(GraphEdgeChangeEvent<Node, DefaultEdge> event) {
+    private final GraphListener<Node, Edge> GRAPH_LISTENER = new GraphListener<>() {
+        @Override public void edgeRemoved(GraphEdgeChangeEvent<Node, Edge> event) {
             observers.forEach(obs -> obs.edgeRemoved(event));
         }
-        @Override public void edgeAdded(GraphEdgeChangeEvent<Node, DefaultEdge> event) {
+        @Override public void edgeAdded(GraphEdgeChangeEvent<Node, Edge> event) {
+            System.out.println(" -> Edge add <-");
+            Edge e = event.getEdge();
+            // This is needed due to FileGraphImport is is working with default ede constructors
+            // (therefore field Line in Edge.class doesn't get set)
+            // Problem is in Graph6Sparse6Importer.Consumer.edgeConsumer
+            // on line: E e = graph.addEdge(from, to);
+            
+            // I can't find any way around this, so do some checking here.
+            if (e.getLine() == null) {
+                e.setLine(event.getEdgeSource(), event.getEdgeTarget());
+            }
             observers.forEach(obs -> obs.edgeAdded(event));
         }
         @Override public void vertexAdded(GraphVertexChangeEvent<Node> event) {
@@ -61,9 +75,16 @@ public class MyGraph implements GraphObservable {
         graph.addGraphListener(GRAPH_LISTENER);
     }
     
-    public void onGraphImport() {
+    public void onGraphImport(GraphBuilder builder) {
         // TODO
         //drawEdges(true);
+        System.out.println("NEW GRAPH IMPORT");
+        
+        clearGraph();
+        builder.buildGraph();
+        
+        //this.graph
+        
         this.observers.forEach(GraphChangeObserver::onGraphImport);
     }
     
@@ -94,7 +115,7 @@ public class MyGraph implements GraphObservable {
         
         // Slow but works (creates copy references for every edge and node...)
         // (http://jgrapht-users.107614.n3.nabble.com/remove-all-edges-and-vertices-td4024747.html)
-        LinkedList<DefaultEdge> copy = new LinkedList<>(graph.edgeSet());
+        LinkedList<Edge> copy = new LinkedList<>(graph.edgeSet());
         graph.removeAllEdges(copy);
         LinkedList<Node> copy2 = new LinkedList<>(graph.vertexSet());
         graph.removeAllVertices(copy2);
@@ -182,9 +203,14 @@ public class MyGraph implements GraphObservable {
         }
         
         Edge e = new Edge(n1, n2);
-        System.out.println("ADDED EDGE: " + e);
+        boolean added = graph.addEdge(n1, n2, e);
         
-        graphPane.getChildren().add(e.getLine());
+        if (!added) {
+            throw new RuntimeException("Couldnt add aedge to graph, edge:" + e);
+        }
+        
+        System.out.println("ADDED EDGE: " + e);
+
         
         return true;
     }
@@ -196,8 +222,6 @@ public class MyGraph implements GraphObservable {
         if (node.isPresent()) return node.get();
         throw new RuntimeException("Can't find node by id=" + id + ".");
     }
-    
-    public Graph<Node, DefaultEdge> getGraph() { return this.graph; }
     
     @Override public void addObserver(GraphChangeObserver observer) { this.observers.add(observer); }
     @Override public void removeObserver(GraphChangeObserver observer) { this.observers.remove(observer); }
