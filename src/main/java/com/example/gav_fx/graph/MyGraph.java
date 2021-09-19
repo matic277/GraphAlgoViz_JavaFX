@@ -10,7 +10,6 @@ import org.jgrapht.ListenableGraph;
 import org.jgrapht.event.GraphEdgeChangeEvent;
 import org.jgrapht.event.GraphListener;
 import org.jgrapht.event.GraphVertexChangeEvent;
-import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.DefaultListenableGraph;
 import org.jgrapht.graph.DefaultUndirectedGraph;
 
@@ -188,13 +187,7 @@ public class MyGraph implements GraphObservable {
         System.out.println("ADDED NODE: " + n);
         numOfNodes++;
         
-        // TODO
-        // method this.onGraphImport() exists...
-        // this is not ideal...
-        //if (numOfNodes == 1) {
-        //    // kinda hacky?
-        //    mainPanel.getSimulationWindow().onNewGraphImport(null);
-        //}
+        n.toFront(); // draw last
     }
     
     public synchronized boolean addEdge(Node n1, Node n2) {
@@ -204,13 +197,14 @@ public class MyGraph implements GraphObservable {
         
         Edge e = new Edge(n1, n2);
         boolean added = graph.addEdge(n1, n2, e);
+        e.line.toBack();
         
         if (!added) {
-            throw new RuntimeException("Couldnt add aedge to graph, edge:" + e);
+            throw new RuntimeException("Couldn't add edge to graph, edge:" + e);
         }
         
         System.out.println("ADDED EDGE: " + e);
-
+    
         
         return true;
     }

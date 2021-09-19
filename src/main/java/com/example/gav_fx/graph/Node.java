@@ -47,7 +47,9 @@ public class Node extends Circle {
             System.out.println("dragg");
             setCenterX(event.getX() + dragDelta.x);
             setCenterY(event.getY() + dragDelta.y);
-            
+            this.setFill(Color.PALEGOLDENROD);
+            this.toFront();
+            event.consume();
         });
         this.setOnMouseClicked(event -> {
             //System.out.println("clickk");
@@ -58,7 +60,6 @@ public class Node extends Circle {
             dragDelta.y = getCenterY() - event.getY();
             event.consume();
         });
-        
     }
     
     public int getNodeId() { return this.id; }

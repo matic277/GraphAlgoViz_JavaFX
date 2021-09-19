@@ -1,59 +1,26 @@
 package com.example.gav_fx;
 
-import com.example.gav_fx.graph.Edge;
 import com.example.gav_fx.graph.MyGraph;
 import com.example.gav_fx.graph.Node;
+import com.example.gav_fx.listeners.PanningAndZoomingControls;
 import com.example.gav_fx.panes.BottomPane;
 import com.example.gav_fx.panes.GraphPane;
 import com.example.gav_fx.panes.TopPane;
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.*;
-import javafx.scene.shape.SVGPath;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-import org.jgrapht.Graph;
-import org.jgrapht.graph.DefaultEdge;
-import org.jgrapht.graph.DefaultUndirectedGraph;
 
 public class App extends Application {
     
     @Override
     public void start(Stage stage) {
-        // Container of GraphPane
-        ScrollPane scrollPane = new ScrollPane();
-        scrollPane.getStyleClass().add("edge-to-edge"); // removing blue border/highlight when clicked/panning
-        scrollPane.setPannable(false);
-        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        AnchorPane.setTopAnchor(scrollPane, 10.0d);
-        AnchorPane.setRightAnchor(scrollPane, 10.0d);
-        AnchorPane.setBottomAnchor(scrollPane, 10.0d);
-        AnchorPane.setLeftAnchor(scrollPane, 10.0d);
-        
-        
-        DefaultUndirectedGraph<Node, Edge> g = new DefaultUndirectedGraph<>(Edge.class);
-    
-        //Node n0  = MyGraph.getNode();
-        //Node n1  = MyGraph.getNode();
-        //Node n2  = MyGraph.getNode();
-        
-        //g.addVertex(n0);
-        //g.addVertex(n1);
-        //g.addVertex(n2);
-        
-        //Edge e = new Edge(n0, n1);
-        //g.addEdge(n0, n1, e);
-        //System.out.println(g.getEdge(n0, n1).getLine());
-        
-        
-    
-        SVGPath x = new SVGPath();
-        
         // TOP
         TopPane topPane = new TopPane();
+        
         // MIDDLE
-        GraphPane graphPane = new GraphPane(scrollPane);
+        GraphPane canvas = new GraphPane();
+        PanningAndZoomingControls sceneControls = new PanningAndZoomingControls(canvas);
         buildGraph();
         
         // BOTTOM
@@ -61,14 +28,20 @@ public class App extends Application {
         
         // MAIN CONTAINER
         BorderPane root = new BorderPane();
-        root.setCenter(scrollPane);
+        root.setCenter(canvas);
         root.setBottom(bottomPane);
         root.setTop(topPane);
         
-        Scene scene = new Scene(root, 1000, 1000);
+        // create scene which can be dragged and zoomed
+        Scene scene = new Scene(root, 1400, 1000);
+        scene.setOnMousePressed(sceneControls.getOnMousePressEventHandler());
+        scene.setOnMouseDragged(sceneControls.getOnMouseDragEventHandler());
+        scene.setOnScroll(sceneControls.getOnScrollEventHandler());
+        
         scene.getStylesheets().add(getClass().getResource("style.css").toExternalForm());
-        stage.setTitle("GAV JavaFX");
+        
         stage.setScene(scene);
+        stage.setTitle("GAV JavaFX");
         stage.show();
     }
     
