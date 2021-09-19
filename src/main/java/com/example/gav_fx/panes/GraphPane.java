@@ -8,6 +8,7 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
 import org.jgrapht.event.GraphEdgeChangeEvent;
 import org.jgrapht.event.GraphVertexChangeEvent;
 
@@ -29,8 +30,7 @@ public class GraphPane extends Pane implements GraphChangeObserver {
         // add scale transform
         scaleXProperty().bind(myScale);
         scaleYProperty().bind(myScale);
-    
-        MyGraph.getInstance().setGraphPane(this);
+        
         MyGraph.getInstance().addObserver(this);
     }
     
@@ -57,7 +57,10 @@ public class GraphPane extends Pane implements GraphChangeObserver {
     
     @Override
     public void edgeAdded(GraphEdgeChangeEvent<Node, Edge> event) {
-        this.getChildren().add(event.getEdge().getLine());
+        Line edgeDrawable = event.getEdge().getLine();
+        this.getChildren().add(edgeDrawable);
+        
+        edgeDrawable.toBack();
     }
     
     @Override
@@ -67,7 +70,10 @@ public class GraphPane extends Pane implements GraphChangeObserver {
     
     @Override
     public void vertexAdded(GraphVertexChangeEvent<Node> event) {
-        this.getChildren().add(event.getVertex());
+        Node node = event.getVertex();
+        this.getChildren().add(node);
+        
+        node.toFront();
     }
     
     @Override

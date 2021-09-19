@@ -29,8 +29,6 @@ public class MyGraph implements GraphObservable {
     ListenableGraph<Node, Edge> graph = new DefaultListenableGraph<>(new DefaultUndirectedGraph<>(Edge.class));
     private final Set<GraphChangeObserver> observers = new HashSet<>(5);
     
-    private GraphPane graphPane;
-    
     // singleton
     private static final MyGraph instance = new MyGraph();
     public static MyGraph getInstance() { return instance; }
@@ -191,21 +189,14 @@ public class MyGraph implements GraphObservable {
     }
     
     public synchronized boolean addEdge(Node n1, Node n2) {
-        if (graphPane == null) {
-            throw new RuntimeException("Added edge, but graphPane wasn't set yet.");
-        }
-        
         Edge e = new Edge(n1, n2);
         boolean added = graph.addEdge(n1, n2, e);
-        e.line.toBack();
         
         if (!added) {
             throw new RuntimeException("Couldn't add edge to graph, edge:" + e);
         }
         
         System.out.println("ADDED EDGE: " + e);
-    
-        
         return true;
     }
     
@@ -222,6 +213,4 @@ public class MyGraph implements GraphObservable {
     
     public void setNumberOfInformedNodes(int num) { this.informedNodes.set(num); this.onInformedNodesChange(); }
     public int getNumberOfInformedNodes() { return this.informedNodes.get(); }
-    
-    public void setGraphPane(GraphPane graphPane) { this.graphPane = graphPane; }
 }
