@@ -4,13 +4,14 @@ import com.example.gav_fx.core.AlgorithmController;
 import com.example.gav_fx.core.State;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.StrokeType;
 import org.jgrapht.Graphs;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.jgrapht.alg.drawing.model.Point2D;
-import org.w3c.dom.events.MouseEvent;
 
 public class Node extends Circle {
     
@@ -36,10 +37,19 @@ public class Node extends Circle {
         super(x, y, 30);
         this.id = id;
         
-        this.setFill(Color.AQUA);
+        this.setFill(Color.DARKGREY);
         
         states = new ArrayList<>(10);
         states.add(new State(0)); // uninformed on initialize
+    
+        // Due to brighter/darker color drift
+        final Color originalColor = (Color)getFill();
+        
+        // Border
+        setStroke(Color.BLACK);
+        setStrokeType(StrokeType.OUTSIDE);
+        setStrokeWidth(0); // hide border
+        
     
         // TODO implementing draggable nodes:
         //  https://stackoverflow.com/questions/49951275/binding-line-with-circles-coordinate-doesnt-work
@@ -47,9 +57,6 @@ public class Node extends Circle {
             System.out.println("dragg");
             setCenterX(event.getX() + dragDelta.x);
             setCenterY(event.getY() + dragDelta.y);
-            
-            setFill(Color.PALEGOLDENROD);
-            toFront();
             
             event.consume();
         });
@@ -60,10 +67,17 @@ public class Node extends Circle {
             System.out.println("press on node, src=" + event.getSource().getClass());
             dragDelta.x = getCenterX() - event.getX();
             dragDelta.y = getCenterY() - event.getY();
+    
+            setStrokeWidth(2); // draw border
+            toFront();
+
+            //setFill(originalColor.brighter());
+            
             event.consume();
         });
         this.setOnMouseReleased(event -> {
-            setFill(Color.AQUA);
+            //setFill(originalColor);
+            setStrokeWidth(0); // hide border
             event.consume();
         });
     }

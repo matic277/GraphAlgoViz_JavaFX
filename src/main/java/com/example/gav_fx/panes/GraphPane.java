@@ -6,9 +6,9 @@ import com.example.gav_fx.graph.MyGraph;
 import com.example.gav_fx.graph.Node;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.scene.Group;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Line;
 import org.jgrapht.event.GraphEdgeChangeEvent;
 import org.jgrapht.event.GraphVertexChangeEvent;
 
@@ -20,12 +20,21 @@ public class GraphPane extends Pane implements GraphChangeObserver {
     
     DoubleProperty myScale = new SimpleDoubleProperty(1.0);
     
+    Group edges;
+    Group nodes;
+    
     public GraphPane() {
         setPrefSize(600, 600);
-    
+        
         // TODO turn this off eventually
         // reference/context
-        this.setBorder(new Border(new BorderStroke(Color.LIGHTCORAL, BorderStrokeStyle.DOTTED, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
+        this.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.DOTTED, new CornerRadii(50), BorderWidths.DEFAULT)));
+        
+        nodes = new Group();
+        edges = new Group();
+        
+        this.getChildren().add(edges);
+        this.getChildren().add(nodes);
         
         // add scale transform
         scaleXProperty().bind(myScale);
@@ -37,65 +46,42 @@ public class GraphPane extends Pane implements GraphChangeObserver {
     
     @Override
     public void onGraphClear() {
-        this.getChildren().clear();
+        edges.getChildren().clear();
+        nodes.getChildren().clear();
     }
     
     @Override
     public void onGraphImport() {
-        // TODO
-    }
-    
-    @Override
-    public void onNewInformedNode() {
-    
-    }
-    
-    @Override
-    public void onNewUninformedNode() {
     
     }
     
     @Override
     public void edgeAdded(GraphEdgeChangeEvent<Node, Edge> event) {
-        Line edgeDrawable = event.getEdge().getLine();
-        this.getChildren().add(edgeDrawable);
-        
-        edgeDrawable.toBack();
+        edges.getChildren().add(event.getEdge().getLine());
     }
     
     @Override
     public void edgeRemoved(GraphEdgeChangeEvent<Node, Edge> event) {
-        this.getChildren().remove(event.getEdge().getLine());
+        edges.getChildren().remove(event.getEdge().getLine());
     }
     
     @Override
     public void vertexAdded(GraphVertexChangeEvent<Node> event) {
-        Node node = event.getVertex();
-        this.getChildren().add(node);
-        
-        node.toFront();
+        nodes.getChildren().add(event.getVertex());
     }
     
     @Override
     public void vertexRemoved(GraphVertexChangeEvent<Node> event) {
-        this.getChildren().remove(event.getVertex());
+        nodes.getChildren().remove(event.getVertex());
     }
     
+    @Override public void onNewInformedNode() {}
+    @Override public void onNewUninformedNode() {}
     
     
     
-    
-    
-    
-    
-    public double getScale() {
-        return myScale.get();
-    }
-    
-    public void setScale( double scale) {
-        myScale.set(scale);
-    }
-    
+    public double getScale() { return myScale.get(); }
+    public void setScale( double scale) { myScale.set(scale); }
     public void setPivot( double x, double y) {
         setTranslateX(getTranslateX()-x);
         setTranslateY(getTranslateY()-y);

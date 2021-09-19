@@ -40,7 +40,7 @@ public class TopPane extends FlowPane {
     private void initDeleteGraphButton() {
         Button btn = new Button("delete");
         btn.setOnMouseClicked(event -> {
-
+            graph.clearGraph();
         });
         
         this.getChildren().add(btn);
