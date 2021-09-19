@@ -5,7 +5,6 @@ import com.example.gav_fx.graph.MyGraph;
 import com.example.gav_fx.graph.Node;
 import org.jgrapht.event.GraphEdgeChangeEvent;
 import org.jgrapht.event.GraphVertexChangeEvent;
-import org.jgrapht.graph.DefaultEdge;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -32,6 +31,7 @@ public class AlgorithmController implements Runnable, StateObservable, GraphChan
     MyGraph graph;
     final Algorithm algo;
     
+    public static AtomicBoolean STOP_THREAD = new AtomicBoolean(false);
     public static volatile AtomicBoolean PAUSE = new AtomicBoolean(true);
     public static final Object PAUSE_LOCK = new Object();
     public static int TIMEOUT_BETWEEN_ROUNDS = 100;
@@ -46,6 +46,12 @@ public class AlgorithmController implements Runnable, StateObservable, GraphChan
 //        assignTasks();
     }
     
+    public void signalShutDown() {
+        synchronized (AlgorithmController.PAUSE_LOCK) { AlgorithmController.PAUSE_LOCK.notify(); }
+        AlgorithmController.STOP_THREAD.set(true);
+        THREAD_POOL.shutdown();
+    }
+    
     @Override
     public void run() {
         Thread.currentThread().setName("CONTROLLER");
@@ -56,6 +62,7 @@ public class AlgorithmController implements Runnable, StateObservable, GraphChan
                 LOG.out("->", "PAUSING.");
                 synchronized (PAUSE_LOCK) {
                     while (PAUSE.getAcquire() && !NEXT_ROUND_BUTTON_PRESSED.get()) {
+                        if (STOP_THREAD.get()) break;
                         try { PAUSE_LOCK.wait(); }
                         catch (Exception e) { e.printStackTrace(); }
                     }
@@ -66,6 +73,8 @@ public class AlgorithmController implements Runnable, StateObservable, GraphChan
                 }
                 LOG.out("->", "CONTINUING.");
             }
+    
+            if (STOP_THREAD.get()) break;
             
             LOG.out("\n->", "STARTING EXECUTORS.");
             for (int i=0; i<EXECUTORS.length; i++) {
@@ -89,6 +98,7 @@ public class AlgorithmController implements Runnable, StateObservable, GraphChan
             
             Tools.sleep(TIMEOUT_BETWEEN_ROUNDS);
         }
+        LOG.out("", "AlgorithmController thread terminated.");
     }
     
     private void incrementState() {

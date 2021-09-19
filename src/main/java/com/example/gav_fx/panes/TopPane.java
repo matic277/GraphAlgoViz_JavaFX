@@ -32,7 +32,7 @@ public class TopPane extends FlowPane {
     }
     
     private void initRunAlgorithmButton() {
-        Button btn = new Button();
+        Button btn = new Button("run");
         btn.setOnMouseClicked(event -> {
             // Thread safe atomic boolean flip
             // flip the value of PAUSE

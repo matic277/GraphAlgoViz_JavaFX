@@ -9,9 +9,11 @@ import com.example.gav_fx.graph.Node;
 import com.example.gav_fx.listeners.PanningAndZoomingControls;
 import com.example.gav_fx.panes.BottomPane;
 import com.example.gav_fx.panes.GraphPane;
+import com.example.gav_fx.panes.LeftPane;
 import com.example.gav_fx.panes.TopPane;
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.control.SplitPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
@@ -47,7 +49,6 @@ public class App extends Application {
         this.algoController = new AlgorithmController(MyGraph.getInstance(), algo);
 //        this.algoController.addObserver(this.mainPanel.getTopPanel().getSimulationPanel());
 //        this.algoController.addObserver();
-    
         this.controllerThread = new Thread(algoController);
         this.controllerThread.start();
         
@@ -57,30 +58,50 @@ public class App extends Application {
         TopPane topPane = new TopPane();
         
         // MIDDLE
-        GraphPane canvas = new GraphPane();
-        PanningAndZoomingControls sceneControls = new PanningAndZoomingControls(canvas);
+        LeftPane leftPane = new LeftPane();
+        leftPane.setMinWidth(200);
+        leftPane.setMaxWidth(200); // limit due to detDivider not working on init
+        GraphPane graphPane = new GraphPane();
+        
         buildGraph();
+        
+        SplitPane middlePane = new SplitPane();
+        middlePane.getItems().addAll(leftPane, graphPane);
+        //middlePane.setDividerPosition(1, 400); // not working
         
         // BOTTOM
         BottomPane bottomPane = new BottomPane();
         
+        
+        
         // MAIN CONTAINER
         BorderPane root = new BorderPane();
-        root.setCenter(canvas);
+        root.setCenter(middlePane);
         root.setBottom(bottomPane);
         root.setTop(topPane);
+        root.setLeft(leftPane);
         
         // create scene which can be dragged and zoomed
         Scene scene = new Scene(root, 1400, 1000);
-        scene.setOnMousePressed(sceneControls.getOnMousePressEventHandler());
-        scene.setOnMouseDragged(sceneControls.getOnMouseDragEventHandler());
-        scene.setOnScroll(sceneControls.getOnScrollEventHandler());
+        
+        PanningAndZoomingControls sceneControls = new PanningAndZoomingControls(graphPane);
+        middlePane.setOnMousePressed(sceneControls.getOnMousePressEventHandler());
+        middlePane.setOnMouseDragged(sceneControls.getOnMouseDragEventHandler());
+        middlePane.setOnScroll(sceneControls.getOnScrollEventHandler());
+        middlePane.setMinWidth(1000);
         
         scene.getStylesheets().add(getClass().getResource("style.css").toExternalForm());
         
         stage.setScene(scene);
         stage.setTitle("GAV JavaFX");
         stage.show();
+        
+        // Needed because controller thread is still alive after cloing
+        stage.setOnCloseRequest(event -> {
+            algoController.signalShutDown();
+        });
+        
+        leftPane.setMaxWidth(Integer.MAX_VALUE); // make it unlimited again
     }
     
     public static void main(String[] args) {
