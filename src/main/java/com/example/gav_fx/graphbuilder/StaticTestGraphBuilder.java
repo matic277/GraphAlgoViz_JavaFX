@@ -2,12 +2,9 @@ package com.example.gav_fx.graphbuilder;
 
 import com.example.gav_fx.graph.MyGraph;
 import com.example.gav_fx.graph.Node;
+import javafx.scene.paint.Paint;
 
 public class StaticTestGraphBuilder extends GraphBuilder {
-    
-    public StaticTestGraphBuilder() {
-        super();
-    }
     
     @Override
     public void buildGraph() {
@@ -25,9 +22,9 @@ public class StaticTestGraphBuilder extends GraphBuilder {
         Node n11 = MyGraph.getNode(); n11.setCenterX(400); n11.setCenterY(600);
         Node n12 = MyGraph.getNode(); n12.setCenterX(400); n12.setCenterY(480);
         Node n13 = MyGraph.getNode(); n13.setCenterX(370); n13.setCenterY(380);
-    
+        
         Node n14 = MyGraph.getNode(); n14.setCenterX(600); n14.setCenterY(600);
-    
+        
         MyGraph.getInstance().addNode(n0);
         MyGraph.getInstance().addNode(n1);
         MyGraph.getInstance().addNode(n2);
@@ -43,11 +40,11 @@ public class StaticTestGraphBuilder extends GraphBuilder {
         MyGraph.getInstance().addNode(n12);
         MyGraph.getInstance().addNode(n13);
         MyGraph.getInstance().addNode(n14);
-    
+        
         MyGraph.getInstance().addEdge(n0, n1);
         MyGraph.getInstance().addEdge(n1, n2);
         MyGraph.getInstance().addEdge(n1, n3);
-    
+        
         MyGraph.getInstance().addEdge(n3, n4);
         MyGraph.getInstance().addEdge(n4, n5);
         MyGraph.getInstance().addEdge(n5, n6);
@@ -58,14 +55,16 @@ public class StaticTestGraphBuilder extends GraphBuilder {
         MyGraph.getInstance().addEdge(n10, n11);
         MyGraph.getInstance().addEdge(n11, n12);
         MyGraph.getInstance().addEdge(n12, n13);
-    
+        
         MyGraph.getInstance().addEdge(n12, n7);
         MyGraph.getInstance().addEdge(n11, n8);
         MyGraph.getInstance().addEdge(n3, n7);
         MyGraph.getInstance().addEdge(n8, n13);
-    
+        
         n2.getState().setState(1);
         n8.getState().setState(1);
+        n2.setFill(Node.INFORMED_COLOR);
+        n8.setFill(Node.INFORMED_COLOR);
         this.initiallyInformedNodesNum = 2;
     }
 }

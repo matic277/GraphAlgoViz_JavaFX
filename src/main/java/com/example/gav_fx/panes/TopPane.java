@@ -1,5 +1,7 @@
 package com.example.gav_fx.panes;
 
+import com.example.gav_fx.core.AlgorithmController;
+import com.example.gav_fx.core.AlgorithmExecutor;
 import com.example.gav_fx.graph.MyGraph;
 import com.example.gav_fx.graphbuilder.GraphBuilder;
 import javafx.geometry.Insets;
@@ -23,9 +25,36 @@ public class TopPane extends FlowPane {
         
         this.setAlignment(Pos.CENTER);
         
+        initRunAlgorithmButton();
         initImportButton();
         initDeleteGraphButton();
         initAddNodeButton();
+    }
+    
+    private void initRunAlgorithmButton() {
+        Button btn = new Button();
+        btn.setOnMouseClicked(event -> {
+            // Thread safe atomic boolean flip
+            // flip the value of PAUSE
+            boolean temp;
+            do { temp = AlgorithmController.PAUSE.get(); }
+            while (!AlgorithmController.PAUSE.compareAndSet(temp, !temp));
+    
+            // when pressing continue, jump to latest state
+            // TODO
+            //  program crash due to node getting drawn from  state 1 when only 1 state existed
+            //  crashed on node.draw on line
+            //  g.setColor(states.get(AlgorithmController.currentStateIndex).getState() == 0 ? UNINFORMED : INFORMED);
+            //  (index 1 out of range of size of list 1)
+            //  -> Happened once, can't reproduce.
+            AlgorithmController.currentStateIndex = AlgorithmController.totalStates - 1;
+    
+            synchronized (AlgorithmController.PAUSE_LOCK) {
+                AlgorithmController.PAUSE_LOCK.notify();
+            }
+        });
+        
+        this.getChildren().add(btn);
     }
     
     private void initAddNodeButton() {

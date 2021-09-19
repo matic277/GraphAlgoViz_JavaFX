@@ -21,6 +21,8 @@ public class Node extends Circle {
 //    public Set<Node> neighbors;
     public List<State> states;
     
+    public static Color INFORMED_COLOR = Color.GREEN;
+    public static Color UNINFORMED_COLOR = Color.BLACK;
 
     int messagesReceived = 0;
     int messagesSent = 0;
@@ -37,46 +39,35 @@ public class Node extends Circle {
         super(x, y, 30);
         this.id = id;
         
-        this.setFill(Color.DARKGREY);
+        this.setFill(UNINFORMED_COLOR);
         
         states = new ArrayList<>(10);
         states.add(new State(0)); // uninformed on initialize
-    
-        // Due to brighter/darker color drift
-        final Color originalColor = (Color)getFill();
         
         // Border
         setStroke(Color.BLACK);
         setStrokeType(StrokeType.OUTSIDE);
         setStrokeWidth(0); // hide border
         
-    
         // TODO implementing draggable nodes:
         //  https://stackoverflow.com/questions/49951275/binding-line-with-circles-coordinate-doesnt-work
         this.setOnMouseDragged(event -> {
-            System.out.println("dragg");
             setCenterX(event.getX() + dragDelta.x);
             setCenterY(event.getY() + dragDelta.y);
-            
             event.consume();
         });
         this.setOnMouseClicked(event -> {
             //System.out.println("clickk");
         });
         this.setOnMousePressed(event -> {
-            System.out.println("press on node, src=" + event.getSource().getClass());
             dragDelta.x = getCenterX() - event.getX();
             dragDelta.y = getCenterY() - event.getY();
-    
+            
             setStrokeWidth(2); // draw border
             toFront();
-
-            //setFill(originalColor.brighter());
-            
             event.consume();
         });
         this.setOnMouseReleased(event -> {
-            //setFill(originalColor);
             setStrokeWidth(0); // hide border
             event.consume();
         });
@@ -85,7 +76,10 @@ public class Node extends Circle {
     public int getNodeId() { return this.id; }
     
     public State getState() { return this.states.get(AlgorithmController.currentStateIndex); }
-    public void addState(State state) { this.states.add(state); }
+    public void addState(State state) {
+        this.states.add(state);
+        this.setFill(states.get(AlgorithmController.currentStateIndex).getState() == 0 ? UNINFORMED_COLOR : INFORMED_COLOR);
+    }
     
     public static void setPosition(Node node, Point2D point2D) {
         node.setCenterX(point2D.getX());
