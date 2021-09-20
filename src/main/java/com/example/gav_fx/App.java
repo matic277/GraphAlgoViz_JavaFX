@@ -12,15 +12,31 @@ import com.example.gav_fx.panes.GraphPane;
 import com.example.gav_fx.panes.LeftPane;
 import com.example.gav_fx.panes.TopPane;
 import javafx.application.Application;
+import javafx.beans.property.DoublePropertyBase;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 public class App extends Application {
     
     Thread controllerThread;
     AlgorithmController algoController;
+    
+    // Mouse tracking at all times, enabling bind-able coords
+    public static final MouseLocation MOUSE_LOCATION = new MouseLocation();
+    public static class MouseLocation  {
+        public DoublePropertyBase x = new DoublePropertyBase() {
+            @Override public Object getBean() { return MouseLocation.this; }
+            @Override public String getName() { return "x"; }
+        };
+        public DoublePropertyBase y = new DoublePropertyBase() {
+            @Override public Object getBean() { return MouseLocation.this; }
+            @Override public String getName() { return "y"; }
+        };
+    }
     
     @Override
     public void start(Stage stage) {
@@ -68,10 +84,19 @@ public class App extends Application {
         SplitPane middlePane = new SplitPane();
         middlePane.getItems().addAll(leftPane, graphPane);
         //middlePane.setDividerPosition(1, 400); // not working
+        PanningAndZoomingControls controls = new PanningAndZoomingControls(graphPane);
+        middlePane.setOnMousePressed(controls.getOnMousePressEventHandler());
+        middlePane.setOnMouseDragged(controls.getOnMouseDragEventHandler());
+        middlePane.setOnScroll(controls.getOnScrollEventHandler());
+        middlePane.setMinWidth(1000);
+        
+        Node divider = (Node) middlePane.lookup(".split-pane-divider");
+        if(divider!=null){
+            divider.setStyle("-fx-background-color: red;");
+        } else System.out.println("NULL");
         
         // BOTTOM
         BottomPane bottomPane = new BottomPane();
-        
         
         
         // MAIN CONTAINER
@@ -81,22 +106,25 @@ public class App extends Application {
         root.setTop(topPane);
         root.setLeft(leftPane);
         
-        // create scene which can be dragged and zoomed
+        
         Scene scene = new Scene(root, 1400, 1000);
-        
-        PanningAndZoomingControls sceneControls = new PanningAndZoomingControls(graphPane);
-        middlePane.setOnMousePressed(sceneControls.getOnMousePressEventHandler());
-        middlePane.setOnMouseDragged(sceneControls.getOnMouseDragEventHandler());
-        middlePane.setOnScroll(sceneControls.getOnScrollEventHandler());
-        middlePane.setMinWidth(1000);
-        
         scene.getStylesheets().add(getClass().getResource("style.css").toExternalForm());
+        Label mouseLocationIndicator = new Label();
+        Pane parent = new Pane();
+        parent.setMinWidth(100);
+        parent.getChildren().add(mouseLocationIndicator);
+        root.setRight(parent);
+        middlePane.setOnMouseMoved(event -> {
+            MOUSE_LOCATION.x.set(event.getX());
+            MOUSE_LOCATION.y.set(event.getY());
+            mouseLocationIndicator.setText("(" + (int)MOUSE_LOCATION.x.get() + ", " + (int)MOUSE_LOCATION.y.get() + ")");
+        });
         
         stage.setScene(scene);
         stage.setTitle("GAV JavaFX");
         stage.show();
         
-        // Needed because controller thread is still alive after cloing
+        // Needed because controller thread is still alive after closing
         stage.setOnCloseRequest(event -> {
             algoController.signalShutDown();
         });

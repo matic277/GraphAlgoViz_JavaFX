@@ -1,28 +1,19 @@
 package com.example.gav_fx.panes;
 
 import com.example.gav_fx.core.AlgorithmController;
-import com.example.gav_fx.core.AlgorithmExecutor;
+import com.example.gav_fx.core.State;
 import com.example.gav_fx.graph.MyGraph;
-import com.example.gav_fx.graphbuilder.GraphBuilder;
-import javafx.geometry.Insets;
+import com.example.gav_fx.graph.Node;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
-import javafx.stage.Stage;
 
 public class TopPane extends FlowPane {
     
     private final MyGraph graph = MyGraph.getInstance();
     
     public TopPane() {
-        this.setBackground(new Background(new BackgroundFill(Color.LIGHTSEAGREEN, CornerRadii.EMPTY, Insets.EMPTY)));
-        Label l = new Label("top");
-        this.getChildren().add(l);
-        
         this.setAlignment(Pos.CENTER);
         
         initRunAlgorithmButton();
@@ -40,13 +31,7 @@ public class TopPane extends FlowPane {
             do { temp = AlgorithmController.PAUSE.get(); }
             while (!AlgorithmController.PAUSE.compareAndSet(temp, !temp));
     
-            // when pressing continue, jump to latest state
-            // TODO
-            //  program crash due to node getting drawn from  state 1 when only 1 state existed
-            //  crashed on node.draw on line
-            //  g.setColor(states.get(AlgorithmController.currentStateIndex).getState() == 0 ? UNINFORMED : INFORMED);
-            //  (index 1 out of range of size of list 1)
-            //  -> Happened once, can't reproduce.
+            // when pressing continue, jump to the latest state
             AlgorithmController.currentStateIndex = AlgorithmController.totalStates - 1;
     
             synchronized (AlgorithmController.PAUSE_LOCK) {
@@ -60,7 +45,28 @@ public class TopPane extends FlowPane {
     private void initAddNodeButton() {
         Button btn = new Button("add node");
         btn.setOnMouseClicked(event -> {
-            //graph.addNode();
+            Node newNode = MyGraph.getNode();
+            newNode.setCenterX(50);
+            newNode.setCenterY(50);
+            
+            // TODO should this be default behaviour in Node constructor?
+            // when node is added in the middle of the simulation
+            // prefill its history (state list) with uninformed states!
+            // (one state is automatically made in constructor, so do 1 less)
+            for (int i=0; i<AlgorithmController.currentStateIndex; i++) {
+                newNode.addState(new State(0));
+            }
+            
+            // TODO move this to some method in MyGraph, like onNodeRemoveOrAdd()
+            //   same lambda is in deleteNodeBtn action method!
+            // clear future history of states of nodes
+            this.graph.getNodes().forEach(n -> {
+                if (n.states.size() > AlgorithmController.totalStates) {
+                    n.states.subList(AlgorithmController.totalStates, n.states.size()).clear();
+                }
+            });
+    
+            graph.addNode(newNode);
         });
         
         this.getChildren().add(btn);

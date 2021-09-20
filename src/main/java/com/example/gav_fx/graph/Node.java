@@ -1,14 +1,19 @@
 package com.example.gav_fx.graph;
 
+import com.example.gav_fx.App;
 import com.example.gav_fx.core.AlgorithmController;
 import com.example.gav_fx.core.State;
+import com.example.gav_fx.panes.GraphPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
 import javafx.scene.shape.StrokeType;
 import org.jgrapht.Graphs;
 
+import java.lang.ref.Reference;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.jgrapht.alg.drawing.model.Point2D;
@@ -21,18 +26,22 @@ public class Node extends Circle {
 //    public Set<Node> neighbors;
     public List<State> states;
     
+    private static Color borderColor = Color.BLACK; // default
+    
     public static Color INFORMED_COLOR = Color.GREEN;
     public static Color UNINFORMED_COLOR = Color.BLACK;
-
-    int messagesReceived = 0;
-    int messagesSent = 0;
+    
+    private double originalRadius = 30;
+    
+    final Delta dragDelta = new Delta();
     
     static class Delta {
         double x, y;
     }
     
-    final Delta dragDelta = new Delta();
-    
+    // Edge creating
+    private static final AtomicReference<Node> clickedNodeRef = new AtomicReference<>(null);
+    private static final AtomicReference<Line> edgeRef = new AtomicReference<>(null);
     
     @Deprecated(since = "Do not use this constructor, use MyGraph.newNode()")
     public Node(int x, int y, int id) {
@@ -45,40 +54,90 @@ public class Node extends Circle {
         states.add(new State(0)); // uninformed on initialize
         
         // Border
-        setStroke(Color.BLACK);
+        //setStroke(Color.BLACK);
+        //setStrokeType(StrokeType.OUTSIDE);
+        //setStrokeWidth(0); // hide border
+        
+        // Border
+        setStroke(borderColor);
         setStrokeType(StrokeType.OUTSIDE);
         setStrokeWidth(0); // hide border
         
         // TODO implementing draggable nodes:
         //  https://stackoverflow.com/questions/49951275/binding-line-with-circles-coordinate-doesnt-work
         this.setOnMouseDragged(event -> {
+            GraphPane.INSTANCE.getChildren().remove(edgeRef.get());
+            clickedNodeRef.set(null);
+            edgeRef.set(null);
+            
             setCenterX(event.getX() + dragDelta.x);
             setCenterY(event.getY() + dragDelta.y);
+            
             event.consume();
         });
         this.setOnMouseClicked(event -> {
-            //System.out.println("clickk");
+        
         });
+        
         this.setOnMousePressed(event -> {
+            if (clickedNodeRef.get() != null) {
+                if (this != clickedNodeRef.get()) {
+                    MyGraph.getInstance().addEdge(this, clickedNodeRef.get());
+                    GraphPane.INSTANCE.getChildren().remove(edgeRef.get());
+                    clickedNodeRef.set(null);
+                    edgeRef.set(null);
+                } else {
+                    GraphPane.INSTANCE.getChildren().remove(edgeRef.get());
+                    clickedNodeRef.set(null);
+                    edgeRef.set(null);
+                }
+            } else {
+                System.out.println("yep");
+                GraphPane.INSTANCE.getChildren().remove(edgeRef.get());
+                clickedNodeRef.set(this);
+                Line edge = new Line();
+                edge.setStartX(this.getCenterX());
+                edge.setStartY(this.getCenterY());
+                edge.endXProperty().bind(App.MOUSE_LOCATION.x); // TODO: do ..LOCATION.x.bind(widthOfLeftPane));
+                edge.endYProperty().bind(App.MOUSE_LOCATION.y);
+                edgeRef.set(edge);
+                GraphPane.INSTANCE.getChildren().add(edge);
+            }
+            
             dragDelta.x = getCenterX() - event.getX();
             dragDelta.y = getCenterY() - event.getY();
             
-            setStrokeWidth(2); // draw border
             toFront();
+            setRadius(originalRadius * 1.07);
             event.consume();
         });
         this.setOnMouseReleased(event -> {
-            setStrokeWidth(0); // hide border
+            setRadius(originalRadius * 0.98); // this math isn't correct, should be ~0.93, but it's not enough
             event.consume();
         });
+    }
+    
+    // Circle.setRadius is for some reason final ???
+    public void setNewRadius(double newRadius) {
+        super.setRadius(newRadius);
+        originalRadius = newRadius;
+    }
+    
+    public void setNewBorderColor(Color newColor) {
+        borderColor = newColor;
+        this.setStroke(borderColor); // does this variable even need to exist?
+    }
+    
+    public void setNewBorderWidth(double newWidth) {
+        this.setStrokeWidth(newWidth);
     }
     
     public int getNodeId() { return this.id; }
     
     public State getState() { return this.states.get(AlgorithmController.currentStateIndex); }
+    
     public void addState(State state) {
         this.states.add(state);
-        this.setFill(states.get(AlgorithmController.currentStateIndex).getState() == 0 ? UNINFORMED_COLOR : INFORMED_COLOR);
     }
     
     public static void setPosition(Node node, Point2D point2D) {

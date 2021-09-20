@@ -23,7 +23,10 @@ public class GraphPane extends Pane implements GraphChangeObserver {
     Group edges;
     Group nodes;
     
+    public static GraphPane INSTANCE;
+    
     public GraphPane() {
+        INSTANCE = this;
         setPrefSize(600, 600);
         
         // TODO turn this off eventually

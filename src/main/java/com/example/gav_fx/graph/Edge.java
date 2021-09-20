@@ -34,7 +34,7 @@ public class Edge extends DefaultEdge {
         this.line = new Line(n1.getCenterX(), n1.getCenterY(), n2.getCenterX(), n2.getCenterY());
         bindEdgeToNodes(n1, n2, line);
         
-        this.line.setFill(Color.BLACK);
+        this.line.setStroke(Color.BLACK); // default
     }
     
     public Line getLine() { return line; }
@@ -42,8 +42,6 @@ public class Edge extends DefaultEdge {
     public void setLine(Node n1, Node n2) {
         this.line = new Line(n1.getCenterX(), n1.getCenterY(), n2.getCenterX(), n2.getCenterY());
         bindEdgeToNodes(n1, n2, line);
-        
-        this.line.setFill(Color.BLACK);
     }
     
     // TODO implementing draggable nodes:
@@ -55,6 +53,23 @@ public class Edge extends DefaultEdge {
     
         l.endXProperty().bind(n2.centerXProperty());
         l.endYProperty().bind(n2.centerYProperty());
+    }
+    
+    public void setEdgeWidth(double newWidth) {
+        this.line.setStrokeWidth(newWidth);
+    }
+    
+    public void setEdgeColor(Color newColor) {
+        this.line.setStroke(newColor);
+    }
+    
+    public void setEdgeOpacity(double opacity) {
+        Color clr = (Color) this.line.getStroke();
+        this.line.setStroke(new Color(
+                clr.getRed(),
+                clr.getBlue(),
+                clr.getGreen(),
+                opacity));
     }
 
 //    public static String edgesListToString(Collection<Node> col) {
