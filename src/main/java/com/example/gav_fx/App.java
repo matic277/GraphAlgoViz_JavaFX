@@ -13,11 +13,13 @@ import com.example.gav_fx.panes.LeftPane;
 import com.example.gav_fx.panes.TopPane;
 import javafx.application.Application;
 import javafx.beans.property.DoublePropertyBase;
+import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.transform.TransformChangedEvent;
 import javafx.stage.Stage;
 
 public class App extends Application {
@@ -37,6 +39,8 @@ public class App extends Application {
             @Override public String getName() { return "y"; }
         };
     }
+    
+    public static ReadOnlyDoubleProperty LEFT_MENU_WIDTH;
     
     @Override
     public void start(Stage stage) {
@@ -77,6 +81,7 @@ public class App extends Application {
         LeftPane leftPane = new LeftPane();
         leftPane.setMinWidth(200);
         leftPane.setMaxWidth(200); // limit due to detDivider not working on init
+        LEFT_MENU_WIDTH = leftPane.widthProperty();
         GraphPane graphPane = new GraphPane();
         
         buildGraph();

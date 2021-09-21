@@ -98,8 +98,13 @@ public class Node extends Circle {
                 Line edge = new Line();
                 edge.setStartX(this.getCenterX());
                 edge.setStartY(this.getCenterY());
-                edge.endXProperty().bind(App.MOUSE_LOCATION.x); // TODO: do ..LOCATION.x.bind(widthOfLeftPane));
-                edge.endYProperty().bind(App.MOUSE_LOCATION.y);
+    
+                // TODO:
+                //   maybe this can be achieved with some translate to parent local method or something
+                //   don't know enough about those methods atm
+                //   these static fields aren't the prettiest but they seem to work
+                edge.endXProperty().bind(App.MOUSE_LOCATION.x.subtract(GraphPane.OFFSET_X).subtract(App.LEFT_MENU_WIDTH));
+                edge.endYProperty().bind(App.MOUSE_LOCATION.y.subtract(GraphPane.OFFSET_Y));
                 edgeRef.set(edge);
                 GraphPane.INSTANCE.getChildren().add(edge);
             }

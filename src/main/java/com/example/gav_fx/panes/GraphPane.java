@@ -23,6 +23,9 @@ public class GraphPane extends Pane implements GraphChangeObserver {
     Group edges;
     Group nodes;
     
+    public static DoubleProperty OFFSET_X;
+    public static DoubleProperty OFFSET_Y;
+    
     public static GraphPane INSTANCE;
     
     public GraphPane() {
@@ -44,6 +47,9 @@ public class GraphPane extends Pane implements GraphChangeObserver {
         scaleYProperty().bind(myScale);
         
         MyGraph.getInstance().addObserver(this);
+        
+        OFFSET_X = this.translateXProperty();
+        OFFSET_Y = this.translateYProperty();
     }
     
     
