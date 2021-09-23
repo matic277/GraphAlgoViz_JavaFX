@@ -17,8 +17,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class AlgorithmController implements Runnable, StateObservable, GraphChangeObserver {
     
-    static final int PROCESSORS = 3;
+    public static int PROCESSORS = 3;
     
+    // TODO: should these really be final if we can change number of processors anytime we want.. probably not?
     // TODO: update on change of nodes
     static final CyclicBarrier BARRIER = new CyclicBarrier(PROCESSORS + 1);
     final ExecutorService THREAD_POOL = Executors.newFixedThreadPool(PROCESSORS);
