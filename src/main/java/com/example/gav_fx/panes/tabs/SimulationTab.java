@@ -4,6 +4,7 @@ import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 
 public class SimulationTab extends TabElement {
@@ -24,15 +25,25 @@ public class SimulationTab extends TabElement {
         
         Label title = new Label("Set number of threads");
         title.setPadding(new Insets(0, 10, 0, 5));
+        title.setPrefHeight(25);
         //title.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.DOTTED, new CornerRadii(2), BorderWidths.DEFAULT)));
+        
         TextField inputField = new TextField();
+        Slider slider = new Slider();
+        
         inputField.setText(cores + "");
         inputField.setMaxWidth(45);
+        inputField.setMinWidth(35);
         inputField.setPrefHeight(25);
-        title.setPrefHeight(25);
+        inputField.setOnKeyPressed(event -> {
+            if(event.getCode() == KeyCode.ENTER ) {
+                int newVal = Integer.parseInt(inputField.getText());
+                onThreadsChange(newVal);
+                slider.setValue(newVal); // TODO: this invokes listener on bottom, which then rewrites value in field
+            }
+        } );
         
         
-        Slider slider = new Slider();
         slider.setShowTickLabels(true);
         slider.setMajorTickUnit(9);
         slider.setMax(20);
@@ -46,6 +57,7 @@ public class SimulationTab extends TabElement {
             inputField.setText(intVal + "");
             
             // TODO actual impl
+            onThreadsChange(intVal);
         });
     
         HBox inputContainer = new HBox();
@@ -56,6 +68,10 @@ public class SimulationTab extends TabElement {
         container.getChildren().addAll(inputContainer, slider);
         
         return container;
+    }
+    
+    public void onThreadsChange(int threads) {
+    
     }
     
     @Override
