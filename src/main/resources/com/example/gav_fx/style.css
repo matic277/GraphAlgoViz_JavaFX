@@ -1,31 +1,52 @@
+* {
+    btn-clr: rgb(76, 80, 82);
+    border-clr: rgb(85, 90, 92);
+}
+
 .root{
     -fx-font-size: 10pt;
     -fx-font-family: "Segoe UI";
-    -fx-text-fill: rgb(200, 200, 200);
+    -fx-text-fill: rgb(176, 176, 178);
 
-
-    -fx-base: rgb(38, 38, 38);
-    -fx-background: rgb(60, 60, 60);
+    -fx-base: #696866;
+    -fx-background: #3C3F41FF;
 
     /* Removes blue highlight glow on component click */
     -fx-focus-color: transparent;
     -fx-faint-focus-color: transparent;
 }
 
-.split-pane-divider {
-/*
-  -fx-padding: 5 ;
-  -fx-background: "red";
-  */
-}
-.split-pane-divider #horizontal-grabber {
--fx-padding: 10 ;
+.top-pane {
+   -fx-border-color: border-clr;
+   -fx-border-insets: 3 3 3 3;
+   /*-fx-border-radius: 5 5 5 5; */
 }
 
-.icon-button {
-    -fx-content-display: graphic-only;
-    -fx-shape: "M12,4 L12,8 L10,8 L10,4 L8,4 L11,1 L14,4 L12,4 Z"
+.split-pane-divider {
+
+  -fx-padding: 0;
+  -fx-border-color: border-clr;
+  -fx-border-insets:  0 0 0 0 ;
+  /*-fx-background-color: "red";*/
+
 }
+/*
+.split-pane-divider #horizontal-grabber {
+    -fx-padding: 100;
+}
+*/
+
+.top-button {
+   -fx-background-color: btn-clr;
+}
+
+.button:hover{
+    -fx-background-color: derive(btn-clr, 25%);
+}
+.button:pressed{
+    -fx-background-color: derive(btn-clr, 30%);
+}
+
 
 /* Not used */
 .icon-button-run {

@@ -4,50 +4,63 @@ import com.example.gav_fx.core.AlgorithmController;
 import com.example.gav_fx.core.State;
 import com.example.gav_fx.graph.MyGraph;
 import com.example.gav_fx.graph.Node;
+import javafx.geometry.Dimension2D;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
-import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.FillRule;
 import javafx.scene.shape.SVGPath;
 
 public class TopPane extends FlowPane {
     
     private final MyGraph graph = MyGraph.getInstance();
     
+    private static final Dimension2D BUTTON_SIZE = new Dimension2D(25, 25);
+    
     public TopPane() {
         this.setAlignment(Pos.CENTER);
         
-        initRunAlgorithmButton();
-        initImportButton();
-        initDeleteGraphButton();
-        initAddNodeButton();
+        init();
+        
+        this.getStyleClass().add("top-pane");
     }
     
-    private void initRunAlgorithmButton() {
+    private void init() {
+        Button runBtn = getRunButton();
+        Button importBtn = getImportButton();
+        Button deleteBtn = getDeleteGraphButton();
+        Button addNodeBtn = getAddNodeButton();
+        
+        HBox container = new HBox();
+        container.setSpacing(5);
+        container.setPadding(new Insets(5, 0, 5, 0));
+        container.getChildren().addAll(runBtn, importBtn, deleteBtn, addNodeBtn);
+        this.getChildren().add(container);
+    }
+    
+    private Button getRunButton() {
         SVGPath runSvg = new SVGPath();
         runSvg.setContent("M4,2L14,8L4,14Z");
         runSvg.setFill(new Color(0.35,0.66,0.41, 1));
+        runSvg.setScaleX(1.5);
+        runSvg.setScaleY(1.5);
         SVGPath pauseSvg = new SVGPath();
         pauseSvg.setContent("M0,0L10,0L10,10L0,10L0,0Z");
         pauseSvg.setFill(new Color(0.86,0.35,0.38, 1));
+        pauseSvg.setScaleX(1.5);
+        pauseSvg.setScaleY(1.5);
         
         Button btn = new Button();
+        btn.getStyleClass().add("top-button");
+        btn.setPrefSize(BUTTON_SIZE.getWidth(), BUTTON_SIZE.getHeight());
         //BackgroundImage backgroundImage = new BackgroundImage(new Image(getClass().getResource("play.png").toExternalForm()), BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT);
         //Background background = new Background(backgroundImage);
         //btn.setBackground(background);
-        //btn.getStyleClass().add("icon-button-run");
+        
         btn.setGraphic(runSvg);
-    
-        btn.setPrefSize(30, 30);
-    
-        System.out.println(btn.getPrefWidth());
-        runSvg.setScaleX(2);
-        runSvg.setScaleY(2);
-        pauseSvg.setScaleX(2);
-        pauseSvg.setScaleY(2);
+        
         
         btn.setOnMouseClicked(event -> {
             // Thread safe atomic boolean flip
@@ -66,11 +79,13 @@ public class TopPane extends FlowPane {
             btn.setGraphic(AlgorithmController.PAUSE.get() ? runSvg : pauseSvg);
         });
         
-        this.getChildren().add(btn);
+        return btn;
     }
     
-    private void initAddNodeButton() {
+    private Button getAddNodeButton() {
         Button btn = new Button("add node");
+        btn.getStyleClass().add("top-button");
+        btn.setPrefSize(BUTTON_SIZE.getWidth(), BUTTON_SIZE.getHeight());
         btn.setOnMouseClicked(event -> {
             Node newNode = MyGraph.getNode();
             newNode.setCenterX(50);
@@ -92,45 +107,54 @@ public class TopPane extends FlowPane {
                     n.states.subList(AlgorithmController.totalStates, n.states.size()).clear();
                 }
             });
-    
+            
             graph.addNode(newNode);
         });
         
-        this.getChildren().add(btn);
+        return btn;
     }
-    
-    private void initDeleteGraphButton() {
+
+    private Button getDeleteGraphButton() {
+        // not working - for some reason button gets resized ????????
+        //SVGPath svg = new SVGPath();
+        //svg.setContent("M416.875,114.441406L405.570312,80.554688C401.265625,67.648438,389.230469,58.976562,375.628906,58.976562L280.617188,58.976562L280.617188,28.042969C280.617188,12.582031,268.046875,0,252.589844,0L165.582031,0C150.128906,0,137.554688,12.582031,137.554688,28.042969L137.554688,58.976562L42.546875,58.976562C28.941406,58.976562,16.90625,67.648438,12.601562,80.554688L1.296875,114.441406C-1.277344,122.15625,0.027344,130.699219,4.78125,137.296875C9.535156,143.894531,17.226562,147.835938,25.359375,147.835938L37.175781,147.835938L63.183594,469.441406C65.117188,493.304688,85.367188,512,109.292969,512L314.15625,512C338.078125,512,358.332031,493.304688,360.261719,469.4375L386.269531,147.835938L392.8125,147.835938C400.945312,147.835938,408.636719,143.894531,413.390625,137.300781C418.144531,130.703125,419.449219,122.15625,416.875,114.441406ZM167.554688,30L250.617188,30L250.617188,58.976562L167.554688,58.976562ZM330.359375,467.019531C329.679688,475.421875,322.5625,482,314.15625,482L109.292969,482C100.886719,482,93.769531,475.421875,93.089844,467.019531L67.273438,147.835938L356.171875,147.835938ZM31.792969,117.835938L41.0625,90.046875C41.273438,89.40625,41.871094,88.976562,42.546875,88.976562L375.628906,88.976562C376.304688,88.976562,376.898438,89.40625,377.113281,90.046875L386.382812,117.835938ZM31.792969,117.835938 " +
+        //        "M282.515625,465.957031C282.78125,465.972656,283.042969,465.976562,283.308594,465.976562C291.234375,465.976562,297.859375,459.765625,298.273438,451.757812L312.359375,181.359375C312.789062,173.085938,306.429688,166.027344,298.160156,165.597656C289.867188,165.15625,282.832031,171.523438,282.398438,179.796875L268.316406,450.195312C267.886719,458.46875,274.242188,465.527344,282.515625,465.957031ZM282.515625,465.957031 " +
+        //        "M120.566406,451.792969C121.003906,459.789062,127.621094,465.976562,135.53125,465.976562C135.804688,465.976562,136.085938,465.96875,136.363281,465.953125C144.632812,465.503906,150.972656,458.433594,150.523438,450.160156L135.769531,179.761719C135.320312,171.488281,128.25,165.148438,119.976562,165.601562C111.707031,166.050781,105.367188,173.121094,105.816406,181.394531ZM120.566406,451.792969 " +
+        //        "M209.253906,465.976562C217.539062,465.976562,224.253906,459.261719,224.253906,450.976562L224.253906,180.578125C224.253906,172.292969,217.539062,165.578125,209.253906,165.578125C200.96875,165.578125,194.253906,172.292969,194.253906,180.578125L194.253906,450.976562C194.253906,459.261719,200.96875,465.976562,209.253906,465.976562ZM209.253906,465.976562");
+        //svg.setScaleX(0.05);
+        //svg.setScaleY(0.05);
+        
         Button btn = new Button("delete");
+        //btn.setGraphic(svg);
+        btn.getStyleClass().add("top-button");
+        btn.setPrefSize(BUTTON_SIZE.getWidth(), BUTTON_SIZE.getHeight());
+        btn.setMaxWidth(BUTTON_SIZE.getWidth());
+        btn.setMaxHeight(BUTTON_SIZE.getWidth());
         btn.setOnMouseClicked(event -> {
             graph.clearGraph();
         });
         
-        this.getChildren().add(btn);
+        return btn;
     }
     
     //FlatSVGIcon importIcon = new FlatSVGIcon("icons/flatlaf/FileChooserUpFolderIcon.svg").derive(iconSize.width, iconSize.height);
-    private void initImportButton() {
+    private Button getImportButton() {
         SVGPath svg = new SVGPath();
-        svg.setContent(
-                "M2,3L5.5,3L7,5L9,5L9,9L13,9L13,5L14,5L14,13L2,13Z" +
-                "M12,4L12,8L10,8L10,4L8,4L11,1L14,4L12,4Z");
+        svg.setContent("M2,3L5.5,3L7,5L9,5L9,9L13,9L13,5L14,5L14,13L2,13Z" +
+                       "M12,4L12,8L10,8L10,4L8,4L11,1L14,4L12,4Z");
+        svg.setScaleX(1.5);
+        svg.setScaleY(1.5);
         
         Button btn = new Button();
-        btn.setPrefSize(30, 30);
-        //btn.getStyleClass().add("icon-button-import");
+        btn.getStyleClass().add("top-button");
+        btn.setPrefSize(BUTTON_SIZE.getWidth(), BUTTON_SIZE.getHeight());
         btn.setGraphic(svg);
-    
-        System.out.println(btn.getPrefWidth());
-        //btn.setScaleX(2);
-        //btn.setScaleY(2);
-        svg.setScaleX(2);
-        svg.setScaleY(2);
         
         btn.setOnMouseClicked(event -> {
             if (ImportGraphPane.isOpened) return;
             Parent root = new ImportGraphPane(this);
         });
         
-        this.getChildren().add(btn);
+        return btn;
     }
 }
