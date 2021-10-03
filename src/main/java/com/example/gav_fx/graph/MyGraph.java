@@ -186,13 +186,18 @@ public class MyGraph implements GraphObservable {
         n.toFront(); // draw last
     }
     
+    // TODO maybe this method should be void
+    //  since listeners take care of communication if an edge was added or not?
     public synchronized boolean addEdge(Node n1, Node n2) {
         Edge e = new Edge(n1, n2);
         boolean added = graph.addEdge(n1, n2, e);
         
-        if (!added) {
-            throw new RuntimeException("Couldn't add edge to graph, edge:" + e);
-        }
+        // Maybe dont check this since adges arent added in case of:
+        // node1 -----> node2
+        // Adding edge : node2 ---> node1 : returns false (since graph is undirected)
+        //if (!added) {
+            //throw new RuntimeException("Couldn't add edge to graph, edge:" + e + " for nodes: " + n1 + ", " + n2);
+        //}
         
         System.out.println("ADDED EDGE: " + e);
         return true;

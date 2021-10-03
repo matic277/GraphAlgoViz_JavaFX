@@ -17,4 +17,5 @@ module com.example.gav_fx {
     opens com.example.gav_fx to javafx.fxml, org.jgrapht.core;
     exports com.example.gav_fx;
     exports com.example.gav_fx.graph;
+    exports com.example.gav_fx.core; // MyGraph using com.example.gav_fx.core.GraphChangeObserver
 }

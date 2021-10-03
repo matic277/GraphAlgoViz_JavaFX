@@ -15,8 +15,27 @@ public class NodeTab extends TabElement {
     private void init() {
         VBox clrComponent = getBorderColorComponent();
         VBox widthComponent = getBorderWidthComponent();
+        VBox radiusComponent = getNodeRadiusComponent();
         
-        this.getChildren().addAll(clrComponent, widthComponent);
+        this.getChildren().addAll(clrComponent, widthComponent, radiusComponent);
+    }
+    
+    private VBox getNodeRadiusComponent() {
+        Label title = new Label("Set node radius");
+        Slider slider = new Slider();
+        slider.setShowTickLabels(true);
+        slider.setMax(100);
+        slider.setMin(0);
+        slider.setMajorTickUnit(10);
+        slider.setMaxWidth(200);
+        slider.valueProperty().addListener(event -> {
+            MyGraph.getInstance().getNodes().forEach(n -> n.setNewRadius(slider.getValue()));
+        });
+        
+        VBox container = new VBox();
+        container.getChildren().add(title);
+        container.getChildren().add(slider);
+        return container;
     }
     
     private VBox getBorderColorComponent() {

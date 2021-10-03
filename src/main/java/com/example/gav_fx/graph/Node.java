@@ -31,7 +31,8 @@ public class Node extends Circle {
     public static Color INFORMED_COLOR = Color.GREEN;
     public static Color UNINFORMED_COLOR = Color.BLACK;
     
-    private double originalRadius = 30;
+    public static double NODE_RADIUS = 30;
+    private static double ON_DRAG_ENLARGEMENT_PERCENTAGE = 1.1; // on drag, enlarge TODO this shoud be scaled based on NODE_RADIUS (bigger circles get enlarged more, smaller less, not ideal! (maybe keep 1.1, but do min/max if perc enlargement is too low/high))
     
     final Delta dragDelta = new Delta();
     
@@ -113,11 +114,11 @@ public class Node extends Circle {
             dragDelta.y = getCenterY() - event.getY();
             
             toFront();
-            setRadius(originalRadius * 1.07);
+            setRadius(NODE_RADIUS * ON_DRAG_ENLARGEMENT_PERCENTAGE);
             event.consume();
         });
         this.setOnMouseReleased(event -> {
-            setRadius(originalRadius * 0.98); // this math isn't correct, should be ~0.93, but it's not enough
+            setRadius(NODE_RADIUS);
             event.consume();
         });
     }
@@ -125,7 +126,7 @@ public class Node extends Circle {
     // Circle.setRadius is for some reason final ???
     public void setNewRadius(double newRadius) {
         super.setRadius(newRadius);
-        originalRadius = newRadius;
+        NODE_RADIUS = newRadius;
     }
     
     public void setNewBorderColor(Color newColor) {
