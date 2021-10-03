@@ -7,6 +7,9 @@
     -fx-base: rgb(38, 38, 38);
     -fx-background: rgb(60, 60, 60);
 
+    /* Removes blue highlight glow on component click */
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
 }
 
 .split-pane-divider {
@@ -22,5 +25,23 @@
 .icon-button {
     -fx-content-display: graphic-only;
     -fx-shape: "M12,4 L12,8 L10,8 L10,4 L8,4 L11,1 L14,4 L12,4 Z"
+}
+
+/* Not used */
+.icon-button-run {
+    -fx-content-display: graphic-only;
+    -fx-shape: "M4,2L14,8L4,14Z";
+    -fx-background-color: rgb(89,168,105);
+}
+
+/* Not used */
+.icon-button-import {
+    -fx-content-display: graphic-only;
+    -fx-shape: "M2,3L5.5,3L7,5L9,5L9,9L13,9L13,5L14,5L14,13L2,13Z M12,4L12,8L10,8L10,4L8,4L11,1L14,4L12,4Z";
+    -fx-background-color: rgb(110,110,110);
+    /*
+    -fx-shape: "M12,4L12,8L10,8L10,4L8,4L11,1L14,4L12,4Z";
+    -fx-background-color: rgb(56,159,214);
+    */
 }
 
