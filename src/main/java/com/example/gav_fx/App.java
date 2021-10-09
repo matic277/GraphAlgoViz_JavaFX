@@ -10,7 +10,7 @@ import com.example.gav_fx.listeners.PanningAndZoomingControls;
 import com.example.gav_fx.panes.BottomPane;
 import com.example.gav_fx.panes.GraphPane;
 import com.example.gav_fx.panes.LeftPane;
-import com.example.gav_fx.panes.TopPane;
+import com.example.gav_fx.panes.toppane.TopPane;
 import javafx.application.Application;
 import javafx.beans.property.DoublePropertyBase;
 import javafx.beans.property.ReadOnlyDoubleProperty;
@@ -19,7 +19,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.transform.TransformChangedEvent;
 import javafx.stage.Stage;
 
 public class App extends Application {

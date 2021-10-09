@@ -1,6 +1,8 @@
 package com.example.gav_fx.core;
 
 
+import javafx.scene.paint.Color;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -43,6 +45,8 @@ public class Tools {
     //public static final Dimension INITIAL_IMPORT_WINDOW_SIZE = new Dimension(500, 550);
     
     public static final Random RAND = new Random();
+    
+    public static final Color ICON_COLOR = Color.rgb(174, 176, 178);
     
     //// Store request fonts in a map.
     //// So when multiple components request a font of size X

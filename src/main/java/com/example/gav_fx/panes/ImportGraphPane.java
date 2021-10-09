@@ -5,6 +5,7 @@ import com.example.gav_fx.core.LayoutType;
 import com.example.gav_fx.graph.MyGraph;
 import com.example.gav_fx.graphbuilder.GraphBuilder;
 import com.example.gav_fx.panes.optionpanes.OptionPane;
+import com.example.gav_fx.panes.toppane.TopPane;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;

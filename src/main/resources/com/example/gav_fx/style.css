@@ -1,12 +1,13 @@
 * {
     btn-clr: rgb(76, 80, 82);
     border-clr: rgb(85, 90, 92);
+    text-clr: rgb(215, 215, 215);
 }
 
 .root{
     -fx-font-size: 10pt;
     -fx-font-family: "Segoe UI";
-    -fx-text-fill: rgb(176, 176, 178);
+    -fx-text-background-color: text-clr;
 
     -fx-base: #696866;
     -fx-background: #3C3F41FF;
@@ -23,18 +24,17 @@
 }
 
 .split-pane-divider {
-
   -fx-padding: 0;
   -fx-border-color: border-clr;
   -fx-border-insets:  0 0 0 0 ;
   /*-fx-background-color: "red";*/
-
 }
 /*
 .split-pane-divider #horizontal-grabber {
     -fx-padding: 100;
 }
 */
+
 
 .top-button {
    -fx-background-color: btn-clr;
@@ -45,6 +45,22 @@
 }
 .button:pressed{
     -fx-background-color: derive(btn-clr, 30%);
+}
+
+
+
+.import-component {
+   -fx-border-color: border-clr;
+   /*-fx-border-insets: 5 5 5 5;*/
+   -fx-border-radius: 5 5 5 5;
+}
+.combo-box .combo-box-popup .list-view, .combo-box .combo-box-popup .list-cell {
+    -fx-background-color: btn-clr;
+    -fx-text-fill: rgb(176, 176, 178);
+}
+.combo-box .combo-box-popup .list-cell:hover {
+    -fx-background-color: rgb(66, 70, 72);
+    -fx-text-fill: white;
 }
 
 

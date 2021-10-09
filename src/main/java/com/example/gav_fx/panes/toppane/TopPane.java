@@ -1,9 +1,11 @@
-package com.example.gav_fx.panes;
+package com.example.gav_fx.panes.toppane;
 
 import com.example.gav_fx.core.AlgorithmController;
 import com.example.gav_fx.core.State;
+import com.example.gav_fx.core.Tools;
 import com.example.gav_fx.graph.MyGraph;
 import com.example.gav_fx.graph.Node;
+import com.example.gav_fx.panes.ImportGraphPane;
 import javafx.geometry.Dimension2D;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -18,7 +20,7 @@ public class TopPane extends FlowPane {
     
     private final MyGraph graph = MyGraph.getInstance();
     
-    private static final Dimension2D BUTTON_SIZE = new Dimension2D(25, 25);
+    private static final Dimension2D BUTTON_SIZE = new Dimension2D(33, 33);
     
     public TopPane() {
         this.setAlignment(Pos.CENTER);
@@ -34,10 +36,12 @@ public class TopPane extends FlowPane {
         Button deleteBtn = getDeleteGraphButton();
         Button addNodeBtn = getAddNodeButton();
         
+        ImportComponent importCmp = new ImportComponent();
+        
         HBox container = new HBox();
         container.setSpacing(5);
         container.setPadding(new Insets(5, 0, 5, 0));
-        container.getChildren().addAll(runBtn, importBtn, deleteBtn, addNodeBtn);
+        container.getChildren().addAll(importCmp, runBtn, importBtn, deleteBtn, addNodeBtn);
         this.getChildren().add(container);
     }
     
@@ -45,13 +49,13 @@ public class TopPane extends FlowPane {
         SVGPath runSvg = new SVGPath();
         runSvg.setContent("M4,2L14,8L4,14Z");
         runSvg.setFill(new Color(0.35,0.66,0.41, 1));
-        runSvg.setScaleX(1.5);
-        runSvg.setScaleY(1.5);
+        runSvg.setScaleX(1.6);
+        runSvg.setScaleY(1.6);
         SVGPath pauseSvg = new SVGPath();
         pauseSvg.setContent("M0,0L10,0L10,10L0,10L0,0Z");
         pauseSvg.setFill(new Color(0.86,0.35,0.38, 1));
-        pauseSvg.setScaleX(1.5);
-        pauseSvg.setScaleY(1.5);
+        pauseSvg.setScaleX(1.6);
+        pauseSvg.setScaleY(1.6);
         
         Button btn = new Button();
         btn.getStyleClass().add("top-button");
@@ -87,8 +91,8 @@ public class TopPane extends FlowPane {
         SVGPath addSvg = new SVGPath();
         addSvg.setContent("M 7.5 1 C 3.9160714 1 1 3.9160714 1 7.5 C 1 11.083929 3.9160714 14 7.5 14 C 11.083929 14 14 11.083929 14 7.5 C 14 3.9160714 11.083929 1 7.5 1 z M 7.5 2 C 10.543488 2 13 4.4565116 13 7.5 C 13 10.543488 10.543488 13 7.5 13 C 4.4565116 13 2 10.543488 2 7.5 C 2 4.4565116 4.4565116 2 7.5 2 z M 7 5 L 7 5.5 L 7 7 L 5.5 7 L 5 7 L 5 8 L 5.5 8 L 7 8 L 7 9.5 L 7 10 L 8 10 L 8 9.5 L 8 8 L 9.5 8 L 10 8 L 10 7 L 9.5 7 L 8 7 L 8 5.5 L 8 5 L 7 5 z");
         addSvg.setFill(Color.BLACK);
-        addSvg.setScaleX(1.5);
-        addSvg.setScaleY(1.5);
+        addSvg.setScaleX(1.6);
+        addSvg.setScaleY(1.6);
         
         Button btn = new Button();
         btn.getStyleClass().add("top-button");
@@ -141,9 +145,9 @@ public class TopPane extends FlowPane {
         //svg.setScaleX(1);
         //svg.setScaleY(1);
         
-        Button btn = new Button();
+        Button btn = new Button("del");
         btn.getStyleClass().add("top-button");
-        btn.setGraphic(svg);
+        //btn.setGraphic(svg);
         btn.setPrefSize(BUTTON_SIZE.getWidth(), BUTTON_SIZE.getHeight());
         btn.setMaxWidth(BUTTON_SIZE.getWidth());
         btn.setMaxHeight(BUTTON_SIZE.getWidth());
@@ -159,8 +163,9 @@ public class TopPane extends FlowPane {
         SVGPath svg = new SVGPath();
         svg.setContent("M2,3L5.5,3L7,5L9,5L9,9L13,9L13,5L14,5L14,13L2,13Z" +
                        "M12,4L12,8L10,8L10,4L8,4L11,1L14,4L12,4Z");
-        svg.setScaleX(1.5);
-        svg.setScaleY(1.5);
+        svg.setScaleX(1.6);
+        svg.setScaleY(1.6);
+        svg.setFill(Tools.ICON_COLOR);
         
         Button btn = new Button();
         btn.getStyleClass().add("top-button");
