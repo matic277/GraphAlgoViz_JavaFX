@@ -1,2 +1,2 @@
 These icons are from Flaticons, available at
-https://roundicons.com/
+https://www.flaticon.com/

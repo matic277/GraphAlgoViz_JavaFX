@@ -12,6 +12,7 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
+import javafx.scene.transform.Transform;
 
 public class TopPane extends FlowPane {
     
@@ -83,8 +84,15 @@ public class TopPane extends FlowPane {
     }
     
     private Button getAddNodeButton() {
-        Button btn = new Button("add node");
+        SVGPath addSvg = new SVGPath();
+        addSvg.setContent("M 7.5 1 C 3.9160714 1 1 3.9160714 1 7.5 C 1 11.083929 3.9160714 14 7.5 14 C 11.083929 14 14 11.083929 14 7.5 C 14 3.9160714 11.083929 1 7.5 1 z M 7.5 2 C 10.543488 2 13 4.4565116 13 7.5 C 13 10.543488 10.543488 13 7.5 13 C 4.4565116 13 2 10.543488 2 7.5 C 2 4.4565116 4.4565116 2 7.5 2 z M 7 5 L 7 5.5 L 7 7 L 5.5 7 L 5 7 L 5 8 L 5.5 8 L 7 8 L 7 9.5 L 7 10 L 8 10 L 8 9.5 L 8 8 L 9.5 8 L 10 8 L 10 7 L 9.5 7 L 8 7 L 8 5.5 L 8 5 L 7 5 z");
+        addSvg.setFill(Color.BLACK);
+        addSvg.setScaleX(1.5);
+        addSvg.setScaleY(1.5);
+        
+        Button btn = new Button();
         btn.getStyleClass().add("top-button");
+        btn.setGraphic(addSvg);
         btn.setPrefSize(BUTTON_SIZE.getWidth(), BUTTON_SIZE.getHeight());
         btn.setOnMouseClicked(event -> {
             Node newNode = MyGraph.getNode();
@@ -123,10 +131,19 @@ public class TopPane extends FlowPane {
         //        "M209.253906,465.976562C217.539062,465.976562,224.253906,459.261719,224.253906,450.976562L224.253906,180.578125C224.253906,172.292969,217.539062,165.578125,209.253906,165.578125C200.96875,165.578125,194.253906,172.292969,194.253906,180.578125L194.253906,450.976562C194.253906,459.261719,200.96875,465.976562,209.253906,465.976562ZM209.253906,465.976562");
         //svg.setScaleX(0.05);
         //svg.setScaleY(0.05);
+    
+        SVGPath svg = new SVGPath();
+        svg.setContent("M23,2L17,2L17,0L7,0L7,2L1,2C0.447715,2,0,2.447715,0,3L0,5C0,5.552285,0.447715,6,1,6L23,6C23.552285,6,24,5.552285,24,5L24,3C24,2.447715,23.552285,2,23,2Z " +
+                       "M18.28,24L5.82,24C4.806125,24.007948,3.946707,23.255958,3.82,22.25L2,8L22,8L20.27,22.25C20.143745,23.252153,19.290071,24.002871,18.28,24Z");
+        svg.getTransforms().add(Transform.affine(0.470658,0,0,0.519992,2.352104,1.774068));
         
-        Button btn = new Button("delete");
-        //btn.setGraphic(svg);
+        svg.setFill(Color.BLACK);
+        //svg.setScaleX(1);
+        //svg.setScaleY(1);
+        
+        Button btn = new Button();
         btn.getStyleClass().add("top-button");
+        btn.setGraphic(svg);
         btn.setPrefSize(BUTTON_SIZE.getWidth(), BUTTON_SIZE.getHeight());
         btn.setMaxWidth(BUTTON_SIZE.getWidth());
         btn.setMaxHeight(BUTTON_SIZE.getWidth());

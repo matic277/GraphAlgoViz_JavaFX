@@ -10,7 +10,6 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.StrokeType;
 import org.jgrapht.Graphs;
 
-import java.lang.ref.Reference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -35,14 +34,13 @@ public class Node extends Circle {
     private static double ON_DRAG_ENLARGEMENT_PERCENTAGE = 1.1; // on drag, enlarge TODO this shoud be scaled based on NODE_RADIUS (bigger circles get enlarged more, smaller less, not ideal! (maybe keep 1.1, but do min/max if perc enlargement is too low/high))
     
     final Delta dragDelta = new Delta();
-    
     static class Delta {
         double x, y;
     }
     
     // Edge creating
-    private static final AtomicReference<Node> clickedNodeRef = new AtomicReference<>(null);
-    private static final AtomicReference<Line> edgeRef = new AtomicReference<>(null);
+    public static final AtomicReference<Node> clickedNodeRef = new AtomicReference<>(null);
+    public static final AtomicReference<Line> edgeRef = new AtomicReference<>(null);
     
     @Deprecated(since = "Do not use this constructor, use MyGraph.newNode()")
     public Node(int x, int y, int id) {
@@ -81,19 +79,16 @@ public class Node extends Circle {
         });
         
         this.setOnMousePressed(event -> {
+            // creating edge
             if (clickedNodeRef.get() != null) {
                 if (this != clickedNodeRef.get()) {
                     MyGraph.getInstance().addEdge(this, clickedNodeRef.get());
-                    GraphPane.INSTANCE.getChildren().remove(edgeRef.get());
-                    clickedNodeRef.set(null);
-                    edgeRef.set(null);
-                } else {
-                    GraphPane.INSTANCE.getChildren().remove(edgeRef.get());
-                    clickedNodeRef.set(null);
-                    edgeRef.set(null);
                 }
-            } else {
-                System.out.println("yep");
+                GraphPane.INSTANCE.getChildren().remove(edgeRef.get());
+                clickedNodeRef.set(null);
+                edgeRef.set(null);
+            }
+            else {
                 GraphPane.INSTANCE.getChildren().remove(edgeRef.get());
                 clickedNodeRef.set(this);
                 Line edge = new Line();
@@ -110,6 +105,7 @@ public class Node extends Circle {
                 GraphPane.INSTANCE.getChildren().add(edge);
             }
             
+            // dragging
             dragDelta.x = getCenterX() - event.getX();
             dragDelta.y = getCenterY() - event.getY();
             
@@ -123,7 +119,7 @@ public class Node extends Circle {
         });
     }
     
-    // Circle.setRadius is for some reason final ???
+    // Circle.setRadius() method is for some reason final ???
     public void setNewRadius(double newRadius) {
         super.setRadius(newRadius);
         NODE_RADIUS = newRadius;
