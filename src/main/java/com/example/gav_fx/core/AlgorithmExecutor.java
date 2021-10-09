@@ -30,23 +30,26 @@ public class AlgorithmExecutor implements Runnable {
         threadNamer.run();
 //        System.out.println("Thread '"+name+"' stared.");
         
-        nodes.forEach(n -> {
-//            LOG.out("  ->", "Algo starting on node " + n + ".");
-            
-            State newState = algorithm.run(new Vertex(n));
-            n.addState(newState);
-            
-            if (newState.getState() >= 1) n.setFill(Node.INFORMED_COLOR);
-            
-            if (newState.getState() >= 1 &&
-                n.states.get(AlgorithmController.currentStateIndex).getState() == 0) {
-                MyGraph.getInstance().signalNewInformedNode();
-            }
-            
-//            LOG.out("  ->", "Algo done on node     " + n + ".");
-        });
+        if (algorithm == null) {
+            LOG.out(" -> ", "Algorithm == null, returning.");
+        }
+        else {
+            nodes.forEach(n -> {
+                //LOG.out("  ->", "Algo starting on node " + n + ".");
+                State newState = algorithm.run(new Vertex(n));
+                n.addState(newState);
         
-        LOG.out("  ->", "AlgoExecutor done for all nodes, waiting on barrier.");
+                if (newState.getState() >= 1) n.setFill(Node.INFORMED_COLOR);
+        
+                if (newState.getState() >= 1 &&
+                        n.states.get(AlgorithmController.currentStateIndex).getState() == 0) {
+                    MyGraph.getInstance().signalNewInformedNode();
+                }
+                //LOG.out("  ->", "Algo done on node     " + n + ".");
+            });
+            
+            LOG.out("  ->", "AlgoExecutor done for all nodes, waiting on barrier.");
+        }
         
         try { AlgorithmController.BARRIER.await(); }
         catch (InterruptedException | BrokenBarrierException e) { e.printStackTrace(); }
@@ -59,4 +62,6 @@ public class AlgorithmExecutor implements Runnable {
     }
     
     public synchronized void addNewNodeToProcess(Node n) { nodes.add(n); }
+    
+    public void setAlgorithm(Algorithm algo) { algorithm = algo; }
 }

@@ -1,15 +1,12 @@
 package com.example.gav_fx;
 
-import com.example.gav_fx.core.Algorithm;
 import com.example.gav_fx.core.AlgorithmController;
-import com.example.gav_fx.core.State;
-import com.example.gav_fx.core.Tools;
 import com.example.gav_fx.graph.MyGraph;
 import com.example.gav_fx.graph.Node;
 import com.example.gav_fx.listeners.PanningAndZoomingControls;
 import com.example.gav_fx.panes.BottomPane;
 import com.example.gav_fx.panes.GraphPane;
-import com.example.gav_fx.panes.LeftPane;
+import com.example.gav_fx.panes.leftpane.LeftPane;
 import com.example.gav_fx.panes.toppane.TopPane;
 import javafx.application.Application;
 import javafx.beans.property.DoublePropertyBase;
@@ -44,28 +41,28 @@ public class App extends Application {
     @Override
     public void start(Stage stage) {
         
-        Algorithm algo = vertex -> {
-            // if you have info, don't do anything
-            if (vertex.getState().info > 0) return new State(vertex.getState().info);
-    
-            // Some nodes have no neighbors, so
-            // in this case don't do anything.
-            // Return the same state you're in.
-            if (vertex.getNeighbors().isEmpty()) return new State(vertex.getState().info);
-    
-            // get two random neighbors
-            Node randNeigh1 = vertex.getNeighbors().get(Tools.RAND.nextInt(vertex.getNeighbors().size()));
-            Node randNeigh2 = vertex.getNeighbors().get(Tools.RAND.nextInt(vertex.getNeighbors().size()));
-            State stateOfNeigh1 = randNeigh1.getState();
-            State stateOfNeigh2 = randNeigh2.getState();
-    
-            // or
-            int newStateInfo = stateOfNeigh1.info | stateOfNeigh2.info | vertex.getState().info;
-    
-            return new State(newStateInfo);
-        };
+        //Algorithm algo = vertex -> {
+        //    // if you have info, don't do anything
+        //    if (vertex.getState().info > 0) return new State(vertex.getState().info);
+        //
+        //    // Some nodes have no neighbors, so
+        //    // in this case don't do anything.
+        //    // Return the same state you're in.
+        //    if (vertex.getNeighbors().isEmpty()) return new State(vertex.getState().info);
+        //
+        //    // get two random neighbors
+        //    Node randNeigh1 = vertex.getNeighbors().get(Tools.RAND.nextInt(vertex.getNeighbors().size()));
+        //    Node randNeigh2 = vertex.getNeighbors().get(Tools.RAND.nextInt(vertex.getNeighbors().size()));
+        //    State stateOfNeigh1 = randNeigh1.getState();
+        //    State stateOfNeigh2 = randNeigh2.getState();
+        //
+        //    // or
+        //    int newStateInfo = stateOfNeigh1.info | stateOfNeigh2.info | vertex.getState().info;
+        //
+        //    return new State(newStateInfo);
+        //};
         
-        this.algoController = new AlgorithmController(MyGraph.getInstance(), algo);
+        this.algoController = new AlgorithmController(MyGraph.getInstance());
 //        this.algoController.addObserver(this.mainPanel.getTopPanel().getSimulationPanel());
 //        this.algoController.addObserver();
         this.controllerThread = new Thread(algoController);
@@ -74,7 +71,7 @@ public class App extends Application {
         
         
         // TOP
-        TopPane topPane = new TopPane();
+        TopPane topPane = new TopPane(algoController);
         
         // MIDDLE
         LeftPane leftPane = new LeftPane();

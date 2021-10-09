@@ -19,10 +19,12 @@ import javafx.scene.transform.Transform;
 public class TopPane extends FlowPane {
     
     private final MyGraph graph = MyGraph.getInstance();
+    private final AlgorithmController algorithmController;
     
     private static final Dimension2D BUTTON_SIZE = new Dimension2D(33, 33);
     
-    public TopPane() {
+    public TopPane(AlgorithmController algorithmController) {
+        this.algorithmController = algorithmController;
         this.setAlignment(Pos.CENTER);
         
         init();
@@ -36,7 +38,7 @@ public class TopPane extends FlowPane {
         Button deleteBtn = getDeleteGraphButton();
         Button addNodeBtn = getAddNodeButton();
         
-        ImportComponent importCmp = new ImportComponent();
+        ImportComponent importCmp = new ImportComponent(algorithmController);
         
         HBox container = new HBox();
         container.setSpacing(5);

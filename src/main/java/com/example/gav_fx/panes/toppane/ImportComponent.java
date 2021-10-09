@@ -1,5 +1,7 @@
 package com.example.gav_fx.panes.toppane;
 
+import com.example.gav_fx.core.Algorithm;
+import com.example.gav_fx.core.AlgorithmController;
 import com.example.gav_fx.core.Tools;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
@@ -10,6 +12,9 @@ import javafx.scene.shape.SVGPath;
 import javafx.scene.transform.Transform;
 
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.*;
 
 /**
@@ -24,16 +29,23 @@ import java.util.*;
  */
 public class ImportComponent extends HBox {
     
+    final AlgorithmController algorithmController;
+    
     // Name of class file (to be displayed in dropdown menu) -> Class File
-    Map<String, File> algorithms;
+    final Map<String, File> algorithms;
     
     ComboBox<String> dropdown;
     Button refreshBtn;
     
-    public ImportComponent() {
-        algorithms = new HashMap<>();
+    public ImportComponent(AlgorithmController algorithmController) {
+        this.algorithmController = algorithmController;
+        this.algorithms = new HashMap<>();
         readAlgorithmFiles();
         init();
+        
+        this.getStyleClass().add("import-component");
+        this.setSpacing(5);
+        this.setPadding(new Insets(3, 3, 4, 3));
     }
     
     private void init() {
@@ -42,7 +54,23 @@ public class ImportComponent extends HBox {
         dropdown.getStyleClass().add("top-button");
         dropdown.getStyleClass().add("toolbar-button");
         dropdown.setOnAction(e -> {
-            // TODO: hotswap graph algorithm
+            try {
+                // TODO how to load outside .class files or load .java and compile them here?
+                //URL filUrl = algorithms.get(dropdown.getSelectionModel().getSelectedItem()).toURI().toURL();
+                //URL[] urls = new URL[]{filUrl};
+                
+                //// Create a new class loader with the directory
+                //ClassLoader cl = new URLClassLoader(urls);
+                
+                //// Load in the class; MyClass.class should be located in
+                //// the directory file:/c:/myclasses/com/mycompany
+                //Class cls = cl.loadClass("com.mycompany.MyClass");
+                
+                Algorithm algo = (Algorithm) Class.forName("test.MyClass").getDeclaredConstructor().newInstance();
+                algorithmController.setAlgorithm(algo);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         });
         
         // reload icon
@@ -65,11 +93,7 @@ public class ImportComponent extends HBox {
             dropdown.setItems(FXCollections.observableList(algorithms.keySet().stream().toList()));
         });
         
-        this.setSpacing(5);
-        this.setPadding(new Insets(3, 3, 4, 3));
         this.getChildren().addAll(dropdown, refreshBtn);
-        
-        this.getStyleClass().add("import-component");
     }
     
     private void readAlgorithmFiles() {

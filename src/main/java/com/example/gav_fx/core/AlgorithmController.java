@@ -30,21 +30,25 @@ public class AlgorithmController implements Runnable, StateObservable, GraphChan
     public static int totalStates = 1;
     
     MyGraph graph;
-    final Algorithm algo;
+    Algorithm algo;
     
     public static AtomicBoolean STOP_THREAD = new AtomicBoolean(false);
     public static volatile AtomicBoolean PAUSE = new AtomicBoolean(true);
     public static final Object PAUSE_LOCK = new Object();
     public static int TIMEOUT_BETWEEN_ROUNDS = 100;
     
-    public AlgorithmController(MyGraph graph, Algorithm algo) {
+    public AlgorithmController(MyGraph graph /*, Algorithm algo */) {
         this.graph = graph;
-        this.algo = algo;
+        //this.algo = algo;
         
         MyGraph.getInstance().addObserver(this);
         
         initProcessors();
 //        assignTasks();
+    }
+    
+    public void setAlgorithm(Algorithm algo) {
+        this.algo = algo;
     }
     
     public void signalShutDown() {
@@ -115,6 +119,11 @@ public class AlgorithmController implements Runnable, StateObservable, GraphChan
         for (int i=0; i<PROCESSORS; i++) {
             EXECUTORS[i] = new AlgorithmExecutor(new HashSet<>(), algo, "PR-"+i);
         }
+    }
+    
+    public void onNewAlgorithmSelected(Algorithm algo) {
+        this.algo = algo; // is this field necessary in this class, even?
+        for (int i=0; i<PROCESSORS; i++) EXECUTORS[i].setAlgorithm(algo);
     }
     
     public void assignTasks() {

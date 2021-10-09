@@ -1,4 +1,4 @@
-package com.example.gav_fx.panes.tabs;
+package com.example.gav_fx.panes.leftpane.tabs;
 
 import javafx.geometry.Insets;
 import javafx.scene.layout.VBox;

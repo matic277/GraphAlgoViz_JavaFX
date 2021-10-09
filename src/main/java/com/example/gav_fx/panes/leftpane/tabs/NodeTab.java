@@ -1,4 +1,4 @@
-package com.example.gav_fx.panes.tabs;
+package com.example.gav_fx.panes.leftpane.tabs;
 
 import com.example.gav_fx.graph.MyGraph;
 import javafx.scene.control.ColorPicker;
