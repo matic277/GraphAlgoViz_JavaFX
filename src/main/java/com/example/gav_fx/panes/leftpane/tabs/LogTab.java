@@ -1,9 +1,8 @@
 package com.example.gav_fx.panes.leftpane.tabs;
 
 import javafx.application.Platform;
+import javafx.geometry.Insets;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextArea;
-import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -18,8 +17,7 @@ public class LogTab extends ScrollPane {
     public LogTab() {
         this.textArea = new TextFlow();
         this.setContent(textArea);
-        
-        textArea.getChildren().add(new Text("LOL"));
+        this.setPadding(new Insets(5, 5, 5, 5));
     }
     
     // TODO call to this for some reason triggers a bunch of warning for class cast exception

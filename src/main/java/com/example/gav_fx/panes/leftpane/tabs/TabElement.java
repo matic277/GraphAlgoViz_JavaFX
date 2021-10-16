@@ -19,7 +19,7 @@ public abstract class TabElement extends VBox {
             Color.BLACK
             //Color.rgb(76, 80, 82); // TODO strange color artifacts/discoloring around egdes... super annoying
             ;
-    private static final int CORNER_RADII = 8;
+    private static final int CORNER_RADII = 5;
     
     public HBox getTitleContainer(String title) {
         Text text = new Text(title);

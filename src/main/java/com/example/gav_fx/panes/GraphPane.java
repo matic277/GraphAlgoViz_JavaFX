@@ -32,9 +32,8 @@ public class GraphPane extends Pane implements GraphChangeObserver {
         INSTANCE = this;
         setPrefSize(600, 600);
         
-        // TODO turn this off eventually
         // reference/context
-        this.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.DOTTED, new CornerRadii(50), BorderWidths.DEFAULT)));
+        //this.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.DOTTED, new CornerRadii(50), BorderWidths.DEFAULT)));
         
         nodes = new Group();
         edges = new Group();
