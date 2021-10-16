@@ -1,7 +1,7 @@
 package com.example.gav_fx.panes.toppane;
 
-import com.example.gav_fx.core.Algorithm;
 import com.example.gav_fx.core.AlgorithmController;
+import com.example.gav_fx.core.AlgorithmImplementor;
 import com.example.gav_fx.core.Tools;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
@@ -33,6 +33,7 @@ public class ImportComponent extends HBox {
     
     // Name of class file (to be displayed in dropdown menu) -> Class File
     final Map<String, File> algorithms;
+    final File algoFolder = new File("algos");
     
     ComboBox<String> dropdown;
     Button refreshBtn;
@@ -65,9 +66,17 @@ public class ImportComponent extends HBox {
                 //// Load in the class; MyClass.class should be located in
                 //// the directory file:/c:/myclasses/com/mycompany
                 //Class cls = cl.loadClass("com.mycompany.MyClass");
+    
+                URL dirUrl = algoFolder.toURI().toURL();
+                System.out.println(dirUrl);
+                URLClassLoader cl = new URLClassLoader(new URL[] {dirUrl}, AlgorithmImplementor.class.getClassLoader());  // 2
+                Class loadedClass = cl.loadClass(dropdown.getSelectionModel().getSelectedItem().replace(".class", ""));
+                Object obj =  loadedClass.getDeclaredConstructor().newInstance();
+    
+                System.out.println(obj);
                 
-                Algorithm algo = (Algorithm) Class.forName("test.MyClass").getDeclaredConstructor().newInstance();
-                algorithmController.setAlgorithm(algo);
+                //Algorithm algo = (Algorithm) Class.forName("test.MyClass").getDeclaredConstructor().newInstance();
+                //algorithmController.setAlgorithm(algo);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -97,7 +106,6 @@ public class ImportComponent extends HBox {
     }
     
     private void readAlgorithmFiles() {
-        File algoFolder = new File("algos");
         System.out.println("algo folder path: " + algoFolder.getAbsolutePath());
         File[] files = algoFolder.listFiles();
         

@@ -1,9 +1,11 @@
 package com.example.gav_fx.panes.leftpane.tabs;
 
 import com.example.gav_fx.graph.MyGraph;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.ColorPicker;
-import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 public class NodeTab extends TabElement {
@@ -21,7 +23,8 @@ public class NodeTab extends TabElement {
     }
     
     private VBox getNodeRadiusComponent() {
-        Label title = new Label("Set node radius");
+        HBox titleContainer = getTitleContainer("Set node radius");
+        
         Slider slider = new Slider();
         slider.setShowTickLabels(true);
         slider.setMax(100);
@@ -32,30 +35,34 @@ public class NodeTab extends TabElement {
             MyGraph.getInstance().getNodes().forEach(n -> n.setNewRadius(slider.getValue()));
         });
         
-        VBox container = new VBox();
-        container.getChildren().add(title);
-        container.getChildren().add(slider);
-        return container;
+        VBox contentContainer = new VBox(slider);
+        contentContainer.setPadding(new Insets(5, 5, 5, 5));
+        contentContainer.setSpacing(5);
+        
+        return getMainContainer(titleContainer, contentContainer);
     }
     
     private VBox getBorderColorComponent() {
-        Label title = new Label("Set border color");
-        ColorPicker clrPicker = new ColorPicker();
+        HBox titleContainer = getTitleContainer("Set border color");
         
+        ColorPicker clrPicker = new ColorPicker();
         // TODO can all these be binds instead of listening?
         //  same for other eventHandlers in this class
         clrPicker.setOnAction(event -> {
             MyGraph.getInstance().getNodes().forEach(n -> n.setNewBorderColor(clrPicker.getValue()));
         });
-        
-        VBox container = new VBox();
-        container.getChildren().add(title);
-        container.getChildren().add(clrPicker);
-        return container;
+    
+        VBox contentContainer = new VBox(clrPicker);
+        contentContainer.setPadding(new Insets(5, 5, 5, 5));
+        contentContainer.setSpacing(5);
+        contentContainer.setAlignment(Pos.CENTER);
+    
+        return getMainContainer(titleContainer, contentContainer);
     }
     
     private VBox getBorderWidthComponent() {
-        Label title = new Label("Set border width");
+        HBox titleContainer = getTitleContainer("Set border width");
+        
         Slider slider = new Slider();
         slider.setShowTickLabels(true);
         slider.setMax(30);
@@ -65,11 +72,13 @@ public class NodeTab extends TabElement {
         slider.valueProperty().addListener(event -> {
             MyGraph.getInstance().getNodes().forEach(n -> n.setNewBorderWidth(slider.getValue()));
         });
-    
-        VBox container = new VBox();
-        container.getChildren().add(title);
-        container.getChildren().add(slider);
-        return container;
+        
+        VBox contentContainer = new VBox(slider);
+        contentContainer.setPadding(new Insets(5, 5, 5, 5));
+        contentContainer.setSpacing(5);
+        contentContainer.setAlignment(Pos.CENTER);
+        
+        return getMainContainer(titleContainer, contentContainer);
     }
     
     @Override

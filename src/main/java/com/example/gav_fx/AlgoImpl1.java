@@ -5,6 +5,8 @@ import com.example.gav_fx.graph.Node;
 
 public class AlgoImpl1 implements AlgorithmImplementor {
     
+    public AlgoImpl1() {}
+    
     @Override
     public Algorithm getAlgorithm() {
         return vertex -> {

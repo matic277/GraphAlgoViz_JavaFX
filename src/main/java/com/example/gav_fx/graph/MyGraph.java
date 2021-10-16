@@ -207,8 +207,7 @@ public class MyGraph implements GraphObservable {
     
     public Node getNodeById(int id) {
         Optional<Node> node = this.graph.vertexSet().stream().filter(n -> n.id == id).findFirst();
-        if (node.isPresent()) return node.get();
-        throw new RuntimeException("Can't find node by id=" + id + ".");
+        return node.orElse(null);
     }
     
     @Override public void addObserver(GraphChangeObserver observer) { this.observers.add(observer); }

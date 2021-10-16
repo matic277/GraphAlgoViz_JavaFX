@@ -48,6 +48,13 @@ public class Tools {
     
     public static final Color ICON_COLOR = Color.rgb(174, 176, 178);
     
+    public static class Tuple<T> {
+        T l, r;
+        public Tuple(T l_, T r_) { l=l_; r=r_; }
+        public T getLeft() { return l; }
+        public T getRight() { return r; }
+    }
+    
     //// Store request fonts in a map.
     //// So when multiple components request a font of size X
     //// just make a lookup and return it. Otherwise create
