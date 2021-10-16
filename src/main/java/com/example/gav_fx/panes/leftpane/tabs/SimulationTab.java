@@ -1,6 +1,7 @@
 package com.example.gav_fx.panes.leftpane.tabs;
 
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
@@ -23,10 +24,9 @@ public class SimulationTab extends TabElement {
     private VBox getThreadsComponent() {
         int cores = Runtime.getRuntime().availableProcessors();
         
-        Label title = new Label("Set number of threads");
-        title.setPadding(new Insets(0, 10, 0, 5));
-        title.setPrefHeight(25);
-        //title.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.DOTTED, new CornerRadii(2), BorderWidths.DEFAULT)));
+        HBox titleContainer = getTitleContainer("Number of processors");
+        
+        Label inputLbl = new Label("Set custom amount:");
         
         TextField inputField = new TextField();
         Slider slider = new Slider();
@@ -42,7 +42,6 @@ public class SimulationTab extends TabElement {
                 slider.setValue(newVal); // TODO: this invokes listener on bottom, which then rewrites value in field
             }
         } );
-        
         
         slider.setShowTickLabels(true);
         slider.setMajorTickUnit(9);
@@ -61,13 +60,17 @@ public class SimulationTab extends TabElement {
         });
     
         HBox inputContainer = new HBox();
-        inputContainer.setPadding(new Insets(0, 0, 5, 0));
-        inputContainer.getChildren().addAll(title, inputField);
+        inputContainer.setSpacing(5);
+        inputContainer.setPadding(new Insets(5, 5, 5, 5));
+        inputContainer.getChildren().addAll(inputLbl, inputField);
+        inputContainer.setAlignment(Pos.CENTER);
         
-        VBox container = new VBox();
-        container.getChildren().addAll(inputContainer, slider);
+        VBox contentContainer = new VBox(inputContainer, slider);
+        contentContainer.setPadding(new Insets(5, 5, 5, 5));
+        contentContainer.setSpacing(5);
+        contentContainer.setAlignment(Pos.CENTER);
         
-        return container;
+        return getMainContainer(titleContainer, contentContainer);
     }
     
     public void onThreadsChange(int threads) {

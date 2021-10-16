@@ -4,6 +4,7 @@ import com.example.gav_fx.App;
 import com.example.gav_fx.core.AlgorithmController;
 import com.example.gav_fx.core.State;
 import com.example.gav_fx.panes.GraphPane;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
@@ -22,16 +23,18 @@ public class Node extends Circle {
     public int id;
     
     public int info = 0;
-//    public Set<Node> neighbors;
+    //    public Set<Node> neighbors;
     public List<State> states;
     
-    private static Color borderColor = Color.BLACK; // default
+    private static Color BORDER_COLOR = Color.BLACK; // default
     
     public static Color INFORMED_COLOR = Color.GREEN;
     public static Color UNINFORMED_COLOR = Color.BLACK;
     
+    public static double BORDER_WIDTH = 3;
     public static double NODE_RADIUS = 30;
-    private static double ON_DRAG_ENLARGEMENT_PERCENTAGE = 1.1; // on drag, enlarge TODO this shoud be scaled based on NODE_RADIUS (bigger circles get enlarged more, smaller less, not ideal! (maybe keep 1.1, but do min/max if perc enlargement is too low/high))
+    private static final double ON_DRAG_ENLARGEMENT_PERCENTAGE = 1.1; // on drag, enlarge TODO this shoud be scaled based on NODE_RADIUS (bigger circles get enlarged more, smaller less, not ideal! (maybe keep 1.1, but do min/max if perc enlargement is too low/high))
+    private static final Border ON_HOVER_BORDER = new Border(new BorderStroke(Color.WHITESMOKE, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT));
     
     final Delta dragDelta = new Delta();
     static class Delta {
@@ -47,20 +50,16 @@ public class Node extends Circle {
         super(x, y, 30);
         this.id = id;
         
+        this.setRadius(NODE_RADIUS);
         this.setFill(UNINFORMED_COLOR);
         
         states = new ArrayList<>(10);
         states.add(new State(0)); // uninformed on initialize
         
-        // Border
-        //setStroke(Color.BLACK);
-        //setStrokeType(StrokeType.OUTSIDE);
-        //setStrokeWidth(0); // hide border
-        
-        // Border
-        setStroke(borderColor);
+        // border
+        setStroke(BORDER_COLOR);
         setStrokeType(StrokeType.OUTSIDE);
-        setStrokeWidth(0); // hide border
+        setStrokeWidth(BORDER_WIDTH);
         
         // TODO implementing draggable nodes:
         //  https://stackoverflow.com/questions/49951275/binding-line-with-circles-coordinate-doesnt-work
@@ -117,21 +116,30 @@ public class Node extends Circle {
             setRadius(NODE_RADIUS);
             event.consume();
         });
+        
+        // Highlight on mouse hover
+        this.setOnMouseEntered(e -> {
+            setNewBorderColor(BORDER_COLOR.invert());
+        });
+        this.setOnMouseExited(e -> {
+            setNewBorderColor(BORDER_COLOR.invert());
+        });
     }
     
     // Circle.setRadius() method is for some reason final ???
     public void setNewRadius(double newRadius) {
-        super.setRadius(newRadius);
         NODE_RADIUS = newRadius;
+        super.setRadius(NODE_RADIUS);
     }
     
     public void setNewBorderColor(Color newColor) {
-        borderColor = newColor;
-        this.setStroke(borderColor); // does this variable even need to exist?
+        BORDER_COLOR = newColor;
+        this.setStroke(BORDER_COLOR); // does this variable even need to exist?
     }
     
     public void setNewBorderWidth(double newWidth) {
-        this.setStrokeWidth(newWidth);
+        BORDER_WIDTH = newWidth;
+        this.setStrokeWidth(BORDER_WIDTH);
     }
     
     public int getNodeId() { return this.id; }
@@ -156,7 +164,6 @@ public class Node extends Circle {
     
     // equals & hashcode needed due to Node mutation
     // in order to make sure hashset operations work
-    
     @Override
     public boolean equals(Object o) {
         if((o == null) || (o.getClass() != this.getClass())) {

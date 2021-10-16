@@ -1,6 +1,7 @@
 package com.example.gav_fx.panes.leftpane.tabs;
 
 import com.example.gav_fx.graph.MyGraph;
+import com.example.gav_fx.graph.Node;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.ColorPicker;
@@ -72,6 +73,7 @@ public class NodeTab extends TabElement {
         slider.valueProperty().addListener(event -> {
             MyGraph.getInstance().getNodes().forEach(n -> n.setNewBorderWidth(slider.getValue()));
         });
+        slider.setValue(Node.BORDER_WIDTH); // default
         
         VBox contentContainer = new VBox(slider);
         contentContainer.setPadding(new Insets(5, 5, 5, 5));

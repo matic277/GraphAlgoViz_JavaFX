@@ -1,15 +1,8 @@
 package com.example.gav_fx.graph;
 
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.value.WritableDoubleValue;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.jgrapht.graph.DefaultEdge;
-
-import java.util.Collection;
-import java.util.Iterator;
 
 public class Edge extends DefaultEdge {
     
@@ -17,7 +10,10 @@ public class Edge extends DefaultEdge {
     
     //Node n1, n2;
     
+    public static int BORDER_WIDTH = 3; // TODO for easier selecting when edge is thin
     Line line; // drawable
+    
+    private Color color = Color.BLACK; // default
     
     // Note:
     // This is a constructor for JGraphT and is only needed when calling
@@ -31,10 +27,19 @@ public class Edge extends DefaultEdge {
         super();
         
         //this.n2 = n2;
-        this.line = new Line(n1.getCenterX(), n1.getCenterY(), n2.getCenterX(), n2.getCenterY());
+        line = new Line(n1.getCenterX(), n1.getCenterY(), n2.getCenterX(), n2.getCenterY());
+        //line.setBo
         bindEdgeToNodes(n1, n2, line);
         
-        this.line.setStroke(Color.BLACK); // default
+        line.setStroke(color); // default
+        
+        // Highlight on mouse hover
+        line.setOnMouseEntered(e -> {
+            setEdgeColor(color.invert());
+        });
+        line.setOnMouseExited(e -> {
+            setEdgeColor(color.invert());
+        });
     }
     
     public Line getLine() { return line; }
@@ -50,7 +55,7 @@ public class Edge extends DefaultEdge {
     private static void bindEdgeToNodes(Node n1, Node n2, Line l) {
         l.startXProperty().bind(n1.centerXProperty());
         l.startYProperty().bind(n1.centerYProperty());
-    
+        
         l.endXProperty().bind(n2.centerXProperty());
         l.endYProperty().bind(n2.centerYProperty());
     }
@@ -60,7 +65,8 @@ public class Edge extends DefaultEdge {
     }
     
     public void setEdgeColor(Color newColor) {
-        this.line.setStroke(newColor);
+        color = newColor;
+        this.line.setStroke(color);
     }
     
     public void setEdgeOpacity(double opacity) {
