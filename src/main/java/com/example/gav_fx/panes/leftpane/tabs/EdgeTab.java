@@ -2,6 +2,7 @@ package com.example.gav_fx.panes.leftpane.tabs;
 
 import com.example.gav_fx.core.Tools;
 import com.example.gav_fx.core.Tools.Tuple;
+import com.example.gav_fx.graph.Edge;
 import com.example.gav_fx.graph.MyGraph;
 import com.example.gav_fx.graph.Node;
 import javafx.application.Platform;
@@ -84,8 +85,7 @@ public class EdgeTab extends TabElement {
         contentContainer.setPadding(new Insets(5, 5, 5, 5));
         contentContainer.setSpacing(5);
         
-        VBox mainContainer = getMainContainer(titleContainer, contentContainer);
-        return mainContainer;
+        return getMainContainer(titleContainer, contentContainer);
     }
     
     private VBox getOpacityComponent() {
@@ -105,7 +105,6 @@ public class EdgeTab extends TabElement {
         contentContainer.setPadding(new Insets(5, 5, 5, 5));
         contentContainer.setSpacing(5);
         
-        
         return getMainContainer(titleContainer, contentContainer);
     }
     
@@ -120,6 +119,7 @@ public class EdgeTab extends TabElement {
         slider.setMaxWidth(200);
         slider.valueProperty().addListener(event -> {
             MyGraph.getInstance().getGraph().edgeSet().forEach(e -> e.setEdgeWidth(slider.getValue()));
+            Edge.strokeWidth = slider.getValue();
         });
         
         VBox contentContainer = new VBox(slider);

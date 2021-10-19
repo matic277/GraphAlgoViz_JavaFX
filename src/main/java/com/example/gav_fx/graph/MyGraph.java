@@ -192,7 +192,7 @@ public class MyGraph implements GraphObservable {
         Edge e = new Edge(n1, n2);
         boolean added = graph.addEdge(n1, n2, e);
         
-        // Maybe dont check this since adges arent added in case of:
+        // Maybe don't check this since edges arent added in case of:
         // node1 -----> node2
         // Adding edge : node2 ---> node1 : returns false (since graph is undirected)
         //if (!added) {

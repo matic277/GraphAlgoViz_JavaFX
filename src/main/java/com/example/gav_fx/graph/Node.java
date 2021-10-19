@@ -91,6 +91,7 @@ public class Node extends Circle {
                 GraphPane.INSTANCE.getChildren().remove(edgeRef.get());
                 clickedNodeRef.set(this);
                 Line edge = new Line();
+                edge.setStrokeWidth(Edge.strokeWidth);
                 edge.setStartX(this.getCenterX());
                 edge.setStartY(this.getCenterY());
     

@@ -8,12 +8,11 @@ public class Edge extends DefaultEdge {
     
     private static final MyGraph graph = MyGraph.getInstance();
     
-    //Node n1, n2;
-    
     public static int BORDER_WIDTH = 3; // TODO for easier selecting when edge is thin
     Line line; // drawable
     
     private Color color = Color.BLACK; // default
+    public static double strokeWidth = 1;
     
     // Note:
     // This is a constructor for JGraphT and is only needed when calling
@@ -28,10 +27,10 @@ public class Edge extends DefaultEdge {
         
         //this.n2 = n2;
         line = new Line(n1.getCenterX(), n1.getCenterY(), n2.getCenterX(), n2.getCenterY());
-        //line.setBo
         bindEdgeToNodes(n1, n2, line);
         
         line.setStroke(color); // default
+        line.setStrokeWidth(strokeWidth);
         
         // Highlight on mouse hover
         line.setOnMouseEntered(e -> {
@@ -61,7 +60,8 @@ public class Edge extends DefaultEdge {
     }
     
     public void setEdgeWidth(double newWidth) {
-        this.line.setStrokeWidth(newWidth);
+        strokeWidth = newWidth;
+        line.setStrokeWidth(strokeWidth);
     }
     
     public void setEdgeColor(Color newColor) {
@@ -71,11 +71,12 @@ public class Edge extends DefaultEdge {
     
     public void setEdgeOpacity(double opacity) {
         Color clr = (Color) this.line.getStroke();
-        this.line.setStroke(new Color(
+        color = new Color(
                 clr.getRed(),
                 clr.getBlue(),
                 clr.getGreen(),
-                opacity));
+                opacity);
+        line.setStroke(color);
     }
 
 //    public static String edgesListToString(Collection<Node> col) {
