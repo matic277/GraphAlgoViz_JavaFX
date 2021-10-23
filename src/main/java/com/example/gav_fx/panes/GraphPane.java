@@ -7,8 +7,12 @@ import com.example.gav_fx.graph.Node;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.Group;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import org.jgrapht.event.GraphEdgeChangeEvent;
 import org.jgrapht.event.GraphVertexChangeEvent;
 
@@ -18,15 +22,42 @@ import org.jgrapht.event.GraphVertexChangeEvent;
  */
 public class GraphPane extends Pane implements GraphChangeObserver {
     
-    DoubleProperty myScale = new SimpleDoubleProperty(1.0);
+    public static DoubleProperty myScale = new SimpleDoubleProperty(1.0);
     
     Group edges;
     Group nodes;
+    Group nodeLabels;
     
     public static DoubleProperty OFFSET_X;
     public static DoubleProperty OFFSET_Y;
     
     public static GraphPane INSTANCE;
+    
+    private Object clickedObjectSource;
+    private final ContextMenu edgeMenu = new ContextMenu(); {
+        MenuItem item = new MenuItem("Delete");
+        item.setOnAction(e -> {
+            MyGraph.getInstance().getGraph().removeEdge((Edge)clickedObjectSource);
+            clickedObjectSource = null;
+        });
+        edgeMenu.getItems().add(item);
+    }
+    private final MenuItem coordsItem = new MenuItem();
+    private final ContextMenu nodeMenu = new ContextMenu(); {
+        MenuItem del = new MenuItem("Delete");
+        del.setOnAction(e -> {
+            MyGraph.getInstance().deleteNode((Node)clickedObjectSource);
+            clickedObjectSource = null;
+        });
+        coordsItem.setOnAction(e -> {
+            Node n = (Node)clickedObjectSource;
+            if (n.areCoordsShowing()) n.hideCoordsInfo();
+            else n.showCoordsInfo();
+            clickedObjectSource = null;
+        });
+        
+        nodeMenu.getItems().addAll(del, coordsItem);
+    }
     
     public GraphPane() {
         INSTANCE = this;
@@ -35,11 +66,15 @@ public class GraphPane extends Pane implements GraphChangeObserver {
         // reference/context
         //this.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.DOTTED, new CornerRadii(50), BorderWidths.DEFAULT)));
         
+        //this.set
+        
         nodes = new Group();
         edges = new Group();
+        nodeLabels = new Group();
         
         this.getChildren().add(edges);
         this.getChildren().add(nodes);
+        this.getChildren().add(nodeLabels);
         
         // add scale transform
         scaleXProperty().bind(myScale);
@@ -51,6 +86,27 @@ public class GraphPane extends Pane implements GraphChangeObserver {
         OFFSET_Y = this.translateYProperty();
     }
     
+    public void openContextMenuForEdge(ContextMenuEvent e) {
+        clickedObjectSource = e.getSource();
+        edgeMenu.show(this, e.getScreenX(), e.getScreenY());
+    }
+    
+    public void openContextMenuForNode(ContextMenuEvent e) {
+        clickedObjectSource = e.getSource();
+        
+        Node n = (Node)clickedObjectSource;
+        coordsItem.setText((n.areCoordsShowing() ? "Hide" : "Show") + " coordinates");
+        
+        nodeMenu.show(this, e.getScreenX(), e.getScreenY());
+    }
+    
+    public void addNodeLabel(Label lbl) {
+        nodeLabels.getChildren().add(lbl);
+    }
+    
+    public void removeNodeLabel(Label lbl) {
+        nodeLabels.getChildren().remove(lbl);
+    }
     
     @Override
     public void onGraphClear() {

@@ -30,7 +30,7 @@ public class NodeTab extends TabElement {
         slider.setShowTickLabels(true);
         slider.setMax(100);
         slider.setMin(0);
-        slider.setMajorTickUnit(10);
+        slider.setMajorTickUnit(20);
         slider.setMaxWidth(200);
         slider.valueProperty().addListener(event -> {
             MyGraph.getInstance().getNodes().forEach(n -> n.setNewRadius(slider.getValue()));

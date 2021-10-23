@@ -1,5 +1,6 @@
 package com.example.gav_fx.graph;
 
+import com.example.gav_fx.panes.GraphPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import org.jgrapht.graph.DefaultEdge;
@@ -17,7 +18,7 @@ public class Edge extends DefaultEdge {
     // Note:
     // This is a constructor for JGraphT and is only needed when calling
     //  graph.addEdge(v1, v2).
-    // If calling graph.addEdge(v1, v2, edge), then its not needed.
+    // If calling graph.addEdge(v1, v2, edge), then it's not needed.
     public Edge() {
     
     }
@@ -39,7 +40,12 @@ public class Edge extends DefaultEdge {
         line.setOnMouseExited(e -> {
             setEdgeColor(color.invert());
         });
+        
+        // Right-click menu for deleting edges
+        line.setOnContextMenuRequested(e -> GraphPane.INSTANCE.openContextMenuForEdge(e));
     }
+    
+    //public void setParentComponent(GraphPane parent) { this.parent = parent; }
     
     public Line getLine() { return line; }
     

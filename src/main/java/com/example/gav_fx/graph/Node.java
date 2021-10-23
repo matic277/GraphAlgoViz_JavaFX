@@ -4,6 +4,7 @@ import com.example.gav_fx.App;
 import com.example.gav_fx.core.AlgorithmController;
 import com.example.gav_fx.core.State;
 import com.example.gav_fx.panes.GraphPane;
+import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -37,13 +38,14 @@ public class Node extends Circle {
     private static final Border ON_HOVER_BORDER = new Border(new BorderStroke(Color.WHITESMOKE, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT));
     
     final Delta dragDelta = new Delta();
-    static class Delta {
-        double x, y;
-    }
+    static class Delta { double x, y; }
     
     // Edge creating
     public static final AtomicReference<Node> clickedNodeRef = new AtomicReference<>(null);
     public static final AtomicReference<Line> edgeRef = new AtomicReference<>(null);
+    
+    private Label coordsInfo;
+    private boolean coordsShowing = false;
     
     @Deprecated(since = "Do not use this constructor, use MyGraph.newNode()")
     public Node(int x, int y, int id) {
@@ -71,13 +73,22 @@ public class Node extends Circle {
             setCenterX(event.getX() + dragDelta.x);
             setCenterY(event.getY() + dragDelta.y);
             
+            if (coordsInfo != null) {
+                updateCoordsText();
+            }
+            
             event.consume();
         });
         this.setOnMouseClicked(event -> {
         
         });
+    
+        // Right-click menu for deleting edges
+        this.setOnContextMenuRequested(e -> GraphPane.INSTANCE.openContextMenuForNode(e));
         
         this.setOnMousePressed(event -> {
+            if (event.isSecondaryButtonDown()) return;
+            
             // creating edge
             if (clickedNodeRef.get() != null) {
                 if (this != clickedNodeRef.get()) {
@@ -94,13 +105,15 @@ public class Node extends Circle {
                 edge.setStrokeWidth(Edge.strokeWidth);
                 edge.setStartX(this.getCenterX());
                 edge.setStartY(this.getCenterY());
-    
+                
                 // TODO:
                 //   maybe this can be achieved with some translate to parent local method or something
                 //   don't know enough about those methods atm
                 //   these static fields aren't the prettiest but they seem to work
+                //   not anymore (did they ever)??
                 edge.endXProperty().bind(App.MOUSE_LOCATION.x.subtract(GraphPane.OFFSET_X).subtract(App.LEFT_MENU_WIDTH));
                 edge.endYProperty().bind(App.MOUSE_LOCATION.y.subtract(GraphPane.OFFSET_Y));
+                
                 edgeRef.set(edge);
                 GraphPane.INSTANCE.getChildren().add(edge);
             }
@@ -126,6 +139,28 @@ public class Node extends Circle {
             setNewBorderColor(BORDER_COLOR.invert());
         });
     }
+    
+    public void showCoordsInfo() {
+        coordsShowing = true;
+        coordsInfo = new Label();
+        updateCoordsText();
+        //coordsInfo.setLayoutX(200);
+        //coordsInfo.setLayoutY(50);
+        
+        coordsInfo.layoutXProperty().bind(centerXProperty().add(radiusProperty()));
+        coordsInfo.layoutYProperty().bind(centerYProperty().add(radiusProperty()));
+        GraphPane.INSTANCE.addNodeLabel(coordsInfo);
+    }
+    
+    public void hideCoordsInfo() {
+        coordsShowing = false;
+        if (coordsInfo == null) return; // shouldn't really happen
+        GraphPane.INSTANCE.removeNodeLabel(coordsInfo);
+    }
+    
+    public void updateCoordsText() { coordsInfo.setText("(" + (int)getCenterX() + ", " + (int)getCenterY() + ")"); }
+    
+    public boolean areCoordsShowing() { return coordsShowing; }
     
     // Circle.setRadius() method is for some reason final ???
     public void setNewRadius(double newRadius) {
