@@ -90,3 +90,14 @@
     -fx-border-width: 5px;
     -fx-border-color: black;
 }
+
+
+
+.context-menu {
+    -fx-background-radius: 8 8 8 8;
+    -fx-background-color: gray;
+    -fx-padding: 2;
+}
+.menu-item {
+     -fx-background-radius: 8 8 8 8;
+}

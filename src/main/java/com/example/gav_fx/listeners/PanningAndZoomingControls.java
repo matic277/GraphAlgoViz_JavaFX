@@ -50,7 +50,7 @@ public class PanningAndZoomingControls {
     private final EventHandler<ScrollEvent> ON_SCROLL = event -> {
         double delta = 1.2;
         
-        double scale = canvas.getScale(); // currently we only use Y, same value is used for X
+        double scale = canvas.getScale(); // currently, we only use Y, same value is used for X
         double oldScale = scale;
         
         if (event.getDeltaY() < 0) scale /= delta;

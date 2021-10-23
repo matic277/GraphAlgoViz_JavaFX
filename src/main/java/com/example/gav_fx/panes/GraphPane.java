@@ -5,14 +5,15 @@ import com.example.gav_fx.graph.Edge;
 import com.example.gav_fx.graph.MyGraph;
 import com.example.gav_fx.graph.Node;
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.DoublePropertyBase;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.Group;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
-import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import org.jgrapht.event.GraphEdgeChangeEvent;
 import org.jgrapht.event.GraphVertexChangeEvent;
 
@@ -33,12 +34,26 @@ public class GraphPane extends Pane implements GraphChangeObserver {
     
     public static GraphPane INSTANCE;
     
+    // Mouse tracking relative to this component
+    public static final MouseLocation MOUSE_LOCATION = new MouseLocation();
+    public static class MouseLocation  {
+        public DoublePropertyBase x = new DoublePropertyBase() {
+            @Override public Object getBean() { return GraphPane.MouseLocation.this; }
+            @Override public String getName() { return "x"; }
+        };
+        public DoublePropertyBase y = new DoublePropertyBase() {
+            @Override public Object getBean() { return GraphPane.MouseLocation.this; }
+            @Override public String getName() { return "y"; }
+        };
+    }
+    
     private Object clickedObjectSource;
     private final ContextMenu edgeMenu = new ContextMenu(); {
         MenuItem item = new MenuItem("Delete");
         item.setOnAction(e -> {
             MyGraph.getInstance().getGraph().removeEdge((Edge)clickedObjectSource);
             clickedObjectSource = null;
+            e.consume();
         });
         edgeMenu.getItems().add(item);
     }
@@ -68,10 +83,10 @@ public class GraphPane extends Pane implements GraphChangeObserver {
     
     public GraphPane() {
         INSTANCE = this;
-        setPrefSize(600, 600);
+        //setPrefSize(600, 600);
         
         // reference/context
-        //this.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.DOTTED, new CornerRadii(50), BorderWidths.DEFAULT)));
+        this.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, new CornerRadii(5), BorderWidths.DEFAULT)));
         
         //this.set
         
@@ -91,6 +106,20 @@ public class GraphPane extends Pane implements GraphChangeObserver {
         
         OFFSET_X = this.translateXProperty();
         OFFSET_Y = this.translateYProperty();
+        
+        this.setOnMouseClicked(e -> {
+            edgeMenu.hide();
+            nodeMenu.hide();
+            e.consume();
+        });
+    
+        this.setOnMouseMoved(event -> {
+            MOUSE_LOCATION.x.set(event.getX());
+            MOUSE_LOCATION.y.set(event.getY());
+        });
+        
+        this.setPrefSize(Integer.MAX_VALUE, Integer.MAX_VALUE);
+        this.autosize();
     }
     
     public void openContextMenuForEdge(ContextMenuEvent e) {

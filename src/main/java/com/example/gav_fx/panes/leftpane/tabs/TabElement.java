@@ -23,7 +23,6 @@ public abstract class TabElement extends VBox {
     
     public HBox getTitleContainer(String title) {
         Text text = new Text(title);
-        text.getStyleClass().add("-fx-font-weight: bold;"); // TODO color is same as text-clr var in css, can't seem to make it work
         text.setStroke(Color.rgb(215, 215, 215));
         HBox titleContainer = new HBox(text);
         titleContainer.setAlignment(Pos.CENTER);
