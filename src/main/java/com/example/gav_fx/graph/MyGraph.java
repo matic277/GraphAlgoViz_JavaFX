@@ -13,10 +13,7 @@ import org.jgrapht.event.GraphVertexChangeEvent;
 import org.jgrapht.graph.DefaultListenableGraph;
 import org.jgrapht.graph.DefaultUndirectedGraph;
 
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class MyGraph implements GraphObservable {
@@ -154,9 +151,24 @@ public class MyGraph implements GraphObservable {
     }
     
     public synchronized void deleteNode(Node node) {
+        // Need to get neighbors before calling removeVertex (due to how Node.getNeighbors is implemented)
+        var neighbours = node.getNeighbors();
+        
         boolean removed = this.graph.removeVertex(node);
         System.out.println("REMOVING NODE="+node+"="+removed);
         if (removed) numOfNodes--;
+        
+        // TODO
+        //   Maybe there should be a method: Node.onDelete
+        if (node.areNeighboursShowing()) {
+            // delete its own coords from graph pane
+            node.hideNeighboursInfo();
+            
+            // if his neighbours are showing neighbours
+            // then we must update them
+            neighbours.stream().filter(Node::areNeighboursShowing).forEach(Node::updateNeighboursInfo);
+        }
+        if (node.areCoordsShowing()) node.hideCoordsInfo();
         
         // TODO
         // deleting a node, but what state in history should we look at?
@@ -192,6 +204,9 @@ public class MyGraph implements GraphObservable {
     public synchronized boolean addEdge(Node n1, Node n2) {
         Edge e = new Edge(n1, n2);
         boolean added = graph.addEdge(n1, n2, e);
+        
+        n1.updateNeighboursInfo();
+        n2.updateNeighboursInfo();
         
         // Maybe don't check this since edges arent added in case of:
         // node1 -----> node2

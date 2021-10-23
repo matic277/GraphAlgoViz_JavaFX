@@ -42,7 +42,9 @@ public class GraphPane extends Pane implements GraphChangeObserver {
         });
         edgeMenu.getItems().add(item);
     }
+    
     private final MenuItem coordsItem = new MenuItem();
+    private final MenuItem neighboursItem = new MenuItem();
     private final ContextMenu nodeMenu = new ContextMenu(); {
         MenuItem del = new MenuItem("Delete");
         del.setOnAction(e -> {
@@ -55,8 +57,13 @@ public class GraphPane extends Pane implements GraphChangeObserver {
             else n.showCoordsInfo();
             clickedObjectSource = null;
         });
-        
-        nodeMenu.getItems().addAll(del, coordsItem);
+        neighboursItem.setOnAction(e -> {
+            Node n = (Node)clickedObjectSource;
+            if (n.areNeighboursShowing()) n.hideNeighboursInfo();
+            else n.drawNeighboursInfo();
+            clickedObjectSource = null;
+        });
+        nodeMenu.getItems().addAll(del, coordsItem, neighboursItem);
     }
     
     public GraphPane() {
@@ -96,6 +103,7 @@ public class GraphPane extends Pane implements GraphChangeObserver {
         
         Node n = (Node)clickedObjectSource;
         coordsItem.setText((n.areCoordsShowing() ? "Hide" : "Show") + " coordinates");
+        neighboursItem.setText((n.areCoordsShowing() ? "Hide" : "Show") + " neighbours");
         
         nodeMenu.show(this, e.getScreenX(), e.getScreenY());
     }

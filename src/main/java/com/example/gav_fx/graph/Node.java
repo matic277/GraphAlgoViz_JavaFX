@@ -15,6 +15,7 @@ import org.jgrapht.Graphs;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.jgrapht.alg.drawing.model.Point2D;
@@ -46,6 +47,8 @@ public class Node extends Circle {
     
     private Label coordsInfo;
     private boolean coordsShowing = false;
+    private Label neighboursInfo;
+    private boolean neighboursShowing = false;
     
     @Deprecated(since = "Do not use this constructor, use MyGraph.newNode()")
     public Node(int x, int y, int id) {
@@ -74,7 +77,7 @@ public class Node extends Circle {
             setCenterY(event.getY() + dragDelta.y);
             
             if (coordsInfo != null) {
-                updateCoordsText();
+                updateCoordsInfo();
             }
             
             event.consume();
@@ -143,24 +146,39 @@ public class Node extends Circle {
     public void showCoordsInfo() {
         coordsShowing = true;
         coordsInfo = new Label();
-        updateCoordsText();
-        //coordsInfo.setLayoutX(200);
-        //coordsInfo.setLayoutY(50);
+        updateCoordsInfo();
         
         coordsInfo.layoutXProperty().bind(centerXProperty().add(radiusProperty()));
         coordsInfo.layoutYProperty().bind(centerYProperty().add(radiusProperty()));
         GraphPane.INSTANCE.addNodeLabel(coordsInfo);
     }
-    
     public void hideCoordsInfo() {
         coordsShowing = false;
         if (coordsInfo == null) return; // shouldn't really happen
         GraphPane.INSTANCE.removeNodeLabel(coordsInfo);
     }
-    
-    public void updateCoordsText() { coordsInfo.setText("(" + (int)getCenterX() + ", " + (int)getCenterY() + ")"); }
-    
+    public void updateCoordsInfo() { coordsInfo.setText("(" + (int)getCenterX() + ", " + (int)getCenterY() + ")"); }
     public boolean areCoordsShowing() { return coordsShowing; }
+    
+    public void drawNeighboursInfo() {
+        neighboursShowing = true;
+        neighboursInfo = new Label();
+        updateNeighboursInfo();
+        
+        neighboursInfo.layoutXProperty().bind(centerXProperty().add(radiusProperty()));
+        neighboursInfo.layoutYProperty().bind(centerYProperty().add(radiusProperty()).add(20));
+        GraphPane.INSTANCE.addNodeLabel(neighboursInfo);
+    }
+    public void hideNeighboursInfo() {
+        neighboursShowing = true;
+        if (neighboursInfo == null) return; // shouldn't really happen
+        GraphPane.INSTANCE.removeNodeLabel(neighboursInfo);
+    }
+    public void updateNeighboursInfo() {
+        if (!neighboursShowing) return;
+        neighboursInfo.setText(getNeighbors().stream().map(n -> n.getNodeId()+"").collect(Collectors.joining(", ", "{", "}")));
+    }
+    public boolean areNeighboursShowing() { return neighboursShowing; }
     
     // Circle.setRadius() method is for some reason final ???
     public void setNewRadius(double newRadius) {
