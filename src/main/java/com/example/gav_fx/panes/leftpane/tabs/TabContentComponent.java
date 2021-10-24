@@ -6,21 +6,21 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 
-public abstract class TabElement extends VBox {
+public abstract class TabContentComponent extends VBox {
     
-    public TabElement() {
-        this.setPadding(new Insets(15, 10, 10, 10));
-        this.setSpacing(20);
-        this.getStyleClass().add("tab-content");
-    }
-    
-    public abstract String getTabName();
-    
+    private static final int CORNER_RADII = 5;
     private static final Color TITLE_COLOR =
             Color.BLACK
             //Color.rgb(76, 80, 82);
             ;
-    private static final int CORNER_RADII = 5;
+    
+    public TabContentComponent() {
+        this.setPadding(new Insets(15, 10, 10, 10));
+        this.setSpacing(20);
+        this.getStyleClass().add("tab-content-component");
+    }
+    
+    public abstract String getTabName();
     
     public HBox getTitleContainer(String title) {
         Text text = new Text(title);

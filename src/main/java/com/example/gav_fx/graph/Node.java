@@ -10,6 +10,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.StrokeType;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import org.jgrapht.Graphs;
 
 import java.util.ArrayList;
@@ -47,6 +49,12 @@ public class Node extends Circle {
     public static final AtomicReference<Node> clickedNodeRef = new AtomicReference<>(null);
     public static final AtomicReference<Line> edgeRef = new AtomicReference<>(null);
     
+    private static final int INFO_FONT_SIZE = 12;
+    private static final int EXTRA_INFO_VERTICAL_SPACING = 3;
+    private static final Font ID_INFO_FONT = Font.font(Font.getDefault().getFamily(), FontWeight.BOLD, INFO_FONT_SIZE);
+    private static final Font INFO_FONT = Font.font(Font.getDefault().getFamily(), FontWeight.NORMAL, INFO_FONT_SIZE);
+    private Label idInfo;
+    private boolean idShowing = false;
     private Label coordsInfo;
     private boolean coordsShowing = false;
     private Label neighboursInfo;
@@ -151,13 +159,32 @@ public class Node extends Circle {
         });
     }
     
+    public void showIdInfo() {
+        if (idShowing) return;
+        idShowing = true;
+        idInfo = new Label(id + "");
+        idInfo.setFont(ID_INFO_FONT);
+    
+        idInfo.layoutXProperty().bind(centerXProperty().add(radiusProperty().add(10)));
+        idInfo.layoutYProperty().bind(centerYProperty().subtract(radiusProperty()));
+        GraphPane.INSTANCE.addNodeLabel(idInfo);
+    }
+    public void hideIdInfo() {
+        idShowing = false;
+        if (idInfo == null) return; // shouldn't really happen
+        GraphPane.INSTANCE.removeNodeLabel(idInfo);
+    }
+    public boolean isIdShowing() { return idShowing; }
+    
     public void showCoordsInfo() {
+        if (coordsShowing) return;
         coordsShowing = true;
         coordsInfo = new Label();
+        coordsInfo.setFont(INFO_FONT);
         updateCoordsInfo();
         
-        coordsInfo.layoutXProperty().bind(centerXProperty().add(radiusProperty()));
-        coordsInfo.layoutYProperty().bind(centerYProperty().add(radiusProperty()));
+        coordsInfo.layoutXProperty().bind(centerXProperty().add(radiusProperty().add(10)));
+        coordsInfo.layoutYProperty().bind(centerYProperty().subtract(radiusProperty()).add(EXTRA_INFO_VERTICAL_SPACING + INFO_FONT_SIZE));
         GraphPane.INSTANCE.addNodeLabel(coordsInfo);
     }
     public void hideCoordsInfo() {
@@ -168,17 +195,19 @@ public class Node extends Circle {
     public void updateCoordsInfo() { coordsInfo.setText("(" + (int)getCenterX() + ", " + (int)getCenterY() + ")"); }
     public boolean areCoordsShowing() { return coordsShowing; }
     
-    public void drawNeighboursInfo() {
+    public void showNeighboursInfo() {
+        if (neighboursShowing) return;
         neighboursShowing = true;
         neighboursInfo = new Label();
+        neighboursInfo.setFont(INFO_FONT);
         updateNeighboursInfo();
         
-        neighboursInfo.layoutXProperty().bind(centerXProperty().add(radiusProperty()));
-        neighboursInfo.layoutYProperty().bind(centerYProperty().add(radiusProperty()).add(20));
+        neighboursInfo.layoutXProperty().bind(centerXProperty().add(radiusProperty()).add(10));
+        neighboursInfo.layoutYProperty().bind(centerYProperty().subtract(radiusProperty()).add(2*(EXTRA_INFO_VERTICAL_SPACING + INFO_FONT_SIZE)));
         GraphPane.INSTANCE.addNodeLabel(neighboursInfo);
     }
     public void hideNeighboursInfo() {
-        neighboursShowing = true;
+        neighboursShowing = false;
         if (neighboursInfo == null) return; // shouldn't really happen
         GraphPane.INSTANCE.removeNodeLabel(neighboursInfo);
     }

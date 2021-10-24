@@ -8,7 +8,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 
-public class SimulationTab extends TabElement {
+public class SimulationTab extends TabContentComponent {
     
     public SimulationTab() {
         init();

@@ -26,11 +26,11 @@
     -fx-border-insets: 3 3 3 3;
 }
 .middle-pane {
+    -fx-background-color: derive(fx-bg, -10%);
     -fx-border-color: border-clr;
 
     -fx-border-insets: 0 0 3 3;
-    -fx-background-insets: 3;
-
+    -fx-background-insets: 3 3 4 3;
 }
 .right-pane {
     -fx-border-color: border-clr;
@@ -40,6 +40,12 @@
     -fx-border-color: border-clr;
     -fx-border-insets: 3 3 3 3;
 }
+
+
+.graph-pane {
+   -fx-background-color: derive(fx-bg, -10%);
+}
+
 
 
 .split-pane-divider {
@@ -65,22 +71,22 @@
     -fx-padding: 0;
     -fx-background-insets: 0;
 }
-.tab-content {
+.tab-content-component { /* Tab content */
     -fx-background-color: derive(fx-bg, 10%);
     -fx-background-insets: 0 5 0 0;
-    -fx-border-color: border-clr;
 
+    -fx-border-color: transparent;
+    -fx-border-style: none;
 /*
     -fx-border-style: solid;
     -fx-border-insets:  8 0 0 0 ;
     */
 }
-.tab {
+.tab { /* Tab itself */
     -fx-background-color: derive(fx-bg, 5%); /* tab color */
 
-
     /* custom border styles for tabs based on edges simply won't work */
-    -fx-border-style: none, none, none, none;
+    -fx-border-style: none;
     -fx-border-color: transparent;
 
 }

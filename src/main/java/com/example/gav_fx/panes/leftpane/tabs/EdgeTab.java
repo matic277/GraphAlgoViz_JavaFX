@@ -13,7 +13,7 @@ import javafx.scene.layout.*;
 
 import java.util.function.Supplier;
 
-public class EdgeTab extends TabElement {
+public class EdgeTab extends TabContentComponent {
     
     MyGraph graph = MyGraph.getInstance();
     

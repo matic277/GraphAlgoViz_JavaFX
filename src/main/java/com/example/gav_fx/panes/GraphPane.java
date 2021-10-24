@@ -12,9 +12,7 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.ContextMenuEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import org.jgrapht.event.GraphEdgeChangeEvent;
 import org.jgrapht.event.GraphVertexChangeEvent;
 
@@ -58,13 +56,20 @@ public class GraphPane extends Pane implements GraphChangeObserver {
         });
         edgeMenu.getItems().add(item);
     }
-    
+    // TODO these menus could probably be in Node/Edge instead of here...
+    private final MenuItem idItem = new MenuItem();
     private final MenuItem coordsItem = new MenuItem();
     private final MenuItem neighboursItem = new MenuItem();
     private final ContextMenu nodeMenu = new ContextMenu(); {
         MenuItem del = new MenuItem("Delete");
         del.setOnAction(e -> {
             MyGraph.getInstance().deleteNode((Node)clickedObjectSource);
+            clickedObjectSource = null;
+        });
+        idItem.setOnAction(e -> {
+            Node n = (Node)clickedObjectSource;
+            if (n.isIdShowing()) n.hideIdInfo();
+            else n.showIdInfo();
             clickedObjectSource = null;
         });
         coordsItem.setOnAction(e -> {
@@ -76,15 +81,17 @@ public class GraphPane extends Pane implements GraphChangeObserver {
         neighboursItem.setOnAction(e -> {
             Node n = (Node)clickedObjectSource;
             if (n.areNeighboursShowing()) n.hideNeighboursInfo();
-            else n.drawNeighboursInfo();
+            else n.showNeighboursInfo();
             clickedObjectSource = null;
         });
-        nodeMenu.getItems().addAll(del, coordsItem, neighboursItem);
+        nodeMenu.getItems().addAll(del, idItem, coordsItem, neighboursItem);
     }
     
     public GraphPane() {
         INSTANCE = this;
         //setPrefSize(600, 600);
+        
+        this.getStyleClass().add("graph-pane");
         
         // reference/context
         //this.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, new CornerRadii(5), BorderWidths.DEFAULT)));
@@ -138,8 +145,9 @@ public class GraphPane extends Pane implements GraphChangeObserver {
         clickedObjectSource = e.getSource();
         
         Node n = (Node)clickedObjectSource;
+        idItem.setText((n.isIdShowing() ? "Hide" : "Show") + " node id");
         coordsItem.setText((n.areCoordsShowing() ? "Hide" : "Show") + " coordinates");
-        neighboursItem.setText((n.areCoordsShowing() ? "Hide" : "Show") + " neighbours");
+        neighboursItem.setText((n.areNeighboursShowing() ? "Hide" : "Show") + " neighbours");
         
         nodeMenu.show(this, e.getScreenX(), e.getScreenY());
     }
@@ -149,6 +157,7 @@ public class GraphPane extends Pane implements GraphChangeObserver {
     }
     
     public void removeNodeLabel(Label lbl) {
+        System.out.println("removing: " + lbl.getText());
         nodeLabels.getChildren().remove(lbl);
     }
     
@@ -179,6 +188,7 @@ public class GraphPane extends Pane implements GraphChangeObserver {
     public void vertexRemoved(GraphVertexChangeEvent<Node> event) {
         Node n = event.getVertex();
         nodes.getChildren().remove(n);
+        if (n.isIdShowing()) n.hideIdInfo();
         if (n.areCoordsShowing()) n.hideCoordsInfo();
         if (n.areNeighboursShowing()) n.hideNeighboursInfo();
     }
