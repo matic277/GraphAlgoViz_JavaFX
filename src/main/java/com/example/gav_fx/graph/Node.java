@@ -28,6 +28,8 @@ public class Node extends Circle {
     //    public Set<Node> neighbors;
     public List<State> states;
     
+    private Color color;
+    
     private static Color BORDER_COLOR = Color.BLACK; // default
     
     public static Color INFORMED_COLOR = Color.GREEN;
@@ -200,6 +202,21 @@ public class Node extends Circle {
     public void setNewBorderWidth(double newWidth) {
         BORDER_WIDTH = newWidth;
         this.setStrokeWidth(BORDER_WIDTH);
+    }
+    
+    public void setNodeOpacity(double opacity) {
+        Color clr = (Color) this.getFill();
+        color = new Color(
+                clr.getRed(),
+                clr.getGreen(),
+                clr.getBlue(),
+                opacity);
+        this.setFill(color);
+    }
+    
+    public void setNodeColor(Color newColor) {
+        color = newColor;
+        this.setFill(color);
     }
     
     public int getNodeId() { return this.id; }

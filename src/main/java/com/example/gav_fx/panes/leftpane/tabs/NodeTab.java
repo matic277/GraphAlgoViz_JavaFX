@@ -17,10 +17,15 @@ public class NodeTab extends TabElement {
     
     private void init() {
         VBox clrComponent = getBorderColorComponent();
+        VBox opacityComponent = getOpacityComponent();
         VBox widthComponent = getBorderWidthComponent();
         VBox radiusComponent = getNodeRadiusComponent();
         
-        this.getChildren().addAll(clrComponent, widthComponent, radiusComponent);
+        this.getChildren().addAll(
+                clrComponent,
+                opacityComponent,
+                widthComponent,
+                radiusComponent);
     }
     
     private VBox getNodeRadiusComponent() {
@@ -58,6 +63,26 @@ public class NodeTab extends TabElement {
         contentContainer.setSpacing(5);
         contentContainer.setAlignment(Pos.CENTER);
     
+        return getMainContainer(titleContainer, contentContainer);
+    }
+    
+    private VBox getOpacityComponent() {
+        HBox titleContainer = getTitleContainer("Set node opacity");
+        
+        Slider slider = new Slider();
+        slider.setShowTickLabels(true);
+        slider.setMax(1);
+        slider.setMin(0);
+        slider.setValue(1); // default
+        slider.setMaxWidth(200);
+        slider.valueProperty().addListener(event -> {
+            MyGraph.getInstance().getGraph().vertexSet().forEach(n -> n.setNodeOpacity(slider.getValue()));
+        });
+        
+        VBox contentContainer = new VBox(slider);
+        contentContainer.setPadding(new Insets(5, 5, 5, 5));
+        contentContainer.setSpacing(5);
+        
         return getMainContainer(titleContainer, contentContainer);
     }
     

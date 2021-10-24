@@ -82,8 +82,8 @@ public class Edge extends DefaultEdge {
         Color clr = (Color) this.line.getStroke();
         color = new Color(
                 clr.getRed(),
-                clr.getBlue(),
                 clr.getGreen(),
+                clr.getBlue(),
                 opacity);
         line.setStroke(color);
     }
