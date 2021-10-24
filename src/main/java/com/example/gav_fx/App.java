@@ -11,11 +11,13 @@ import com.example.gav_fx.panes.toppane.TopPane;
 import javafx.application.Application;
 import javafx.beans.property.DoublePropertyBase;
 import javafx.beans.property.ReadOnlyDoubleProperty;
+import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.SplitPane;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 public class App extends Application {
@@ -83,38 +85,50 @@ public class App extends Application {
         buildGraph();
         
         SplitPane middlePane = new SplitPane();
+        middlePane.setBorder(null);
+        middlePane.getStyleClass().add("middle-pane");
         middlePane.getItems().addAll(leftPane, graphPane);
-        //middlePane.setDividerPosition(1, 400); // not working
+        
         PanningAndZoomingControls controls = new PanningAndZoomingControls(graphPane);
         middlePane.setOnMousePressed(controls.getOnMousePressEventHandler());
         middlePane.setOnMouseDragged(controls.getOnMouseDragEventHandler());
         middlePane.setOnScroll(controls.getOnScrollEventHandler());
         middlePane.setMinWidth(1000);
         
-        Node divider = (Node) middlePane.lookup(".split-pane-divider");
-        if(divider!=null){
-            divider.setStyle("-fx-background-color: red;");
-        } else System.out.println("NULL");
         
+        // RIGHT
+        Label mouseLocationIndicator = new Label();
+        HBox contentContainer = new HBox();
+        contentContainer.setPadding(new Insets(10, 10, 10, 10));
+        contentContainer.getChildren().add(mouseLocationIndicator);
+        Pane rightPane = new Pane();
+        rightPane.setMinWidth(100);
+        rightPane.getChildren().add(contentContainer);
+        rightPane.getStyleClass().add("right-pane");
+        
+        
+        BorderPane topContainer = new BorderPane();
+        topContainer.setCenter(middlePane);
+        topContainer.setTop(topPane);
+        topContainer.setLeft(leftPane);
+        topContainer.setRight(rightPane);
+    
+    
         // BOTTOM
         BottomPane bottomPane = new BottomPane();
         
-        
         // MAIN CONTAINER
-        BorderPane root = new BorderPane();
-        root.setCenter(middlePane);
-        root.setBottom(bottomPane);
-        root.setTop(topPane);
-        root.setLeft(leftPane);
-        
+        SplitPane root = new SplitPane();
+        root.setOrientation(Orientation.VERTICAL);
+        root.getItems().addAll(topContainer, bottomPane);
+        //root.setDividerPosition(0, 500);
+
         
         Scene scene = new Scene(root, 1400, 1000);
         scene.getStylesheets().add(getClass().getResource("style.css").toExternalForm());
-        Label mouseLocationIndicator = new Label();
-        Pane parent = new Pane();
-        parent.setMinWidth(100);
-        parent.getChildren().add(mouseLocationIndicator);
-        root.setRight(parent);
+        
+        
+        
         middlePane.setOnMouseMoved(event -> {
             MOUSE_LOCATION.x.set(event.getX());
             MOUSE_LOCATION.y.set(event.getY());
@@ -131,6 +145,9 @@ public class App extends Application {
         });
         
         leftPane.setMaxWidth(Integer.MAX_VALUE); // make it unlimited again
+    
+        root.setDividerPositions(0.8);
+        middlePane.setDividerPositions(0.2);
     }
     
     public static void main(String[] args) {

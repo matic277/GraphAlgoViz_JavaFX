@@ -9,8 +9,9 @@ import javafx.scene.text.Text;
 public abstract class TabElement extends VBox {
     
     public TabElement() {
-        this.setPadding(new Insets(10, 10, 10, 10));
+        this.setPadding(new Insets(15, 10, 10, 10));
         this.setSpacing(20);
+        this.getStyleClass().add("tab-content");
     }
     
     public abstract String getTabName();

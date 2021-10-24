@@ -12,8 +12,6 @@ public class SimulationTab extends TabElement {
     
     public SimulationTab() {
         init();
-    
-        
     }
     
     private void init() {

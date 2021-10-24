@@ -17,7 +17,7 @@ public class LogTab extends ScrollPane {
     public LogTab() {
         this.textArea = new TextFlow();
         this.setContent(textArea);
-        this.setPadding(new Insets(5, 5, 5, 5));
+        this.setPadding(new Insets(15, 5, 5, 5));
     }
     
     // TODO call to this for some reason triggers a bunch of warning for class cast exception

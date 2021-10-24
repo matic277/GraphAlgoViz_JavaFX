@@ -2,6 +2,9 @@
     btn-clr: rgb(76, 80, 82);
     border-clr: rgb(85, 90, 92);
     text-clr: rgb(215, 215, 215);
+
+    fx-base: #696866;
+    fx-bg: #3C3F41FF;
 }
 
 .root{
@@ -9,31 +12,85 @@
     -fx-font-family: "Segoe UI";
     -fx-text-background-color: text-clr;
 
-    -fx-base: #696866;
-    -fx-background: #3C3F41FF;
+    -fx-base: fx-base;
+    -fx-background: fx-bg;
 
     /* Removes blue highlight glow on component click */
     -fx-focus-color: transparent;
     -fx-faint-focus-color: transparent;
 }
 
+
 .top-pane {
     -fx-border-color: border-clr;
     -fx-border-insets: 3 3 3 3;
-    /*-fx-border-radius: 5 5 5 5; */
+}
+.middle-pane {
+    -fx-border-color: border-clr;
+
+    -fx-border-insets: 0 0 3 3;
+    -fx-background-insets: 3;
+
+}
+.right-pane {
+    -fx-border-color: border-clr;
+    -fx-border-insets: 0 3 3 4;
+}
+.bottom-pane {
+    -fx-border-color: border-clr;
+    -fx-border-insets: 3 3 3 3;
 }
 
+
 .split-pane-divider {
-    -fx-padding: 0;
+    -fx-padding: 0,5;
     -fx-border-color: border-clr;
     -fx-border-insets:  0 0 0 0 ;
-    /*-fx-background-color: "red";*/
+    -fx-background-color: border-clr;
 }
 /*
 .split-pane-divider #horizontal-grabber {
     -fx-padding: 100;
 }
 */
+
+/* Removes spacing around tabs */
+.tab-pane {
+     /*         top     left */
+    -fx-padding: -7 0 0 -7;
+    -fx-background-color: fx-bg;
+}
+.tab-header-area .tab-header-background {
+    -fx-background-color: fx-bg;
+    -fx-padding: 0;
+    -fx-background-insets: 0;
+}
+.tab-content {
+    -fx-background-color: derive(fx-bg, 10%);
+    -fx-background-insets: 0 5 0 0;
+    -fx-border-color: border-clr;
+
+/*
+    -fx-border-style: solid;
+    -fx-border-insets:  8 0 0 0 ;
+    */
+}
+.tab {
+    -fx-background-color: derive(fx-bg, 5%); /* tab color */
+
+
+    /* custom border styles for tabs based on edges simply won't work */
+    -fx-border-style: none, none, none, none;
+    -fx-border-color: transparent;
+
+}
+.tab:selected {
+    -fx-background-color: derive(fx-bg, 10%);
+    -fx-text-base-color: white; /* TODO not working */
+}
+.tab:hover {
+    -fx-text-base-color: text-clr; /* disable tabs coloring to back when hovered */
+}
 
 
 .top-button {

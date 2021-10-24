@@ -38,10 +38,12 @@ public class LeftPane extends TabPane {
         logTab.setContent(lTab);
         
         this.getTabs().addAll(nodeTab, edgesTab, simulationTab, logTab);
-    
+        
         
         selectedTab = edgesTab;
         
         this.setSide(Side.LEFT);
+        
+        //this.setPadding(null);
     }
 }

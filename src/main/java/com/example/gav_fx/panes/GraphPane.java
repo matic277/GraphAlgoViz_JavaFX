@@ -87,7 +87,7 @@ public class GraphPane extends Pane implements GraphChangeObserver {
         //setPrefSize(600, 600);
         
         // reference/context
-        this.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, new CornerRadii(5), BorderWidths.DEFAULT)));
+        //this.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, new CornerRadii(5), BorderWidths.DEFAULT)));
         
         //this.set
         
