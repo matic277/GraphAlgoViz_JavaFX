@@ -12,6 +12,7 @@ public class AlgorithmExecutor implements Runnable {
     Algorithm algorithm;
     
     String name;
+    OutputType outputType = OutputType.ALGO_EXECUTOR;
     
     // this is a workaround to the problem of naming threads
     // in ExecutorService
@@ -31,7 +32,7 @@ public class AlgorithmExecutor implements Runnable {
 //        System.out.println("Thread '"+name+"' stared.");
         
         if (algorithm == null) {
-            LOG.out(" -> ", "Algorithm == null, returning.");
+            LOG.out(" -> ", "Algorithm == null, returning.", outputType);
         }
         else {
             nodes.forEach(n -> {
@@ -42,13 +43,13 @@ public class AlgorithmExecutor implements Runnable {
                 if (newState.getState() >= 1) n.setFill(Node.INFORMED_COLOR);
         
                 if (newState.getState() >= 1 &&
-                        n.states.get(AlgorithmController.currentStateIndex).getState() == 0) {
+                    n.states.get(AlgorithmController.currentStateIndex).getState() == 0) {
                     MyGraph.getInstance().signalNewInformedNode();
                 }
                 //LOG.out("  ->", "Algo done on node     " + n + ".");
             });
             
-            LOG.out("  ->", "AlgoExecutor done for all nodes, waiting on barrier.");
+            LOG.out("  ->", "AlgoExecutor done for all nodes, waiting on barrier.", outputType);
         }
         
         try { AlgorithmController.BARRIER.await(); }

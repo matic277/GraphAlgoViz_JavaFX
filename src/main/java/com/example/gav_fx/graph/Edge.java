@@ -9,7 +9,12 @@ public class Edge extends DefaultEdge {
     
     private static final MyGraph graph = MyGraph.getInstance();
     
-    public static int BORDER_WIDTH = 3; // TODO for easier selecting when edge is thin
+    // TODO for easier selecting when edge is thin
+    //  but when zooming in, thickness should be adjusted, otherwise even
+    //  thin edges would be overlapping... but how performant is this
+    //  when graph is dense and lare (ie lots of edges)...
+    public static int BORDER_WIDTH = 3;
+    
     Line line; // drawable
     
     private Color color = Color.BLACK; // default
@@ -19,9 +24,7 @@ public class Edge extends DefaultEdge {
     // This is a constructor for JGraphT and is only needed when calling
     //  graph.addEdge(v1, v2).
     // If calling graph.addEdge(v1, v2, edge), then it's not needed.
-    public Edge() {
-    
-    }
+    public Edge() { }
     
     public Edge(Node n1, Node n2) {
         super();
@@ -42,7 +45,7 @@ public class Edge extends DefaultEdge {
         });
         
         // Right-click menu for deleting edges
-        line.setOnContextMenuRequested(e -> GraphPane.INSTANCE.openContextMenuForEdge(e));
+        line.setOnContextMenuRequested(e -> GraphPane.INSTANCE.openContextMenuForEdge(e, this));
     }
     
     //public void setParentComponent(GraphPane parent) { this.parent = parent; }

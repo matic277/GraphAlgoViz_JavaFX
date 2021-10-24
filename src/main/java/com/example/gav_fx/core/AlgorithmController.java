@@ -19,6 +19,8 @@ public class AlgorithmController implements Runnable, StateObservable, GraphChan
     
     public static int PROCESSORS = 3;
     
+    OutputType outputType = OutputType.ALGO_CONTROLLER;
+    
     // TODO: should these really be final if we can change number of processors anytime we want.. probably not?
     // TODO: update on change of nodes
     static final CyclicBarrier BARRIER = new CyclicBarrier(PROCESSORS + 1);
@@ -64,7 +66,7 @@ public class AlgorithmController implements Runnable, StateObservable, GraphChan
         while (true)
         {
             if (PAUSE.getAcquire()) {
-                LOG.out("->", "PAUSING.");
+                LOG.out("->", "PAUSING.", outputType);
                 synchronized (PAUSE_LOCK) {
                     while (PAUSE.getAcquire() && !NEXT_ROUND_BUTTON_PRESSED.get()) {
                         if (STOP_THREAD.get()) break;
@@ -72,29 +74,29 @@ public class AlgorithmController implements Runnable, StateObservable, GraphChan
                         catch (Exception e) { e.printStackTrace(); }
                     }
                     // woken up
-                    // if woken up by button, the set the button press to false
+                    // if woken up by button, then set the button press to false
                     // if not woken up by button, then don't do anything and just continue
                     boolean wasPressed = NEXT_ROUND_BUTTON_PRESSED.compareAndSet(true, false);
                 }
-                LOG.out("->", "CONTINUING.");
+                LOG.out("->", "CONTINUING.", outputType);
             }
-    
+            
             if (STOP_THREAD.get()) break;
             
-            LOG.out("\n->", "STARTING EXECUTORS.");
-            for (int i=0; i<EXECUTORS.length; i++) {
-                THREAD_POOL.submit(EXECUTORS[i]);
-            }
-            LOG.out("->", "ALL EXECUTORS STARTED.");
+            LOG.out("\n->", "STARTING EXECUTORS.", outputType);
+            for (AlgorithmExecutor executor : EXECUTORS)
+                THREAD_POOL.submit(executor);
+            LOG.out("->", "ALL EXECUTORS STARTED.", outputType);
             
+            // Waiting for all executors to finish on barrier
             try { AlgorithmController.BARRIER.await(); }
             catch (InterruptedException | BrokenBarrierException e) { e.printStackTrace(); }
             
             incrementState();
             
-            LOG.out("\n->", "BARRIER TIPPED.");
-            LOG.out(" ->", "currentStateIndex="+currentStateIndex);
-            LOG.out(" ->", "totalStates="+totalStates);
+            LOG.out("\n->", "BARRIER TIPPED.", outputType);
+            LOG.out(" ->", "currentStateIndex="+currentStateIndex, outputType);
+            LOG.out(" ->", "totalStates="+totalStates, outputType);
             
             // TODO
             //MenuPanel.nextBtn.setEnabled(AlgorithmController.PAUSE.get());
@@ -103,7 +105,7 @@ public class AlgorithmController implements Runnable, StateObservable, GraphChan
             
             Tools.sleep(TIMEOUT_BETWEEN_ROUNDS);
         }
-        LOG.out("", "AlgorithmController thread terminated.");
+        LOG.out("", "AlgorithmController thread terminated.", outputType);
     }
     
     private void incrementState() {

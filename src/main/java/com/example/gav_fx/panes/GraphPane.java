@@ -12,6 +12,7 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.ContextMenuEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import org.jgrapht.event.GraphEdgeChangeEvent;
@@ -112,18 +113,22 @@ public class GraphPane extends Pane implements GraphChangeObserver {
             nodeMenu.hide();
             e.consume();
         });
-    
+        
+        //this.addEventHandler(MouseEvent.MOUSE_MOVED, event -> {
+        //    MOUSE_LOCATION.x.set(event.getX());
+        //    MOUSE_LOCATION.y.set(event.getY());
+        //});
+        
         this.setOnMouseMoved(event -> {
             MOUSE_LOCATION.x.set(event.getX());
             MOUSE_LOCATION.y.set(event.getY());
         });
         
-        this.setPrefSize(Integer.MAX_VALUE, Integer.MAX_VALUE);
-        this.autosize();
+        //this.autosize();
     }
     
-    public void openContextMenuForEdge(ContextMenuEvent e) {
-        clickedObjectSource = e.getSource();
+    public void openContextMenuForEdge(ContextMenuEvent e, Edge selectedEdge) {
+        clickedObjectSource = selectedEdge;
         edgeMenu.show(this, e.getScreenX(), e.getScreenY());
     }
     
@@ -167,13 +172,13 @@ public class GraphPane extends Pane implements GraphChangeObserver {
     }
     
     @Override
-    public void vertexAdded(GraphVertexChangeEvent<Node> event) {
-        nodes.getChildren().add(event.getVertex());
-    }
-    
+    public void vertexAdded(GraphVertexChangeEvent<Node> event) { nodes.getChildren().add(event.getVertex()); }
     @Override
     public void vertexRemoved(GraphVertexChangeEvent<Node> event) {
-        nodes.getChildren().remove(event.getVertex());
+        Node n = event.getVertex();
+        nodes.getChildren().remove(n);
+        if (n.areCoordsShowing()) n.hideCoordsInfo();
+        if (n.areNeighboursShowing()) n.hideNeighboursInfo();
     }
     
     @Override public void onNewInformedNode() {}
@@ -182,8 +187,39 @@ public class GraphPane extends Pane implements GraphChangeObserver {
     
     
     public double getScale() { return myScale.get(); }
-    public void setScale( double scale) { myScale.set(scale); }
-    public void setPivot( double x, double y) {
+    public void setScale(double scale) {
+        //System.out.println("1scale =" + scale);
+        //System.out.println("1width =" + this.getWidth());
+        //System.out.println("1height=" + this.getHeight());
+        myScale.set(scale);
+        
+        // TODO none of these work (THIS pane stays same size when zooming... not good)
+        
+        //this.setWidth(this.getWidth()   / scaleXProperty().get());
+        //this.setHeight(this.getHeight() / scaleYProperty().get());
+        
+        //this.setPrefSize(
+        //        this.getWidth()/scaleXProperty().get(),
+        //        this.getHeight()/scaleYProperty().get());
+    
+        //this.setWidth(getBoundsInParent().getWidth());
+        //this.setHeight(getBoundsInParent().getHeight());
+        
+        
+        //minWidthProperty().divide(myScale);
+        
+        //System.out.println("2width =" + this.getWidth()  / scaleXProperty().get());
+        //System.out.println("2height=" + this.getHeight() / scaleYProperty().get());
+    
+        //System.out.println("[]width =" + this.getWidth());
+        //System.out.println("[]height=" + this.getHeight());
+        //System.out.println();
+    
+        //Random r = new Random();
+        //this.setBackground(new Background(new BackgroundFill(Color.rgb(r.nextInt(255), r.nextInt(255), r.nextInt(255)), CornerRadii.EMPTY, Insets.EMPTY)));
+    
+    }
+    public void setPivot(double x, double y) {
         setTranslateX(getTranslateX()-x);
         setTranslateY(getTranslateY()-y);
     }

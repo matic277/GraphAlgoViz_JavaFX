@@ -22,10 +22,10 @@ public class LogTab extends ScrollPane {
     
     // TODO call to this for some reason triggers a bunch of warning for class cast exception
     //   seems to be caused by extends ScrollPane, idk why this is happening.
-    public static synchronized void logText(String logText) {
+    public static synchronized void logText(String logText, Color color) {
         Text text = new Text(logText + "\n");
         text.setFont(new Font("Consolas", 12));
-        text.setFill(Color.rgb(220, 220, 220));
+        text.setFill(color);
         
         // fixes: Not on FX application thread; error
         Platform.runLater(() -> {
