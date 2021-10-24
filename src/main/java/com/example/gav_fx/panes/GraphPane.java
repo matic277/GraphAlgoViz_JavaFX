@@ -108,12 +108,14 @@ public class GraphPane extends Pane implements GraphChangeObserver {
         OFFSET_X = this.translateXProperty();
         OFFSET_Y = this.translateYProperty();
         
+        // TODO
+        //  this does not work... node is flashing on hover (ie. gets selected and unselected instantly...)
+        //  adding eventHandler instead does not help
         this.setOnMouseClicked(e -> {
             edgeMenu.hide();
             nodeMenu.hide();
             e.consume();
         });
-        
         //this.addEventHandler(MouseEvent.MOUSE_MOVED, event -> {
         //    MOUSE_LOCATION.x.set(event.getX());
         //    MOUSE_LOCATION.y.set(event.getY());

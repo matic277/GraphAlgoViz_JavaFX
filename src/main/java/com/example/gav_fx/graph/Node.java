@@ -116,8 +116,10 @@ public class Node extends Circle {
                 //   not anymore (did they ever)??
                 //edge.endXProperty().bind(App.MOUSE_LOCATION.x.subtract(GraphPane.OFFSET_X).subtract(App.LEFT_MENU_WIDTH));
                 //edge.endYProperty().bind(App.MOUSE_LOCATION.y.subtract(GraphPane.OFFSET_Y));
-                
-                // This does not work when mouse goes out of bounds of GraphPane...
+    
+                // TODO
+                //  This does not work... node is flashing on hover...
+                //  This does not work when mouse goes out of bounds of GraphPane...
                 edge.endXProperty().bind(GraphPane.MOUSE_LOCATION.x);
                 edge.endYProperty().bind(GraphPane.MOUSE_LOCATION.y);
                 
