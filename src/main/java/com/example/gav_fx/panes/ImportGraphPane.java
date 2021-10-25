@@ -31,15 +31,11 @@ public class ImportGraphPane extends BorderPane {
     
     public ImportGraphPane(TopPane parent) {
         this.parent = parent;
-        
-        
         this.optionPaneParent = new Pane();
         
         selectedImportType = ImportType.STATIC_TEST; // defaults
         selectedLayoutType = LayoutType.RANDOM;
-        
         optionPane = selectedImportType.getOptionPane();
-        
         selectedLayoutType = null;
         
         initTop();
@@ -48,9 +44,6 @@ public class ImportGraphPane extends BorderPane {
         //initRightSize();
         initBottom();
         
-        
-        
-    
         stage = new Stage();
         stage.setTitle("Import new graph window");
         stage.setScene(new Scene(this, 450, 450));
@@ -72,7 +65,7 @@ public class ImportGraphPane extends BorderPane {
             selectedImportType = newVal;
             setOptionPane(selectedImportType);
         });
-
+        
         importTypeContainer.getChildren().add(importTitle);
         importTypeContainer.getChildren().add(importList);
         

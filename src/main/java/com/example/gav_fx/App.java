@@ -6,7 +6,7 @@ import com.example.gav_fx.graph.Node;
 import com.example.gav_fx.listeners.PanningAndZoomingControls;
 import com.example.gav_fx.panes.BottomPane;
 import com.example.gav_fx.panes.GraphPane;
-import com.example.gav_fx.panes.RightPane;
+import com.example.gav_fx.panes.rightpane.RightPane;
 import com.example.gav_fx.panes.leftpane.LeftPane;
 import com.example.gav_fx.panes.toppane.TopPane;
 import javafx.application.Application;
@@ -142,6 +142,7 @@ public class App extends Application {
     
         root.setDividerPositions(0.8);
         middlePane.setDividerPositions(0.2);
+        SplitPane.setResizableWithParent(leftPane, Boolean.FALSE); // don't left menu to resize when window gets resized, let the GraphPane do that
     }
     
     public static void main(String[] args) {

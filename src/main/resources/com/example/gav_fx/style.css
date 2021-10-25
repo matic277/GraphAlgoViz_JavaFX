@@ -6,7 +6,6 @@
     fx-base: #696866;
     fx-bg: #3C3F41FF;
 }
-
 .root{
     -fx-font-size: 10pt;
     -fx-font-family: "Segoe UI";
@@ -19,6 +18,7 @@
     -fx-focus-color: transparent;
     -fx-faint-focus-color: transparent;
 }
+
 
 
 .top-pane {
@@ -212,3 +212,26 @@
 .scroll-pane > .corner {
     -fx-background-color: fx-bg; /* corner box */
 }
+
+
+
+/* table */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

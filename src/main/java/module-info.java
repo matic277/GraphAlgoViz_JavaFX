@@ -15,8 +15,10 @@ module com.example.gav_fx {
     requires javafxsvg;
     
     // Extra need for communication between jgrapht and gav_fx modules (or whatever)
-    opens com.example.gav_fx to javafx.fxml, org.jgrapht.core;
+    opens com.example.gav_fx to javafx.fxml, org.jgrapht.core, javafx.base;
+    opens com.example.gav_fx.panes to javafx.base; // requirement by Table
     exports com.example.gav_fx;
     exports com.example.gav_fx.graph;
-    exports com.example.gav_fx.core; // MyGraph using com.example.gav_fx.core.GraphChangeObserver
+    exports com.example.gav_fx.core;
+    opens com.example.gav_fx.panes.rightpane to javafx.base; // MyGraph using com.example.gav_fx.core.GraphChangeObserver
 }
