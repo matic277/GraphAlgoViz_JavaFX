@@ -6,20 +6,16 @@ import com.example.gav_fx.graph.Node;
 import com.example.gav_fx.listeners.PanningAndZoomingControls;
 import com.example.gav_fx.panes.BottomPane;
 import com.example.gav_fx.panes.GraphPane;
+import com.example.gav_fx.panes.RightPane;
 import com.example.gav_fx.panes.leftpane.LeftPane;
 import com.example.gav_fx.panes.toppane.TopPane;
-import de.codecentric.centerdevice.javafxsvg.SvgImageLoaderFactory;
-import de.codecentric.centerdevice.javafxsvg.dimension.PrimitiveDimensionProvider;
 import javafx.application.Application;
 import javafx.beans.property.DoublePropertyBase;
 import javafx.beans.property.ReadOnlyDoubleProperty;
-import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 
@@ -102,14 +98,7 @@ public class App extends Application {
         
         
         // RIGHT
-        Label mouseLocationIndicator = new Label();
-        HBox contentContainer = new HBox();
-        contentContainer.setPadding(new Insets(10, 10, 10, 10));
-        contentContainer.getChildren().add(mouseLocationIndicator);
-        Pane rightPane = new Pane();
-        rightPane.setMinWidth(100);
-        rightPane.getChildren().add(contentContainer);
-        rightPane.getStyleClass().add("right-pane");
+        RightPane rightPane = new RightPane();
         
         
         BorderPane topContainer = new BorderPane();
@@ -137,7 +126,7 @@ public class App extends Application {
         middlePane.setOnMouseMoved(event -> {
             MOUSE_LOCATION.x.set(event.getX());
             MOUSE_LOCATION.y.set(event.getY());
-            mouseLocationIndicator.setText("(" + (int)MOUSE_LOCATION.x.get() + ", " + (int)MOUSE_LOCATION.y.get() + ")");
+            rightPane.updateMousePosition();
         });
         
         stage.setScene(scene);

@@ -73,7 +73,7 @@
 }
 .tab-content-component { /* Tab content */
     -fx-background-color: derive(fx-bg, 10%);
-    -fx-background-insets: 0 5 0 0;
+    -fx-background-insets: 0 0 0 0;
 
     -fx-border-color: transparent;
     -fx-border-style: none;
