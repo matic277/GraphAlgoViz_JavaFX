@@ -1,0 +1,28 @@
+<svg id="efyBV2k83wX1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 16 16" shape-rendering="geometricPrecision" text-rendering="geometricPrecision">
+    <g id="efyBV2k83wX2">
+        <path id="efyBV2k83wX3"
+              d="M0,0L11,0L11,2L0,2L0,0Z"
+              transform="matrix(-1 0 0 1 13 7)"
+              fill="rgb(110,110,110)"
+              fill-rule="evenodd"
+              stroke="none"
+              stroke-width="1"/>
+        <g id="efyBV2k83wX4"
+           transform="matrix(-1 0 0 1 15 3.02)">
+            <path id="efyBV2k83wX5"
+                  d="M0,0L7,0L7,1.8L0,1.8L0,0Z"
+                  transform="matrix(0.707107 -0.707107 0.707107 0.707107 -0.000265 4.978474)"
+                  fill="rgb(110,110,110)"
+                  fill-rule="evenodd"
+                  stroke="none"
+                  stroke-width="1"/>
+            <path id="efyBV2k83wX6"
+                  d="M0,0L1.8,0L1.8,7L0,7L0,0Z"
+                  transform="matrix(0.707107 -0.707107 0.707107 0.707107 -0.000274 4.97852)"
+                  fill="rgb(110,110,110)"
+                  fill-rule="evenodd"
+                  stroke="none"
+                  stroke-width="1"/>
+        </g>
+    </g>
+</svg>

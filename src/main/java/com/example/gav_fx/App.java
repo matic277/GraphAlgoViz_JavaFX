@@ -8,6 +8,8 @@ import com.example.gav_fx.panes.BottomPane;
 import com.example.gav_fx.panes.GraphPane;
 import com.example.gav_fx.panes.leftpane.LeftPane;
 import com.example.gav_fx.panes.toppane.TopPane;
+import de.codecentric.centerdevice.javafxsvg.SvgImageLoaderFactory;
+import de.codecentric.centerdevice.javafxsvg.dimension.PrimitiveDimensionProvider;
 import javafx.application.Application;
 import javafx.beans.property.DoublePropertyBase;
 import javafx.beans.property.ReadOnlyDoubleProperty;
@@ -19,6 +21,7 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+
 
 public class App extends Application {
     
@@ -42,6 +45,8 @@ public class App extends Application {
     
     @Override
     public void start(Stage stage) {
+    
+        //SvgImageLoaderFactory.install(new PrimitiveDimensionProvider());
         
         //Algorithm algo = vertex -> {
         //    // if you have info, don't do anything

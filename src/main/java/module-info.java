@@ -12,6 +12,7 @@ module com.example.gav_fx {
     requires org.jgrapht.core;
     requires org.apache.commons.lang3;
     requires org.jgrapht.io;
+    requires javafxsvg;
     
     // Extra need for communication between jgrapht and gav_fx modules (or whatever)
     opens com.example.gav_fx to javafx.fxml, org.jgrapht.core;
