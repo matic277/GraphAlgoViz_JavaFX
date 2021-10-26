@@ -94,7 +94,7 @@ public class Edge extends DefaultEdge {
     public void highlight() {
         if (HIGHLIGHTED_EDGE != null) HIGHLIGHTED_EDGE.getLine().setEffect(null);
         HIGHLIGHTED_EDGE = this;
-        HIGHLIGHTED_EDGE.getLine().setEffect(Tools.SHADOW_EFFECT);
+        HIGHLIGHTED_EDGE.getLine().setEffect(Tools.SHADOW_EFFECT_SEARCH);
     }
 
 //    public static String edgesListToString(Collection<Node> col) {

@@ -93,10 +93,10 @@ public class EdgeTab extends TabContentComponent {
                 Node n1 =  MyGraph.getInstance().getNodeById(n1Id);
                 Node n2 =  MyGraph.getInstance().getNodeById(n2Id);
                 
+                // There might be a faster way of doing this
                 Set<Edge> n1Edges = MyGraph.getInstance().getGraph().edgesOf(n1);
                 Set<Edge> n2Edges = MyGraph.getInstance().getGraph().edgesOf(n2);
-    
-                Set<Edge> intersection = new HashSet<>(n1Edges); // use the copy constructor
+                Set<Edge> intersection = new HashSet<>(n1Edges);
                 intersection.retainAll(n2Edges);
     
                 if (intersection.size() == 0) {

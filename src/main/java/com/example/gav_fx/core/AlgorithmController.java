@@ -111,6 +111,7 @@ public class AlgorithmController implements Runnable, StateObservable, GraphChan
     private void incrementState() {
         totalStates++;
         currentStateIndex++;
+        observers.forEach(StateObserver::onNewState);
         observers.forEach(StateObserver::onStateChange);
     }
     

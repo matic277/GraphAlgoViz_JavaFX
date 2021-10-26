@@ -1,13 +1,10 @@
 package com.example.gav_fx.graph;
 
-import com.example.gav_fx.App;
 import com.example.gav_fx.core.AlgorithmController;
 import com.example.gav_fx.core.State;
 import com.example.gav_fx.core.Tools;
 import com.example.gav_fx.panes.GraphPane;
 import javafx.scene.control.Label;
-import javafx.scene.effect.DropShadow;
-import javafx.scene.effect.Effect;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -168,7 +165,7 @@ public class Node extends Circle {
     public void highlight() {
         if (HIGHLIGHTED_NODE != null) HIGHLIGHTED_NODE.setEffect(null);
         HIGHLIGHTED_NODE = this;
-        HIGHLIGHTED_NODE.setEffect(Tools.SHADOW_EFFECT);
+        HIGHLIGHTED_NODE.setEffect(Tools.SHADOW_EFFECT_SEARCH);
     }
     
     public void showIdInfo() {

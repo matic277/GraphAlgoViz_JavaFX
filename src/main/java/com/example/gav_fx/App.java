@@ -110,6 +110,7 @@ public class App extends Application {
     
         // BOTTOM
         BottomPane bottomPane = new BottomPane();
+        algoController.addObserver(bottomPane);
         
         // MAIN CONTAINER
         SplitPane root = new SplitPane();
