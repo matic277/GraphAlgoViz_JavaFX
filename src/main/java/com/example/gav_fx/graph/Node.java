@@ -5,6 +5,8 @@ import com.example.gav_fx.core.AlgorithmController;
 import com.example.gav_fx.core.State;
 import com.example.gav_fx.panes.GraphPane;
 import javafx.scene.control.Label;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.effect.Effect;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -43,6 +45,7 @@ public class Node extends Circle {
     private static final Border ON_HOVER_BORDER = new Border(new BorderStroke(Color.WHITESMOKE, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT));
     
     final Delta dragDelta = new Delta();
+    
     static class Delta { double x, y; }
     
     // Edge creating
@@ -59,6 +62,10 @@ public class Node extends Circle {
     private boolean coordsShowing = false;
     private Label neighboursInfo;
     private boolean neighboursShowing = false;
+    
+    private static Node HIGHLIGHTED_NODE = null; // only one highlighted node at a time for now...
+    private static final Color HIGHLIGHT_COLOR = Color.YELLOW;
+    private static final Effect shadowEffect = new DropShadow(15, HIGHLIGHT_COLOR);
     
     @Deprecated(since = "Do not use this constructor, use MyGraph.newNode()")
     public Node(int x, int y, int id) {
@@ -157,6 +164,12 @@ public class Node extends Circle {
         this.setOnMouseExited(e -> {
             setNewBorderColor(BORDER_COLOR.invert());
         });
+    }
+    
+    public void highlight() {
+        if (HIGHLIGHTED_NODE != null) HIGHLIGHTED_NODE.setEffect(null);
+        HIGHLIGHTED_NODE = this;
+        HIGHLIGHTED_NODE.setEffect(shadowEffect);
     }
     
     public void showIdInfo() {
