@@ -1,5 +1,7 @@
 package com.example.gav_fx.panes.leftpane.tabs;
 
+import com.example.gav_fx.core.LOG;
+import com.example.gav_fx.core.OutputType;
 import com.example.gav_fx.core.Tools;
 import com.example.gav_fx.core.Tools.Tuple;
 import com.example.gav_fx.graph.Edge;
@@ -11,7 +13,11 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.function.Supplier;
+
 
 public class EdgeTab extends TabContentComponent {
     
@@ -29,7 +35,7 @@ public class EdgeTab extends TabContentComponent {
         VBox widthComponent = getEdgeWidthComponent();
         VBox colorComponent = getEdgeColorComponent();
         VBox opacityComponent = getOpacityComponent();
-        VBox addRemoveEdgeComponent = getAddRemoveEdgeComponent();
+        VBox addRemoveEdgeComponent = getAddRemoveSearchEdgeComponent();
         
         this.getChildren().addAll(
                 widthComponent,
@@ -38,7 +44,7 @@ public class EdgeTab extends TabContentComponent {
                 addRemoveEdgeComponent);
     }
     
-    private VBox getAddRemoveEdgeComponent() {
+    private VBox getAddRemoveSearchEdgeComponent() {
         final int maxWidth = 215;
         final int maxInputField = 100; // TODO unnecessary
         HBox titleContainer = getTitleContainer("Add or remove edge");
@@ -77,8 +83,42 @@ public class EdgeTab extends TabContentComponent {
         rmvBtn.setOnMouseClicked(e -> {
             // TODO
         });
-        HBox btnContainer = new HBox(addBtn, rmvBtn);
-        btnContainer.setSpacing(5);
+    
+        // TODO this button gets missaligned if it has a svg background... whyyy
+        Button searchBtn = getSearchIconButton();
+        searchBtn.setOnAction(event -> {
+            try {
+                int n1Id = Integer.parseInt(n1Input.getText());
+                int n2Id = Integer.parseInt(n2Input.getText());
+                Node n1 =  MyGraph.getInstance().getNodeById(n1Id);
+                Node n2 =  MyGraph.getInstance().getNodeById(n2Id);
+                
+                Set<Edge> n1Edges = MyGraph.getInstance().getGraph().edgesOf(n1);
+                Set<Edge> n2Edges = MyGraph.getInstance().getGraph().edgesOf(n2);
+    
+                Set<Edge> intersection = new HashSet<>(n1Edges); // use the copy constructor
+                intersection.retainAll(n2Edges);
+    
+                if (intersection.size() == 0) {
+                    LOG.out("", "Found no edges between n1=" + n1 + " and n2=" + n2 + ".", OutputType.WARNING);
+                    return;
+                }
+                if (intersection.size() > 1) {
+                    LOG.out("", "Found more than one edge between n1=" + n1 + " and n2=" + n2 +
+                            ". Edges: " + Arrays.deepToString(intersection.toArray()), OutputType.ERROR);
+                    return;
+                }
+                intersection.stream().findFirst().get().highlight();
+            }
+            catch (Exception e) {
+                /* ignore */
+                LOG.out("", "Can't find node by id \"" + n1Input.getText() +
+                        "\" or \"" + n2Input.getText() + "\".", OutputType.ERROR);
+            }
+        });
+        
+        HBox btnContainer = new HBox(searchBtn, addBtn, rmvBtn);
+        btnContainer.setSpacing(0);
         btnContainer.setAlignment(Pos.BASELINE_RIGHT);
         
         VBox contentContainer = new VBox(titleContainer, nContainer, info, btnContainer);

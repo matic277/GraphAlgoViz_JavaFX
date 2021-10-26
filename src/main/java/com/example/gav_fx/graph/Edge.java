@@ -1,5 +1,6 @@
 package com.example.gav_fx.graph;
 
+import com.example.gav_fx.core.Tools;
 import com.example.gav_fx.panes.GraphPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
@@ -19,6 +20,8 @@ public class Edge extends DefaultEdge {
     
     private Color color = Color.BLACK; // default
     public static double strokeWidth = 1;
+    
+    private static Edge HIGHLIGHTED_EDGE = null; // only one highlighted node at a time for now...
     
     // Note:
     // This is a constructor for JGraphT and is only needed when calling
@@ -86,6 +89,12 @@ public class Edge extends DefaultEdge {
                 clr.getBlue(),
                 opacity);
         line.setStroke(color);
+    }
+    
+    public void highlight() {
+        if (HIGHLIGHTED_EDGE != null) HIGHLIGHTED_EDGE.getLine().setEffect(null);
+        HIGHLIGHTED_EDGE = this;
+        HIGHLIGHTED_EDGE.getLine().setEffect(Tools.SHADOW_EFFECT);
     }
 
 //    public static String edgesListToString(Collection<Node> col) {

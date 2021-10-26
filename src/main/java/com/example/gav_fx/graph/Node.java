@@ -3,6 +3,7 @@ package com.example.gav_fx.graph;
 import com.example.gav_fx.App;
 import com.example.gav_fx.core.AlgorithmController;
 import com.example.gav_fx.core.State;
+import com.example.gav_fx.core.Tools;
 import com.example.gav_fx.panes.GraphPane;
 import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
@@ -64,8 +65,6 @@ public class Node extends Circle {
     private boolean neighboursShowing = false;
     
     private static Node HIGHLIGHTED_NODE = null; // only one highlighted node at a time for now...
-    private static final Color HIGHLIGHT_COLOR = Color.YELLOW;
-    private static final Effect shadowEffect = new DropShadow(15, HIGHLIGHT_COLOR);
     
     @Deprecated(since = "Do not use this constructor, use MyGraph.newNode()")
     public Node(int x, int y, int id) {
@@ -169,7 +168,7 @@ public class Node extends Circle {
     public void highlight() {
         if (HIGHLIGHTED_NODE != null) HIGHLIGHTED_NODE.setEffect(null);
         HIGHLIGHTED_NODE = this;
-        HIGHLIGHTED_NODE.setEffect(shadowEffect);
+        HIGHLIGHTED_NODE.setEffect(Tools.SHADOW_EFFECT);
     }
     
     public void showIdInfo() {

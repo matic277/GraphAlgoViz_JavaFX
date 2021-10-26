@@ -1,6 +1,8 @@
 package com.example.gav_fx.core;
 
 
+import javafx.scene.effect.DropShadow;
+import javafx.scene.effect.Effect;
 import javafx.scene.paint.Color;
 
 import java.util.HashMap;
@@ -43,6 +45,9 @@ public class Tools {
     //public static final int MAXIMUM_STATS_PANEL_WIDTH = 335;
     //public static final int INITIAL_BOTTOM_MENU_HEIGHT = 200;
     //public static final Dimension INITIAL_IMPORT_WINDOW_SIZE = new Dimension(500, 550);
+    
+    public static final Color HIGHLIGHT_COLOR = Color.rgb(255, 255, 0);
+    public static final Effect SHADOW_EFFECT = new DropShadow(35, HIGHLIGHT_COLOR);
     
     public static final Random RAND = new Random();
     
