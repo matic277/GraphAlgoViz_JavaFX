@@ -40,10 +40,21 @@
     -fx-border-color: border-clr;
     -fx-border-insets: 3 3 3 3;
 }
-
-
 .graph-pane {
    -fx-background-color: derive(fx-bg, -10%);
+}
+
+
+/* TOP BUTTONS */
+.top-button {
+    -fx-background-color: btn-clr;
+}
+
+.button:hover{
+    -fx-background-color: derive(btn-clr, 25%);
+}
+.button:pressed{
+    -fx-background-color: derive(btn-clr, 30%);
 }
 
 
@@ -60,14 +71,16 @@
 }
 */
 
+
+/* LEFT MENU TABS */
 /* Removes spacing around tabs */
-.tab-pane {
+.left-tab-pane {
      /*         top     left */
     -fx-padding: -7 0 0 -7;
     -fx-background-color: fx-bg;
 }
 .tab-header-area .tab-header-background {
-    -fx-background-color: fx-bg;
+    -fx-background-color: transparent;
     -fx-padding: 0;
     -fx-background-insets: 0;
 }
@@ -99,15 +112,12 @@
 }
 
 
-.top-button {
-    -fx-background-color: btn-clr;
-}
-
-.button:hover{
-    -fx-background-color: derive(btn-clr, 25%);
-}
-.button:pressed{
-    -fx-background-color: derive(btn-clr, 30%);
+/* BOTTOM MENU TABS */
+.bottom-tab-pane {
+     /*         top     left */
+    -fx-background-color: fx-bg;
+    -fx-border-color: border-clr;
+    -fx-border-insets:  3;
 }
 
 

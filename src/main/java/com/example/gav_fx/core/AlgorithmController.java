@@ -24,7 +24,7 @@ public class AlgorithmController implements Runnable, StateObservable, GraphChan
     // TODO: should these really be final if we can change number of processors anytime we want.. probably not?
     // TODO: update on change of nodes
     static final CyclicBarrier BARRIER = new CyclicBarrier(PROCESSORS + 1);
-    final ExecutorService THREAD_POOL = Executors.newFixedThreadPool(PROCESSORS);
+    //final ExecutorService THREAD_POOL = Executors.newFixedThreadPool(PROCESSORS);
     final AlgorithmExecutor[] EXECUTORS = new AlgorithmExecutor[PROCESSORS];
     public static final AtomicBoolean NEXT_ROUND_BUTTON_PRESSED = new AtomicBoolean(false);
     
@@ -56,12 +56,16 @@ public class AlgorithmController implements Runnable, StateObservable, GraphChan
     public void signalShutDown() {
         synchronized (AlgorithmController.PAUSE_LOCK) { AlgorithmController.PAUSE_LOCK.notify(); }
         AlgorithmController.STOP_THREAD.set(true);
-        THREAD_POOL.shutdown();
+        //THREAD_POOL.shutdown();
     }
     
     @Override
     public void run() {
         Thread.currentThread().setName("CONTROLLER");
+    
+        LOG.out("\n->", "STARTING EXECUTORS.", outputType);
+        for (AlgorithmExecutor executor : EXECUTORS) executor.start();
+        LOG.out("->", "ALL EXECUTORS STARTED.", outputType);
         
         while (true)
         {
@@ -82,11 +86,6 @@ public class AlgorithmController implements Runnable, StateObservable, GraphChan
             }
             
             if (STOP_THREAD.get()) break;
-            
-            LOG.out("\n->", "STARTING EXECUTORS.", outputType);
-            for (AlgorithmExecutor executor : EXECUTORS)
-                THREAD_POOL.submit(executor);
-            LOG.out("->", "ALL EXECUTORS STARTED.", outputType);
             
             // Waiting for all executors to finish on barrier
             try { AlgorithmController.BARRIER.await(); }
@@ -131,7 +130,7 @@ public class AlgorithmController implements Runnable, StateObservable, GraphChan
     
     public void assignTasks() {
         // Clear all tasks(nodes) from all processors first
-        for (int i=0; i<EXECUTORS.length; i++) EXECUTORS[i].nodes.clear();
+        for (AlgorithmExecutor executor : EXECUTORS) executor.nodesToProcess.clear();
         
         // There are no tasks(nodes) to assign
         if (graph.getGraph().vertexSet().isEmpty()) {
@@ -152,7 +151,7 @@ public class AlgorithmController implements Runnable, StateObservable, GraphChan
             while(iter.hasNext() && --nodeCounter >= 0) {
                 nodesToProcess.add(iter.next());
             }
-            EXECUTORS[i].nodes.addAll(nodesToProcess);
+            EXECUTORS[i].nodesToProcess.addAll(nodesToProcess);
         }
         
         System.out.println();
@@ -242,7 +241,7 @@ public class AlgorithmController implements Runnable, StateObservable, GraphChan
         // one of the executors is processing a node that has been removed
         Node nodeToRemove = e.getVertex();
         for (AlgorithmExecutor ex : EXECUTORS) {
-            boolean foundAndRemoved = ex.nodes.remove(nodeToRemove);
+            boolean foundAndRemoved = ex.nodesToProcess.remove(nodeToRemove);
             if (foundAndRemoved) {
                 return;
             }

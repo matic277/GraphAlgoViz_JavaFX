@@ -1,4 +1,4 @@
-package com.example.gav_fx.panes;
+package com.example.gav_fx.panes.bottompane.tabs;
 
 import com.example.gav_fx.core.AlgorithmController;
 import com.example.gav_fx.core.StateObserver;
@@ -8,11 +8,12 @@ import javafx.geometry.Dimension2D;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class BottomPane extends Pane implements StateObserver {
+public class StateHistoryTab extends Pane implements StateObserver {
     
     FlowPane buttonsContainer;
     
@@ -20,15 +21,15 @@ public class BottomPane extends Pane implements StateObserver {
     final List<Button> stateButtons = new ArrayList<>(16);
     private Button highlightedButton; // indicating current state index
     
-    public BottomPane() {
+    public StateHistoryTab() {
         this.setPrefHeight(200);
-        this.getStyleClass().add("bottom-pane");
         
         buttonsContainer = new FlowPane();
-        buttonsContainer.setPadding(new Insets(10));
+        buttonsContainer.setPadding(new Insets(10, 10, 10, 15));
         buttonsContainer.setHgap(5);
         buttonsContainer.setVgap(5);                                           // insets
         buttonsContainer.prefWrapLengthProperty().bind(this.widthProperty().subtract(20));
+        //buttonsContainer.prefWidthProperty().bind(this.widthProperty());
         
         highlightedButton = getNewStateButton(0);
         highlightedButton.setEffect(Tools.SHADOW_EFFECT_STATE_BTN);
@@ -52,7 +53,7 @@ public class BottomPane extends Pane implements StateObserver {
         int index = AlgorithmController.currentStateIndex;
         Button newBtn = getNewStateButton(index);
         stateButtons.add(newBtn);
-    
+        
         highlightButton(newBtn);
         Platform.runLater(() -> buttonsContainer.getChildren().add(newBtn));
     }

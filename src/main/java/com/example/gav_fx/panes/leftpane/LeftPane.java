@@ -13,6 +13,8 @@ public class LeftPane extends TabPane {
     Tab selectedTab;
     
     public LeftPane() {
+        this.getStyleClass().add("left-tab-pane");
+        
         Tab nodeTab = new Tab();
         nodeTab.setClosable(false);
         NodeTab nTab = new NodeTab();

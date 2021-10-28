@@ -4,7 +4,7 @@ import com.example.gav_fx.core.AlgorithmController;
 import com.example.gav_fx.graph.MyGraph;
 import com.example.gav_fx.graph.Node;
 import com.example.gav_fx.listeners.PanningAndZoomingControls;
-import com.example.gav_fx.panes.BottomPane;
+import com.example.gav_fx.panes.bottompane.BottomPane;
 import com.example.gav_fx.panes.GraphPane;
 import com.example.gav_fx.panes.rightpane.RightPane;
 import com.example.gav_fx.panes.leftpane.LeftPane;
@@ -110,7 +110,7 @@ public class App extends Application {
     
         // BOTTOM
         BottomPane bottomPane = new BottomPane();
-        algoController.addObserver(bottomPane);
+        algoController.addObserver(bottomPane.getStateHistoryTab());
         
         // MAIN CONTAINER
         SplitPane root = new SplitPane();
