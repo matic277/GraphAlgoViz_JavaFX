@@ -1,7 +1,8 @@
 package com.example.gav_fx.graph;
 
-import com.example.gav_fx.core.AlgorithmController;
-import com.example.gav_fx.core.State;
+import com.example.gav_fx.core.WorkBatch;
+import com.example.gav_fx.core.WorkerController;
+import com.example.gav_fx.core.NodeState;
 import com.example.gav_fx.core.Tools;
 import com.example.gav_fx.panes.GraphPane;
 import javafx.scene.control.Label;
@@ -28,7 +29,8 @@ public class Node extends Circle {
     
     public int info = 0;
     //    public Set<Node> neighbors;
-    public List<State> states;
+    public List<NodeState> nodeStates;
+    public WorkBatch workBatch; // tells which batch this node is in, for faster removing on node delete
     
     private Color color;
     
@@ -43,7 +45,6 @@ public class Node extends Circle {
     private static final Border ON_HOVER_BORDER = new Border(new BorderStroke(Color.WHITESMOKE, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT));
     
     final Delta dragDelta = new Delta();
-    
     static class Delta { double x, y; }
     
     // Edge creating
@@ -71,8 +72,8 @@ public class Node extends Circle {
         this.setRadius(NODE_RADIUS);
         this.setFill(UNINFORMED_COLOR);
         
-        states = new ArrayList<>(10);
-        states.add(new State(0)); // uninformed on initialize
+        nodeStates = new ArrayList<>(10);
+        nodeStates.add(new NodeState(0)); // uninformed on initialize
         
         // border
         setStroke(BORDER_COLOR);
@@ -259,16 +260,19 @@ public class Node extends Circle {
     
     public int getNodeId() { return this.id; }
     
-    public State getState() { return this.states.get(AlgorithmController.currentStateIndex); }
+    public NodeState getState() { return this.nodeStates.get(WorkerController.currentStateIndex); }
     
-    public void addState(State state) {
-        this.states.add(state);
+    public void addState(NodeState nodeState) {
+        this.nodeStates.add(nodeState);
     }
     
     public static void setPosition(Node node, Point2D point2D) {
         node.setCenterX(point2D.getX());
         node.setCenterY(point2D.getY());
     }
+    
+    public void setBatchParent(WorkBatch workBatch) { this.workBatch = workBatch; }
+    public WorkBatch getBatchParent() { return workBatch; }
     
     // TODO how optimal is this?
     public List<Node> getNeighbors() {

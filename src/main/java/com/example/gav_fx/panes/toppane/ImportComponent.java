@@ -1,6 +1,6 @@
 package com.example.gav_fx.panes.toppane;
 
-import com.example.gav_fx.core.AlgorithmController;
+import com.example.gav_fx.core.WorkerController;
 import com.example.gav_fx.core.AlgorithmImplementor;
 import com.example.gav_fx.core.Tools;
 import javafx.collections.FXCollections;
@@ -12,7 +12,6 @@ import javafx.scene.shape.SVGPath;
 import javafx.scene.transform.Transform;
 
 import java.io.File;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.*;
@@ -29,7 +28,7 @@ import java.util.*;
  */
 public class ImportComponent extends HBox {
     
-    final AlgorithmController algorithmController;
+    final WorkerController workerController;
     
     // Name of class file (to be displayed in dropdown menu) -> Class File
     final Map<String, File> algorithms;
@@ -38,8 +37,8 @@ public class ImportComponent extends HBox {
     ComboBox<String> dropdown;
     Button refreshBtn;
     
-    public ImportComponent(AlgorithmController algorithmController) {
-        this.algorithmController = algorithmController;
+    public ImportComponent(WorkerController workerController) {
+        this.workerController = workerController;
         this.algorithms = new HashMap<>();
         readAlgorithmFiles();
         init();

@@ -45,7 +45,7 @@ public class NodeInformator implements Runnable {
                 if (alreadyInformed.contains(randId)) continue;
                 
                 alreadyInformed.add(randId);
-                graph.getNodeById(randId).states.get(0).setState(1); // This always mutates state[0]...
+                graph.getNodeById(randId).nodeStates.get(0).setState(1); // This always mutates state[0]...
                 totalNodesToInform--;
             }
     

@@ -4,24 +4,16 @@ import com.example.gav_fx.graph.MyGraph;
 import com.example.gav_fx.graph.Node;
 import com.example.gav_fx.panes.bottompane.tabs.PerformanceTab;
 import javafx.application.Platform;
-import javafx.beans.InvalidationListener;
 import javafx.beans.binding.ObjectBinding;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 
 import java.lang.management.ManagementFactory;
-import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.concurrent.BrokenBarrierException;
-import java.util.concurrent.atomic.AtomicReference;
 
-public class AlgorithmExecutor extends Thread {
+public class Worker extends Thread {
     
-    Set<Node> nodesToProcess;
     Algorithm algorithm;
     
     public String name;
@@ -30,11 +22,10 @@ public class AlgorithmExecutor extends Thread {
     private static final ThreadMXBean THREAD_MX_BEAN = ManagementFactory.getThreadMXBean();
     private ThreadCPUTimeObservable info;
     
-    public AlgorithmExecutor(Set<Node> nodesToProcess, Algorithm algorithm, String threadName) {
-        this.nodesToProcess = nodesToProcess;
+    public Worker(Algorithm algorithm, String threadName) {
         this.algorithm = algorithm;
         this.name = threadName;
-        System.out.println("new executor named: " + threadName + " tasks=" + nodesToProcess);
+        LOG.out(" + ", "New executor named: " + threadName, outputType);
     }
     
     @Override
@@ -46,36 +37,54 @@ public class AlgorithmExecutor extends Thread {
         LOG.out("===>", "Thread '"+name+"' stared.", outputType);
         
         while (true) {
-            try {AlgorithmController.BARRIER.await(); }
+            try {
+                WorkerController.BARRIER.await(); }
             catch (InterruptedException | BrokenBarrierException e) { e.printStackTrace(); }
             
-            if (algorithm == null) {
-                LOG.out(" -> ", "Algorithm == null, returning.", outputType);
-            } else {
-                nodesToProcess.forEach(n -> {
-                    //LOG.out("  ->", "Algo starting on node " + n + ".");
-                    com.example.gav_fx.core.State newState = algorithm.run(new Vertex(n));
-                    n.addState(newState);
+            processWork();
             
-                    if (newState.getState() >= 1) n.setFill(Node.INFORMED_COLOR);
+            LOG.out("  ->", "No more work, waiting on barrier.", outputType);
             
-                    if (newState.getState() >= 1 &&
-                            n.states.get(AlgorithmController.currentStateIndex).getState() == 0) {
-                        MyGraph.getInstance().signalNewInformedNode();
-                    }
-                    //LOG.out("  ->", "Algo done on node     " + n + ".");
-                });
-                LOG.out("  ->", "AlgoExecutor done for all nodes, waiting on barrier.", outputType);
-            }
-            info.computeValue().updateValue(name + ": " + THREAD_MX_BEAN.getThreadCpuTime(Thread.currentThread().getId()));
+            // artificial work
+            //for (int i=0; i<10000; i++) System.out.println(i);
+            
+            long threadCpuTimeMiliseconds = THREAD_MX_BEAN.getThreadCpuTime(Thread.currentThread().getId()) / 1_000_000;
+            info.computeValue().updateValue(name + ": " + threadCpuTimeMiliseconds);
         }
         
         //LOG.out("===>", "Thread " + name + " shutting down.", outputType);
     }
     
-    public String stateToString() { return name + " -> " + nodesToProcess.size(); }
+    public void processWork() {
+        if (algorithm == null) {
+            LOG.out(" -> ", "Algorithm == null, returning.", outputType);
+            return;
+        }
+        
+        WorkBatch workBatch;
+        while((workBatch = WorkerController.WORK_BATCHES.pop()) != null) {
+            // there is still work to do, so process it
+            workBatch.getNodesToProcess().forEach(this::processNode);
+            WorkerController.PROCESSED_BATCHES.add(workBatch);
+        }
+    }
     
-    public synchronized void addNewNodeToProcess(Node n) { nodesToProcess.add(n); }
+    private void processNode(Node n) {
+        //LOG.out("  ->", "Algo starting on node " + n + ".");
+        NodeState newState = algorithm.run(new Vertex(n));
+        n.addState(newState);
+        
+        if (newState.getState() >= 1) n.setFill(Node.INFORMED_COLOR);
+        
+        if (newState.getState() >= 1 &&
+                n.nodeStates.get(WorkerController.currentStateIndex).getState() == 0) {
+            MyGraph.getInstance().signalNewInformedNode();
+        }
+        //LOG.out("  ->", "Algo done on node     " + n + ".");
+    }
+    
+    
+    //public String stateToString() { return name + " -> " + nodesToProcess.size(); }
     
     public void setAlgorithm(Algorithm algo) { algorithm = algo; }
     
@@ -95,7 +104,10 @@ public class AlgorithmExecutor extends Thread {
         public StringProperty property() { return this.threadCPUTime; }
         
         public void updateValue(String newValue) {
-            Platform.runLater(() -> threadCPUTime.setValue(newValue));
+            LOG.out("->", "Updated value " + newValue, OutputType.WARNING);
+            Platform.runLater(() -> {
+                threadCPUTime.setValue(newValue);
+            });
         }
     }
     

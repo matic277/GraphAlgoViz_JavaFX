@@ -1,10 +1,9 @@
 package com.example.gav_fx.graph;
 
-import com.example.gav_fx.core.AlgorithmController;
+import com.example.gav_fx.core.WorkerController;
 import com.example.gav_fx.core.GraphChangeObserver;
 import com.example.gav_fx.core.GraphObservable;
 import com.example.gav_fx.graphbuilder.GraphBuilder;
-import com.example.gav_fx.panes.GraphPane;
 import org.jgrapht.Graph;
 import org.jgrapht.ListenableGraph;
 import org.jgrapht.event.GraphEdgeChangeEvent;
@@ -178,8 +177,8 @@ public class MyGraph implements GraphObservable {
         
         // delete future history
         graph.vertexSet().forEach(n -> {
-            if (n.states.size() > AlgorithmController.totalStates) {
-                n.states.subList(AlgorithmController.totalStates, n.states.size()).clear();
+            if (n.nodeStates.size() > WorkerController.totalStates) {
+                n.nodeStates.subList(WorkerController.totalStates, n.nodeStates.size()).clear();
             }
         });
         

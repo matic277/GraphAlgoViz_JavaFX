@@ -2,15 +2,15 @@ package com.example.gav_fx.core;
 
 import java.util.List;
 
-public class State {
+public class NodeState {
     
     public int info;
     
-    public State(int info) {
+    public NodeState(int info) {
         this.info = info;
     }
     
-    public State() {
+    public NodeState() {
         this(0);
     }
     
@@ -23,7 +23,7 @@ public class State {
     }
     
     // for debug component drawer, mark current state State with "|"
-    public static String stateListToString(List<State> list) {
+    public static String stateListToString(List<NodeState> list) {
         StringBuilder sb = new StringBuilder()
                 .append("[");
         
@@ -33,10 +33,10 @@ public class State {
         // continue from currState...list.len
         for (int i=0; i<list.size()-1; i++) {
             int state = list.get(i).getState();
-            sb.append(AlgorithmController.currentStateIndex == i ? "|"+state+"|, " : state+", ");
+            sb.append(WorkerController.currentStateIndex == i ? "|"+state+"|, " : state+", ");
         }
         int state = list.get(list.size()-1).getState();
-        sb.append(AlgorithmController.currentStateIndex == list.size()-1 ? "|"+state+"|" : state);
+        sb.append(WorkerController.currentStateIndex == list.size()-1 ? "|"+state+"|" : state);
         return sb.append("]").toString();
     }
     

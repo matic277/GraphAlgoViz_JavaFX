@@ -6,5 +6,5 @@ package com.example.gav_fx.core;
  */
 @FunctionalInterface
 public interface Algorithm {
-    public State run(Vertex vertex); // this could probably just be a Function<Vertex, State>
+    public NodeState run(Vertex vertex); // this could probably just be a Function<Vertex, State>
 }

@@ -1,6 +1,6 @@
 package com.example.gav_fx;
 
-import com.example.gav_fx.core.AlgorithmController;
+import com.example.gav_fx.core.WorkerController;
 import com.example.gav_fx.graph.MyGraph;
 import com.example.gav_fx.graph.Node;
 import com.example.gav_fx.listeners.PanningAndZoomingControls;
@@ -22,7 +22,7 @@ import javafx.stage.Stage;
 public class App extends Application {
     
     Thread controllerThread;
-    AlgorithmController algoController;
+    WorkerController algoController;
     
     // Mouse tracking at all times, enabling bind-able coords
     public static final MouseLocation MOUSE_LOCATION = new MouseLocation();
@@ -65,7 +65,7 @@ public class App extends Application {
         //    return new State(newStateInfo);
         //};
         
-        this.algoController = new AlgorithmController(MyGraph.getInstance());
+        this.algoController = new WorkerController(MyGraph.getInstance());
 //        this.algoController.addObserver(this.mainPanel.getTopPanel().getSimulationPanel());
 //        this.algoController.addObserver();
         this.controllerThread = new Thread(algoController);

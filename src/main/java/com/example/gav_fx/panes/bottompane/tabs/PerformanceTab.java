@@ -1,19 +1,13 @@
 package com.example.gav_fx.panes.bottompane.tabs;
 
-import com.example.gav_fx.core.AlgorithmExecutor;
+import com.example.gav_fx.core.Worker;
 import javafx.application.Platform;
-import javafx.beans.Observable;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import org.apache.commons.lang3.SystemUtils;
 
-import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
-import java.lang.management.ThreadMXBean;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,7 +39,7 @@ public class PerformanceTab extends VBox {
         this.getChildren().add(cpu1Info);
     }
     
-    public static void bindThreadInfo(String threadName, AlgorithmExecutor.ThreadCPUTimeObservable info) {
+    public static void bindThreadInfo(String threadName, Worker.ThreadCPUTimeObservable info) {
         System.out.println("attempt: " + threadName);
         if (threadInfoMap.get(threadName) != null) return;
         

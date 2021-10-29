@@ -1,6 +1,6 @@
 package com.example.gav_fx.panes.bottompane.tabs;
 
-import com.example.gav_fx.core.AlgorithmController;
+import com.example.gav_fx.core.WorkerController;
 import com.example.gav_fx.core.StateObserver;
 import com.example.gav_fx.core.Tools;
 import javafx.application.Platform;
@@ -8,7 +8,6 @@ import javafx.geometry.Dimension2D;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,13 +43,13 @@ public class StateHistoryTab extends Pane implements StateObserver {
     
     @Override
     public void onStateChange() {
-        int index = AlgorithmController.currentStateIndex;
+        int index = WorkerController.currentStateIndex;
         highlightButton(stateButtons.get(index));
     }
     
     @Override
     public void onNewState() {
-        int index = AlgorithmController.currentStateIndex;
+        int index = WorkerController.currentStateIndex;
         Button newBtn = getNewStateButton(index);
         stateButtons.add(newBtn);
         
@@ -68,7 +67,7 @@ public class StateHistoryTab extends Pane implements StateObserver {
         Button btn = new Button(stateIndex + "");
         btn.setPrefSize(BUTTON_SIZE.getWidth(), BUTTON_SIZE.getHeight());
         btn.setOnAction(event -> {
-            AlgorithmController.currentStateIndex = stateIndex;
+            WorkerController.currentStateIndex = stateIndex;
             highlightButton(btn);
             
             // TODO setState in Node to index

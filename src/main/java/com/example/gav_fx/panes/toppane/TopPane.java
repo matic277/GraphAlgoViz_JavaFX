@@ -1,7 +1,7 @@
 package com.example.gav_fx.panes.toppane;
 
-import com.example.gav_fx.core.AlgorithmController;
-import com.example.gav_fx.core.State;
+import com.example.gav_fx.core.WorkerController;
+import com.example.gav_fx.core.NodeState;
 import com.example.gav_fx.core.Tools;
 import com.example.gav_fx.graph.MyGraph;
 import com.example.gav_fx.graph.Node;
@@ -13,7 +13,6 @@ import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Path;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.shape.Shape;
 import javafx.scene.transform.Transform;
@@ -21,12 +20,12 @@ import javafx.scene.transform.Transform;
 public class TopPane extends FlowPane {
     
     private final MyGraph graph = MyGraph.getInstance();
-    private final AlgorithmController algorithmController;
+    private final WorkerController workerController;
     
     private static final Dimension2D BUTTON_SIZE = new Dimension2D(33, 33);
     
-    public TopPane(AlgorithmController algorithmController) {
-        this.algorithmController = algorithmController;
+    public TopPane(WorkerController workerController) {
+        this.workerController = workerController;
         this.setAlignment(Pos.CENTER);
         this.getStyleClass().add("top-pane");
         
@@ -41,7 +40,7 @@ public class TopPane extends FlowPane {
         Button deleteBtn = getDeleteGraphButton();
         Button addNodeBtn = getAddNodeButton();
         
-        ImportComponent importCmp = new ImportComponent(algorithmController);
+        ImportComponent importCmp = new ImportComponent(workerController);
         
         HBox container = new HBox();
         container.setSpacing(5);
@@ -79,17 +78,17 @@ public class TopPane extends FlowPane {
             // Thread safe atomic boolean flip
             // flip the value of PAUSE
             boolean temp;
-            do { temp = AlgorithmController.PAUSE.get(); }
-            while (!AlgorithmController.PAUSE.compareAndSet(temp, !temp));
+            do { temp = WorkerController.PAUSE.get(); }
+            while (!WorkerController.PAUSE.compareAndSet(temp, !temp));
     
             // when pressing continue, jump to the latest state
-            AlgorithmController.currentStateIndex = AlgorithmController.totalStates - 1;
+            WorkerController.currentStateIndex = WorkerController.totalStates - 1;
     
-            synchronized (AlgorithmController.PAUSE_LOCK) {
-                AlgorithmController.PAUSE_LOCK.notify();
+            synchronized (WorkerController.PAUSE_LOCK) {
+                WorkerController.PAUSE_LOCK.notify();
             }
             
-            btn.setGraphic(AlgorithmController.PAUSE.get() ? runSvg : pauseSvg);
+            btn.setGraphic(WorkerController.PAUSE.get() ? runSvg : pauseSvg);
         });
         
         return btn;
@@ -197,16 +196,16 @@ public class TopPane extends FlowPane {
             // when node is added in the middle of the simulation
             // prefill its history (state list) with uninformed states!
             // (one state is automatically made in constructor, so do 1 less)
-            for (int i=0; i<AlgorithmController.currentStateIndex; i++) {
-                newNode.addState(new State(0));
+            for (int i = 0; i< WorkerController.currentStateIndex; i++) {
+                newNode.addState(new NodeState(0));
             }
             
             // TODO move this to some method in MyGraph, like onNodeRemoveOrAdd()
             //   same lambda is in deleteNodeBtn action method!
             // clear future history of states of nodes
             this.graph.getNodes().forEach(n -> {
-                if (n.states.size() > AlgorithmController.totalStates) {
-                    n.states.subList(AlgorithmController.totalStates, n.states.size()).clear();
+                if (n.nodeStates.size() > WorkerController.totalStates) {
+                    n.nodeStates.subList(WorkerController.totalStates, n.nodeStates.size()).clear();
                 }
             });
             

@@ -6,18 +6,21 @@ import com.example.gav_fx.graph.Node;
 import org.jgrapht.event.GraphEdgeChangeEvent;
 import org.jgrapht.event.GraphVertexChangeEvent;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.concurrent.BrokenBarrierException;
-import java.util.concurrent.CyclicBarrier;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.*;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class AlgorithmController implements Runnable, StateObservable, GraphChangeObserver {
+public class WorkerController implements Runnable, StateObservable, GraphChangeObserver {
     
     public static int PROCESSORS = 3;
+    public static int BATCH_SIZE = 3; // // TODO hardcoded for now for testing purposes on smaller graphs (should depend on graph size or let used define it)
+    
+    // WORK_BATCHES: work that must be done by threads
+    // PROCESSED_BATCHES: work that has been processed (popped from work and inserted into processedWork)
+    // batchBuffer: buffer when adding new nodes
+    public static final Deque<WorkBatch> WORK_BATCHES = new ConcurrentLinkedDeque<>();
+    public static final Deque<WorkBatch> PROCESSED_BATCHES = new ConcurrentLinkedDeque<>();
+    private WorkBatch batchBuffer = new WorkBatch();
     
     OutputType outputType = OutputType.ALGO_CONTROLLER;
     
@@ -25,7 +28,7 @@ public class AlgorithmController implements Runnable, StateObservable, GraphChan
     // TODO: update on change of nodes
     static final CyclicBarrier BARRIER = new CyclicBarrier(PROCESSORS + 1);
     //final ExecutorService THREAD_POOL = Executors.newFixedThreadPool(PROCESSORS);
-    final AlgorithmExecutor[] EXECUTORS = new AlgorithmExecutor[PROCESSORS];
+    final List<Worker> WORKERS = new ArrayList<>(PROCESSORS);
     public static final AtomicBoolean NEXT_ROUND_BUTTON_PRESSED = new AtomicBoolean(false);
     
     public static int currentStateIndex = 0; // atomic?
@@ -39,14 +42,15 @@ public class AlgorithmController implements Runnable, StateObservable, GraphChan
     public static final Object PAUSE_LOCK = new Object();
     public static int TIMEOUT_BETWEEN_ROUNDS = 100;
     
-    public AlgorithmController(MyGraph graph /*, Algorithm algo */) {
+    public WorkerController(MyGraph graph /*, Algorithm algo */) {
         this.graph = graph;
         //this.algo = algo;
         
         MyGraph.getInstance().addObserver(this);
         
         initProcessors();
-//        assignTasks();
+        WORK_BATCHES.add(batchBuffer);
+//        initializeWorkBatches();
     }
     
     public void setAlgorithm(Algorithm algo) {
@@ -54,18 +58,18 @@ public class AlgorithmController implements Runnable, StateObservable, GraphChan
     }
     
     public void signalShutDown() {
-        synchronized (AlgorithmController.PAUSE_LOCK) { AlgorithmController.PAUSE_LOCK.notify(); }
-        AlgorithmController.STOP_THREAD.set(true);
+        synchronized (WorkerController.PAUSE_LOCK) { WorkerController.PAUSE_LOCK.notify(); }
+        WorkerController.STOP_THREAD.set(true);
         //THREAD_POOL.shutdown();
     }
     
     @Override
     public void run() {
         Thread.currentThread().setName("CONTROLLER");
-    
-        LOG.out("\n->", "STARTING EXECUTORS.", outputType);
-        for (AlgorithmExecutor executor : EXECUTORS) executor.start();
-        LOG.out("->", "ALL EXECUTORS STARTED.", outputType);
+        LOG.out("\n->", "CONTROLLER THREAD STARTED", outputType);
+        LOG.out("\n->", "Starting all workers...", outputType);
+        for (Worker worker : WORKERS) worker.start();
+        LOG.out("->", "All workers started.", outputType);
         
         while (true)
         {
@@ -87,8 +91,8 @@ public class AlgorithmController implements Runnable, StateObservable, GraphChan
             
             if (STOP_THREAD.get()) break;
             
-            // Waiting for all executors to finish on barrier
-            try { AlgorithmController.BARRIER.await(); }
+            // Waiting for all Workers to finish on barrier
+            try { WorkerController.BARRIER.await(); }
             catch (InterruptedException | BrokenBarrierException e) { e.printStackTrace(); }
             
             incrementState();
@@ -101,7 +105,7 @@ public class AlgorithmController implements Runnable, StateObservable, GraphChan
             //MenuPanel.nextBtn.setEnabled(AlgorithmController.PAUSE.get());
             //MenuPanel.prevBtn.setEnabled(AlgorithmController.PAUSE.get());
             
-            
+            // TODO this will probably not work as good as before
             Tools.sleep(TIMEOUT_BETWEEN_ROUNDS);
         }
         LOG.out("", "AlgorithmController thread terminated.", outputType);
@@ -117,48 +121,55 @@ public class AlgorithmController implements Runnable, StateObservable, GraphChan
     private void initProcessors() {
 //        ThreadFactory factor;
 //        new ExecutorService();
-//
         for (int i=0; i<PROCESSORS; i++) {
-            EXECUTORS[i] = new AlgorithmExecutor(new HashSet<>(), algo, "PR-"+i);
+            WORKERS.add(new Worker(algo, "PR-"+i));
         }
     }
     
     public void onNewAlgorithmSelected(Algorithm algo) {
-        this.algo = algo; // is this field necessary in this class, even?
-        for (int i=0; i<PROCESSORS; i++) EXECUTORS[i].setAlgorithm(algo);
+        this.algo = algo; // is this field even necessary in this class?
+        WORKERS.forEach(w -> w.setAlgorithm(algo));
     }
     
-    public void assignTasks() {
-        // Clear all tasks(nodes) from all processors first
-        for (AlgorithmExecutor executor : EXECUTORS) executor.nodesToProcess.clear();
+    public void initializeWorkBatches() {
+        // Clear all batches first
+        WORK_BATCHES.clear();
+        PROCESSED_BATCHES.clear();
         
-        // There are no tasks(nodes) to assign
+        // There is no work to be processed
         if (graph.getGraph().vertexSet().isEmpty()) {
             return;
         }
         
-        int nodes = this.graph.getNodes().size();
-        int taskSize = nodes / PROCESSORS;
-        int lastTaskSize = (nodes - (taskSize * PROCESSORS)) + taskSize;
-        
-        Iterator<Node> iter = this.graph.getNodes().stream().iterator();
-        
-        for (int i=0; i<PROCESSORS; i++) {
-            // last processor might do more work (task divisibility problem)
-            int nodeCounter = i == PROCESSORS-1 ? lastTaskSize : taskSize;
-            Set<Node> nodesToProcess = new HashSet<>((int)(taskSize*1.1));
-            
-            while(iter.hasNext() && --nodeCounter >= 0) {
-                nodesToProcess.add(iter.next());
+        // Divide work(Node) into batches(WorkBatches)
+        int batchSize = BATCH_SIZE;
+        Iterator<Node> nodeIter = this.graph.getNodes().stream().iterator();
+        while(nodeIter.hasNext()) {
+            final WorkBatch workBatch = new WorkBatch();
+            final Set<Node> batch = new HashSet<>((int)(batchSize*1.1));
+            int batchSizeLimit = batchSize;
+            while(nodeIter.hasNext() && --batchSizeLimit >= 0) {
+                Node n = nodeIter.next();
+                n.setBatchParent(workBatch);
+                batch.add(n);
             }
-            EXECUTORS[i].nodesToProcess.addAll(nodesToProcess);
+            workBatch.setWorkBatch(batch);
+            WORK_BATCHES.add(workBatch);
         }
         
-        System.out.println();
-        System.out.println("Assigned tasks:");
-        for (AlgorithmExecutor ex : EXECUTORS) {
-            System.out.println(" -> " + ex.stateToString());
+        // Just to be sure, check if all nodes have been assigned to a batch
+        int nodes = graph.getGraph().vertexSet().size();
+        int work = WORK_BATCHES.stream().map(WorkBatch::getNodesToProcess).mapToInt(Collection::size).sum();
+        if (nodes != work) {
+            String errMsg = "Error assigning work batches!\n" +
+                    "Number of nodes: " + nodes + ", number of work: " + work;
+            LOG.error(errMsg);
+            throw new RuntimeException(errMsg);
         }
+    }
+    
+    public void updatedProcessorsNumber(int processors) {
+        //int deltaP = processors
     }
     
     
@@ -211,42 +222,47 @@ public class AlgorithmController implements Runnable, StateObservable, GraphChan
     
     @Override
     public void onGraphClear() {
-        AlgorithmController.totalStates = 1;
-        AlgorithmController.currentStateIndex = 0;
+        WorkerController.totalStates = 1;
+        WorkerController.currentStateIndex = 0;
         
-        assignTasks();
+        initializeWorkBatches();
     }
     // TODO methods have the same body
     @Override
     public void onGraphImport() {
-        AlgorithmController.totalStates = 1;
-        AlgorithmController.currentStateIndex = 0;
+        WorkerController.totalStates = 1;
+        WorkerController.currentStateIndex = 0;
         
-        assignTasks();
+        initializeWorkBatches();
     }
     
     @Override
     public void vertexAdded(GraphVertexChangeEvent<Node> e) {
-        // add new node to some random processor
-        int randomProc = Tools.RAND.nextInt(PROCESSORS);
-        EXECUTORS[randomProc].addNewNodeToProcess(e.getVertex());
+        Node newNode = e.getVertex();
+        // since we are using Deque, finding a random
+        // WorkBatch isn't scalable
+        // So create a new one, and keep filling it until its full
+        if (batchBuffer.getNodesToProcess().size() > BATCH_SIZE) {
+            batchBuffer = new WorkBatch();
+            WORK_BATCHES.add(batchBuffer);
+        }
+        // Bind them
+        newNode.setBatchParent(batchBuffer);
+        batchBuffer.addMoreWork(newNode);
     
-        AlgorithmController.totalStates = AlgorithmController.currentStateIndex + 1;
+        WorkerController.totalStates = WorkerController.currentStateIndex + 1;
     }
     
     @Override
     public void vertexRemoved(GraphVertexChangeEvent<Node> e) {
-        AlgorithmController.totalStates = AlgorithmController.currentStateIndex + 1;
-        
-        // one of the executors is processing a node that has been removed
+        WorkerController.totalStates = WorkerController.currentStateIndex + 1;
         Node nodeToRemove = e.getVertex();
-        for (AlgorithmExecutor ex : EXECUTORS) {
-            boolean foundAndRemoved = ex.nodesToProcess.remove(nodeToRemove);
-            if (foundAndRemoved) {
-                return;
-            }
+        boolean removed = nodeToRemove.getBatchParent().getNodesToProcess().remove(nodeToRemove);
+        if (!removed) {
+            String errorMsg = "Node " + nodeToRemove + " not found and wasn't removed from any WorkBatch!";
+            LOG.error(errorMsg);
+            throw new RuntimeException(errorMsg);
         }
-        throw new RuntimeException("Node " + nodeToRemove + " not found and wasn't removed from any executor!");
     }
     
     @Override public void onNewInformedNode() {}

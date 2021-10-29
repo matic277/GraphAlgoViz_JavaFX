@@ -17,7 +17,7 @@ public class Vertex {
         return node.getNeighbors();
     }
     
-    public State getState() {
+    public NodeState getState() {
         return node.getState();
     }
 }
