@@ -2,7 +2,7 @@ package com.example.gav_fx.core;
 
 
 import com.example.gav_fx.graphbuilder.*;
-import com.example.gav_fx.panes.optionpanes.*;
+import com.example.gav_fx.components.optionpanes.*;
 
 public enum ImportType {
     

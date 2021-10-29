@@ -40,6 +40,13 @@
 
 
         <dependency>
+            <groupId>com.profesorfalken</groupId>
+            <artifactId>jPowerShell</artifactId>
+            <version>3.1.1</version>
+        </dependency>
+
+
+        <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
             <version>16</version>

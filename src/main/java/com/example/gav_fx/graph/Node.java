@@ -4,7 +4,7 @@ import com.example.gav_fx.core.WorkBatch;
 import com.example.gav_fx.core.WorkerController;
 import com.example.gav_fx.core.NodeState;
 import com.example.gav_fx.core.Tools;
-import com.example.gav_fx.panes.GraphPane;
+import com.example.gav_fx.components.GraphPane;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;

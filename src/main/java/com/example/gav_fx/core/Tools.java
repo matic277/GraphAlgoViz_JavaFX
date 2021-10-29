@@ -54,11 +54,18 @@ public class Tools {
     
     public static final Color ICON_COLOR = Color.rgb(174, 176, 178);
     
-    public static class Tuple<T> {
-        T l, r;
-        public Tuple(T l_, T r_) { l=l_; r=r_; }
+    public static class Tuple1<T> {
+        final T l, r;
+        public Tuple1(T l_, T r_) { l=l_; r=r_; }
         public T getLeft() { return l; }
         public T getRight() { return r; }
+    }
+    
+    public static class Tuple2<L, R> {
+        final L l; final R r;
+        public Tuple2(L l_, R r_) { l=l_; r=r_; }
+        public L getLeft() { return l; }
+        public R getRight() { return r; }
     }
     
     //// Store request fonts in a map.

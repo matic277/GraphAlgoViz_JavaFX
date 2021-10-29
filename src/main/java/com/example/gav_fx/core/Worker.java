@@ -2,7 +2,9 @@ package com.example.gav_fx.core;
 
 import com.example.gav_fx.graph.MyGraph;
 import com.example.gav_fx.graph.Node;
-import com.example.gav_fx.panes.bottompane.tabs.PerformanceTab;
+import com.example.gav_fx.components.bottompane.tabs.PerformanceTab;
+import com.profesorfalken.jpowershell.PowerShell;
+import com.profesorfalken.jpowershell.PowerShellResponse;
 import javafx.application.Platform;
 import javafx.beans.binding.ObjectBinding;
 import javafx.beans.property.SimpleStringProperty;
@@ -20,7 +22,7 @@ public class Worker extends Thread {
     OutputType outputType = OutputType.ALGO_EXECUTOR;
     
     private static final ThreadMXBean THREAD_MX_BEAN = ManagementFactory.getThreadMXBean();
-    private ThreadCPUTimeObservable info;
+    //private ThreadCPUTimeObservable info;
     
     public Worker(Algorithm algorithm, String threadName) {
         this.algorithm = algorithm;
@@ -28,11 +30,21 @@ public class Worker extends Thread {
         LOG.out(" + ", "New executor named: " + threadName, outputType);
     }
     
+    //public static void main(String[] args) throws Exception {
+    //    String command = "(Get-WmiObject -Query \"select Name, PercentProcessorTime from Win32_PerfFormattedData_PerfOS_Processor\") | foreach-object { write-host \"$($_.Name): $($_.PercentProcessorTime)\" };";
+    //
+    //    //Execute a command in PowerShell session
+    //    PowerShellResponse response = PowerShell.executeSingleCommand(command);
+    //
+    //    //Print results
+    //    System.out.println("List Processes:" + response.getCommandOutput());
+    //}
+    
     @Override
     public void run() {
         this.setName(name);
-        info = new ThreadCPUTimeObservable(name + ": -1");
-        PerformanceTab.bindThreadInfo(name, info);
+        //info = new ThreadCPUTimeObservable(name + ": -1");
+        //PerformanceTab.bindThreadInfo(name, info);
         
         LOG.out("===>", "Thread '"+name+"' stared.", outputType);
         
@@ -48,8 +60,8 @@ public class Worker extends Thread {
             // artificial work
             //for (int i=0; i<10000; i++) System.out.println(i);
             
-            long threadCpuTimeMiliseconds = THREAD_MX_BEAN.getThreadCpuTime(Thread.currentThread().getId()) / 1_000_000;
-            info.computeValue().updateValue(name + ": " + threadCpuTimeMiliseconds);
+            //long threadCpuTimeMiliseconds = THREAD_MX_BEAN.getThreadCpuTime(Thread.currentThread().getId()) / 1_000_000;
+            //info.computeValue().updateValue(name + ": " + threadCpuTimeMiliseconds);
         }
         
         //LOG.out("===>", "Thread " + name + " shutting down.", outputType);
@@ -92,36 +104,35 @@ public class Worker extends Thread {
     /**
      * Not sure if this is working correctly... suspicious
      */
-    
-    public static class ExecutorThreadInfo {
-        final StringProperty threadCPUTime;
-        
-        public ExecutorThreadInfo(String initialValue) {
-            threadCPUTime = new SimpleStringProperty();
-            threadCPUTime.setValue(initialValue);
-        }
-        
-        public StringProperty property() { return this.threadCPUTime; }
-        
-        public void updateValue(String newValue) {
-            LOG.out("->", "Updated value " + newValue, OutputType.WARNING);
-            Platform.runLater(() -> {
-                threadCPUTime.setValue(newValue);
-            });
-        }
-    }
-    
-    public static class ThreadCPUTimeObservable extends ObjectBinding<ExecutorThreadInfo> {
-        private final ExecutorThreadInfo value;
-        
-        public ThreadCPUTimeObservable(String initialValue) {
-            this.value = new ExecutorThreadInfo(initialValue);
-            bind(this.value.property());
-        }
-        
-        @Override
-        protected ExecutorThreadInfo computeValue() {
-            return value;
-        }
-    }
+    //public static class ExecutorThreadInfo {
+    //    final StringProperty threadCPUTime;
+    //
+    //    public ExecutorThreadInfo(String initialValue) {
+    //        threadCPUTime = new SimpleStringProperty();
+    //        threadCPUTime.setValue(initialValue);
+    //    }
+    //
+    //    public StringProperty property() { return this.threadCPUTime; }
+    //
+    //    public void updateValue(String newValue) {
+    //        LOG.out("->", "Updated value " + newValue, OutputType.WARNING);
+    //        Platform.runLater(() -> {
+    //            threadCPUTime.setValue(newValue);
+    //        });
+    //    }
+    //}
+    //
+    //public static class ThreadCPUTimeObservable extends ObjectBinding<ExecutorThreadInfo> {
+    //    private final ExecutorThreadInfo value;
+    //
+    //    public ThreadCPUTimeObservable(String initialValue) {
+    //        this.value = new ExecutorThreadInfo(initialValue);
+    //        bind(this.value.property());
+    //    }
+    //
+    //    @Override
+    //    protected ExecutorThreadInfo computeValue() {
+    //        return value;
+    //    }
+    //}
 }

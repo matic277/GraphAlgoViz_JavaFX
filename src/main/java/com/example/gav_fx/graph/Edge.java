@@ -1,7 +1,7 @@
 package com.example.gav_fx.graph;
 
 import com.example.gav_fx.core.Tools;
-import com.example.gav_fx.panes.GraphPane;
+import com.example.gav_fx.components.GraphPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import org.jgrapht.graph.DefaultEdge;

@@ -1,7 +1,7 @@
 package com.example.gav_fx.listeners;
 
 import com.example.gav_fx.graph.Node;
-import com.example.gav_fx.panes.GraphPane;
+import com.example.gav_fx.components.GraphPane;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;

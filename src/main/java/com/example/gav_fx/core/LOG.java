@@ -1,6 +1,6 @@
 package com.example.gav_fx.core;
 
-import com.example.gav_fx.panes.leftpane.tabs.LogTab;
+import com.example.gav_fx.components.leftpane.tabs.LogTab;
 
 
 public class LOG {
