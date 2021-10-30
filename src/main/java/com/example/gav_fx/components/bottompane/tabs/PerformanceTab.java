@@ -3,14 +3,14 @@ package com.example.gav_fx.components.bottompane.tabs;
 import com.example.gav_fx.components.bottompane.CPUUtilizationUpdater;
 import javafx.beans.property.IntegerProperty;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 
 
 public class PerformanceTab extends HBox {
-    
-    private static PerformanceTab INSTANCE;
     
     private final CPUUtilizationUpdater cpuInfoUpdater;
     
@@ -21,7 +21,6 @@ public class PerformanceTab extends HBox {
     public PerformanceTab() {
         this.setPadding(new Insets(10));
         this.setSpacing(10);
-        INSTANCE = this;
         
         cpuInfoUpdater = new CPUUtilizationUpdater();
         new Thread(cpuInfoUpdater).start();
@@ -35,12 +34,33 @@ public class PerformanceTab extends HBox {
             Label valueText = new Label();
             valueText.textProperty().bind(properties[i].asString());
             
+            // Region would be better for styling, but
+            // can't bind height property... only add/subract/multiply/...
+            Rectangle rect = new Rectangle();
+            //rect.getStyleClass().add("cpu-Util-Rect");
+            rect.setFill(Color.BLUE);
+            rect.heightProperty().bind(properties[i]);
+            rect.setWidth(31);
+            rect.setArcHeight(10);
+            rect.setArcWidth(10);
+            
             VBox cpuInfoContainer = new VBox();
-            cpuInfoContainer.setMaxHeight(80);
-            cpuInfoContainer.setPadding(new Insets(5));
-            cpuInfoContainer.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, new CornerRadii(5), BorderWidths.DEFAULT)));
-            cpuInfoContainer.getChildren().addAll(infoText, valueText);
-            this.getChildren().add(cpuInfoContainer);
+            cpuInfoContainer.setPrefHeight(100);
+            cpuInfoContainer.setPrefWidth(35);
+            cpuInfoContainer.setMinWidth(35);
+            cpuInfoContainer.setMaxWidth(35);
+            
+            cpuInfoContainer.setAlignment(Pos.BOTTOM_LEFT);
+            cpuInfoContainer.setPadding(Insets.EMPTY);
+            cpuInfoContainer.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, new CornerRadii(5), new BorderWidths(1.5))));
+            cpuInfoContainer.getChildren().addAll(rect);
+            
+            VBox mainContainer = new VBox(infoText, cpuInfoContainer);
+            mainContainer.setAlignment(Pos.CENTER);
+            mainContainer.setSpacing(5);
+            mainContainer.setPrefWidth(45);
+            
+            this.getChildren().add(mainContainer);
         }
     }
 }

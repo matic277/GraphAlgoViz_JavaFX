@@ -5,6 +5,11 @@ import com.example.gav_fx.core.WorkerController;
 import com.example.gav_fx.core.NodeState;
 import com.example.gav_fx.core.Tools;
 import com.example.gav_fx.components.GraphPane;
+import com.sun.javafx.binding.StringConstant;
+import javafx.beans.Observable;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ObservableStringValue;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -90,7 +95,6 @@ public class Node extends Circle {
             setCenterX(event.getX() + dragDelta.x);
             setCenterY(event.getY() + dragDelta.y);
             
-            // TODO: bind this using textProperty
             if (coordsInfo != null) {
                 updateCoordsInfo();
             }
@@ -100,7 +104,7 @@ public class Node extends Circle {
         this.setOnMouseClicked(event -> {
         
         });
-    
+        
         // Right-click menu for deleting edges
         this.setOnContextMenuRequested(e -> GraphPane.INSTANCE.openContextMenuForNode(e));
         
@@ -198,8 +202,8 @@ public class Node extends Circle {
         coordsShowing = true;
         coordsInfo = new Label();
         coordsInfo.setFont(INFO_FONT);
-        updateCoordsInfo();
         
+        updateCoordsInfo(); // Using .bind() actually seems like more work... so just do this instead
         coordsInfo.layoutXProperty().bind(centerXProperty().add(radiusProperty().add(10)));
         coordsInfo.layoutYProperty().bind(centerYProperty().subtract(radiusProperty()).add(EXTRA_INFO_VERTICAL_SPACING + INFO_FONT_SIZE));
         GraphPane.INSTANCE.addNodeLabel(coordsInfo);

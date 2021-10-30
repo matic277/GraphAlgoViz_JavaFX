@@ -147,8 +147,6 @@ public class WorkerController implements Runnable, StateObservable, GraphChangeO
     }
     
     private void initProcessors() {
-//        ThreadFactory factor;
-//        new ExecutorService();
         for (int i=0; i<PROCESSORS; i++) {
             WORKERS.add(new Worker(algo, "PR-"+i));
         }
@@ -199,42 +197,6 @@ public class WorkerController implements Runnable, StateObservable, GraphChangeO
     public void updatedProcessorsNumber(int processors) {
         //int deltaP = processors
     }
-    
-    
-    //public void removeNode(Node node) {
-    //    for (AlgorithmExecutor ex : EXECUTORS) {
-    //        boolean foundAndRemoved = ex.nodes.remove(node);
-    //        if (foundAndRemoved) {
-    //            return;
-    //        }
-    //    }
-    //    throw new RuntimeException("Node " + node + " not found and removed!");
-    //}
-    
-    //public Algorithm getAlgorithm() {
-    //    return node -> {
-    //        // if you have info, don't do anything
-    //        if (node.getState().info > 0) return new State(node.getState().info);
-    //
-    //        // Some nodes have no neighbors, so
-    //        // in this case don't do anything.
-    //        // Return the same state you're in.
-    //        if (node.getNeighbors().isEmpty()) return new State(node.getState().info);
-    //
-    //        // get two random neighbors
-    //        Node randNeigh1 = node.getNeighbors().get(Tools.RAND.nextInt(node.getNeighbors().size()));
-    //        Node randNeigh2 = node.getNeighbors().get(Tools.RAND.nextInt(node.getNeighbors().size()));
-    //        State stateOfNeigh1 = randNeigh1.getState();
-    //        State stateOfNeigh2 = randNeigh2.getState();
-    //
-    //        // or
-    //        int newStateInfo = stateOfNeigh1.info | stateOfNeigh2.info | node.getState().info;
-    //
-    //        return new State(newStateInfo);
-    //    };
-    //}
-    
-    //public void setAlgorithm(Algorithm a) { algo = a; }
     
     Set<StateObserver> observers = new HashSet<>(8);
     

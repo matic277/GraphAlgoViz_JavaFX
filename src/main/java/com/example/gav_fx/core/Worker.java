@@ -2,13 +2,6 @@ package com.example.gav_fx.core;
 
 import com.example.gav_fx.graph.MyGraph;
 import com.example.gav_fx.graph.Node;
-import com.example.gav_fx.components.bottompane.tabs.PerformanceTab;
-import com.profesorfalken.jpowershell.PowerShell;
-import com.profesorfalken.jpowershell.PowerShellResponse;
-import javafx.application.Platform;
-import javafx.beans.binding.ObjectBinding;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
@@ -31,16 +24,6 @@ public class Worker extends Thread {
         this.name = threadName;
         LOG.out(" + ", "New executor named: " + threadName, outputType);
     }
-    
-    //public static void main(String[] args) throws Exception {
-    //    String command = "(Get-WmiObject -Query \"select Name, PercentProcessorTime from Win32_PerfFormattedData_PerfOS_Processor\") | foreach-object { write-host \"$($_.Name): $($_.PercentProcessorTime)\" };";
-    //
-    //    //Execute a command in PowerShell session
-    //    PowerShellResponse response = PowerShell.executeSingleCommand(command);
-    //
-    //    //Print results
-    //    System.out.println("List Processes:" + response.getCommandOutput());
-    //}
     
     @Override
     public void run() {

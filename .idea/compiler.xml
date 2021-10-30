@@ -13,4 +13,9 @@
       <module name="GAV_FX" target="16" />
     </bytecodeTargetLevel>
   </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="GAV_FX" options="--add-exports javafx.base/com.sun.javafx.binding=com.example.gav_fx" />
+    </option>
+  </component>
 </project>
