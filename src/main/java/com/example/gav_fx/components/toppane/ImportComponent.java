@@ -55,6 +55,8 @@ public class ImportComponent extends HBox {
         dropdown.getStyleClass().add("toolbar-button");
         dropdown.setOnAction(e -> {
             try {
+                // Do nothing for now...
+                
                 // TODO how to load outside .class files or load .java and compile them here?
                 //URL filUrl = algorithms.get(dropdown.getSelectionModel().getSelectedItem()).toURI().toURL();
                 //URL[] urls = new URL[]{filUrl};
@@ -65,14 +67,14 @@ public class ImportComponent extends HBox {
                 //// Load in the class; MyClass.class should be located in
                 //// the directory file:/c:/myclasses/com/mycompany
                 //Class cls = cl.loadClass("com.mycompany.MyClass");
+                
+                //URL dirUrl = algoFolder.toURI().toURL();
+                //System.out.println(dirUrl);
+                //URLClassLoader cl = new URLClassLoader(new URL[] {dirUrl}, AlgorithmImplementor.class.getClassLoader());  // 2
+                //Class loadedClass = cl.loadClass(dropdown.getSelectionModel().getSelectedItem().replace(".class", ""));
+                //Object obj =  loadedClass.getDeclaredConstructor().newInstance();
     
-                URL dirUrl = algoFolder.toURI().toURL();
-                System.out.println(dirUrl);
-                URLClassLoader cl = new URLClassLoader(new URL[] {dirUrl}, AlgorithmImplementor.class.getClassLoader());  // 2
-                Class loadedClass = cl.loadClass(dropdown.getSelectionModel().getSelectedItem().replace(".class", ""));
-                Object obj =  loadedClass.getDeclaredConstructor().newInstance();
-    
-                System.out.println(obj);
+                //System.out.println(obj);
                 
                 //Algorithm algo = (Algorithm) Class.forName("test.MyClass").getDeclaredConstructor().newInstance();
                 //algorithmController.setAlgorithm(algo);

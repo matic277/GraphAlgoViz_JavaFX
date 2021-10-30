@@ -18,8 +18,8 @@ public class WorkerController implements Runnable, StateObservable, GraphChangeO
     // WORK_BATCHES: work that must be done by threads
     // PROCESSED_BATCHES: work that has been processed (popped from work and inserted into processedWork)
     // batchBuffer: buffer when adding new nodes
-    public static final Deque<WorkBatch> WORK_BATCHES = new ConcurrentLinkedDeque<>();
-    public static final Deque<WorkBatch> PROCESSED_BATCHES = new ConcurrentLinkedDeque<>();
+    public static Deque<WorkBatch> WORK_BATCHES = new ConcurrentLinkedDeque<>();
+    public static Deque<WorkBatch> PROCESSED_BATCHES = new ConcurrentLinkedDeque<>();
     private WorkBatch batchBuffer = new WorkBatch();
     
     OutputType outputType = OutputType.ALGO_CONTROLLER;
@@ -28,6 +28,7 @@ public class WorkerController implements Runnable, StateObservable, GraphChangeO
     // TODO: update on change of nodes
     static final CyclicBarrier BARRIER = new CyclicBarrier(PROCESSORS + 1);
     //final ExecutorService THREAD_POOL = Executors.newFixedThreadPool(PROCESSORS);
+    private boolean WORKERS_STARTED = false;
     final List<Worker> WORKERS = new ArrayList<>(PROCESSORS);
     public static final AtomicBoolean NEXT_ROUND_BUTTON_PRESSED = new AtomicBoolean(false);
     
@@ -53,28 +54,40 @@ public class WorkerController implements Runnable, StateObservable, GraphChangeO
 //        initializeWorkBatches();
     }
     
+    public static void doOneRoundOfWork() {
+        System.out.println("one round of work start");
+        synchronized (WorkerController.PAUSE_LOCK) {
+            NEXT_ROUND_BUTTON_PRESSED.compareAndSet(false, true);
+            //WorkerController.PAUSE.compareAndSet(true, false);
+            WorkerController.PAUSE_LOCK.notify();
+        }
+    }
+    
     public void setAlgorithm(Algorithm algo) {
         this.algo = algo;
+        WORKERS.forEach(w -> w.setAlgorithm(algo));
     }
     
     public void signalShutDown() {
-        synchronized (WorkerController.PAUSE_LOCK) { WorkerController.PAUSE_LOCK.notify(); }
         WorkerController.STOP_THREAD.set(true);
+        synchronized (WorkerController.PAUSE_LOCK) { WorkerController.PAUSE_LOCK.notify(); }
+        synchronized (WorkerController.BARRIER) { BARRIER.notifyAll(); }
         //THREAD_POOL.shutdown();
     }
     
     @Override
     public void run() {
-        Thread.currentThread().setName("CONTROLLER");
-        LOG.out("\n->", "CONTROLLER THREAD STARTED", outputType);
-        LOG.out("\n->", "Starting all workers...", outputType);
+        Thread.currentThread().setName("CNTRLR");
+        LOG.out("\n + ", "Controller thread started", outputType);
+        
+        LOG.out("\n -> ", "Starting all workers...", outputType);
         for (Worker worker : WORKERS) worker.start();
-        LOG.out("->", "All workers started.", outputType);
         
         while (true)
         {
+            // Wait at start
             if (PAUSE.getAcquire()) {
-                LOG.out("->", "PAUSING.", outputType);
+                LOG.warning("PAUSING");
                 synchronized (PAUSE_LOCK) {
                     while (PAUSE.getAcquire() && !NEXT_ROUND_BUTTON_PRESSED.get()) {
                         if (STOP_THREAD.get()) break;
@@ -86,32 +99,47 @@ public class WorkerController implements Runnable, StateObservable, GraphChangeO
                     // if not woken up by button, then don't do anything and just continue
                     boolean wasPressed = NEXT_ROUND_BUTTON_PRESSED.compareAndSet(true, false);
                 }
-                LOG.out("->", "CONTINUING.", outputType);
+                LOG.out("->", "CONTINUING", outputType);
             }
+            
+            // Wake up workers
+            LOG.warning("Waking up workers");
+            synchronized (Worker.WORKER_LOCK) { Worker.WORKER_LOCK.notifyAll(); }
+            
+            // Waiting for all Workers to finish processing
+            try { WorkerController.BARRIER.await(); }
+            catch (InterruptedException | BrokenBarrierException e) { e.printStackTrace(); }
+            LOG.warning("ALL WORKERS DONE; BARRIER TIPPED");
             
             if (STOP_THREAD.get()) break;
             
-            // Waiting for all Workers to finish on barrier
-            try { WorkerController.BARRIER.await(); }
-            catch (InterruptedException | BrokenBarrierException e) { e.printStackTrace(); }
-            
+            // All workers done, do some processing
             incrementState();
+    
+            // switch references around to re-add work
+            // work_batches should be empty at this point, and processed_batches should be full
+            var tmpRef = WORK_BATCHES;
+            WORK_BATCHES = PROCESSED_BATCHES;
+            PROCESSED_BATCHES = tmpRef;
+            LOG.warning("Switched batches; wrk_batch:" + WORK_BATCHES.size() + ", prcs_btchs: " + PROCESSED_BATCHES.size());
             
-            LOG.out("\n->", "BARRIER TIPPED.", outputType);
-            LOG.out(" ->", "currentStateIndex="+currentStateIndex, outputType);
-            LOG.out(" ->", "totalStates="+totalStates, outputType);
+            LOG.warning("STATUS\n" +
+                    " -> currentStateIndex="+currentStateIndex + "\n" +
+                    " -> totalStates="+totalStates);
             
             // TODO
             //MenuPanel.nextBtn.setEnabled(AlgorithmController.PAUSE.get());
             //MenuPanel.prevBtn.setEnabled(AlgorithmController.PAUSE.get());
             
-            // TODO this will probably not work as good as before
             Tools.sleep(TIMEOUT_BETWEEN_ROUNDS);
         }
+    
+        synchronized (Worker.WORKER_LOCK) { Worker.WORKER_LOCK.notifyAll(); }
         LOG.out("", "AlgorithmController thread terminated.", outputType);
     }
     
     private void incrementState() {
+        System.out.println("INCREMENTING");
         totalStates++;
         currentStateIndex++;
         observers.forEach(StateObserver::onNewState);

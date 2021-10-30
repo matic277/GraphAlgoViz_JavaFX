@@ -16,6 +16,8 @@ import java.util.concurrent.BrokenBarrierException;
 
 public class Worker extends Thread {
     
+    public static final Object WORKER_LOCK = new Object();
+    
     Algorithm algorithm;
     
     public String name;
@@ -43,46 +45,50 @@ public class Worker extends Thread {
     @Override
     public void run() {
         this.setName(name);
-        //info = new ThreadCPUTimeObservable(name + ": -1");
-        //PerformanceTab.bindThreadInfo(name, info);
+        LOG.out(" + ", "Thread '"+name+"' stared.", outputType);
         
-        LOG.out("===>", "Thread '"+name+"' stared.", outputType);
-        
-        while (true) {
-            try {
-                WorkerController.BARRIER.await(); }
-            catch (InterruptedException | BrokenBarrierException e) { e.printStackTrace(); }
+        while (!WorkerController.STOP_THREAD.get()) {
+            // Wait for controller to do some work management
+            // and wake you up
+            synchronized (WORKER_LOCK) {
+                try { WORKER_LOCK.wait(); }
+                catch (InterruptedException e) { e.printStackTrace(); }
+            }
             
+            // Management by controller is done. Processing can continue
+            LOG.warning("Worker waken up");
             processWork();
             
-            LOG.out("  ->", "No more work, waiting on barrier.", outputType);
-            
-            // artificial work
-            //for (int i=0; i<10000; i++) System.out.println(i);
-            
-            //long threadCpuTimeMiliseconds = THREAD_MX_BEAN.getThreadCpuTime(Thread.currentThread().getId()) / 1_000_000;
-            //info.computeValue().updateValue(name + ": " + threadCpuTimeMiliseconds);
+            // Signal that your work is done... waiting for others
+            try { WorkerController.BARRIER.await(); }
+            catch (InterruptedException | BrokenBarrierException e) { e.printStackTrace(); }
+            LOG.warning("Barrier broken");
         }
         
-        //LOG.out("===>", "Thread " + name + " shutting down.", outputType);
+        LOG.out(" - ", "Thread " + name + " shutting down.", outputType);
     }
     
     public void processWork() {
+        LOG.out("Processing batches.", outputType);
         if (algorithm == null) {
             LOG.out(" -> ", "Algorithm == null, returning.", outputType);
+            //WorkerController.PROCESSED_BATCHES.add(WorkerController.WORK_BATCHES.pop());
             return;
         }
         
+        int processedBatches = 0;
         WorkBatch workBatch;
-        while((workBatch = WorkerController.WORK_BATCHES.pop()) != null) {
+        while((workBatch = WorkerController.WORK_BATCHES.poll()) != null) {
             // there is still work to do, so process it
             workBatch.getNodesToProcess().forEach(this::processNode);
             WorkerController.PROCESSED_BATCHES.add(workBatch);
+            processedBatches++;
         }
+        LOG.out("Done processing, processed  " + processedBatches + " batches.", outputType);
     }
     
     private void processNode(Node n) {
-        //LOG.out("  ->", "Algo starting on node " + n + ".");
+        //LOG.out("Algo starting on node " + n + " with currIndex " + WorkerController.currentStateIndex);
         NodeState newState = algorithm.run(new Vertex(n));
         n.addState(newState);
         

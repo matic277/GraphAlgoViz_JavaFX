@@ -73,7 +73,6 @@ public class TopPane extends FlowPane {
         btn.setPrefSize(BUTTON_SIZE.getWidth(), BUTTON_SIZE.getHeight());
         btn.setGraphic(runSvg);
         
-        
         btn.setOnMouseClicked(event -> {
             // Thread safe atomic boolean flip
             // flip the value of PAUSE
@@ -122,7 +121,7 @@ public class TopPane extends FlowPane {
         btn.setGraphic(mainShape);
     
         btn.setOnMouseClicked(event -> {
-        
+            WorkerController.doOneRoundOfWork();
         });
     
         return btn;

@@ -30,13 +30,13 @@ public class CPUUtilizationUpdater implements Runnable {
     
     @Override
     public void run() {
-        LOG.out(" -> ", this.getClass().getSimpleName() + " started.", OutputType.DEBUG);
+        //LOG.out(" -> ", this.getClass().getSimpleName() + " started.", OutputType.DEBUG);
         while (!WorkerController.STOP_THREAD.get()) {
             try {
                 long t0 = System.currentTimeMillis();
-    
+                
                 update();
-    
+                
                 long timeTakenToUpdate = (System.currentTimeMillis() - t0) / 1000;
                 long sleepTime = UPDATE_INTERVAL_MS - timeTakenToUpdate;
                 Tools.sleep(sleepTime);
@@ -47,7 +47,7 @@ public class CPUUtilizationUpdater implements Runnable {
                         " on line" + e.getStackTrace()[0]);
             }
         }
-        LOG.out(" -> ", this.getClass().getSimpleName() + " finished.", OutputType.DEBUG);
+        //LOG.out(" -> ", this.getClass().getSimpleName() + " finished.", OutputType.DEBUG);
     }
     
     public void update() {

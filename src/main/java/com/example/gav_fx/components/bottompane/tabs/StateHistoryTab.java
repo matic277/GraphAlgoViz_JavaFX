@@ -3,6 +3,8 @@ package com.example.gav_fx.components.bottompane.tabs;
 import com.example.gav_fx.core.WorkerController;
 import com.example.gav_fx.core.StateObserver;
 import com.example.gav_fx.core.Tools;
+import com.example.gav_fx.graph.MyGraph;
+import com.example.gav_fx.graph.Node;
 import javafx.application.Platform;
 import javafx.geometry.Dimension2D;
 import javafx.geometry.Insets;
@@ -43,12 +45,16 @@ public class StateHistoryTab extends Pane implements StateObserver {
     
     @Override
     public void onStateChange() {
+        // TODO not working correctly
+        System.out.println("STATE CHANGE");
         int index = WorkerController.currentStateIndex;
         highlightButton(stateButtons.get(index));
     }
     
     @Override
     public void onNewState() {
+        // TODO not working correctly
+        System.out.println("NEW STATE");
         int index = WorkerController.currentStateIndex;
         Button newBtn = getNewStateButton(index);
         stateButtons.add(newBtn);
@@ -71,7 +77,7 @@ public class StateHistoryTab extends Pane implements StateObserver {
             highlightButton(btn);
             
             // TODO setState in Node to index
-            //MyGraph.getInstance().getNodes().forEach(n -> n.stat);
+            MyGraph.getInstance().getNodes().forEach(Node::setCurrentState);
         });
         return btn;
     }

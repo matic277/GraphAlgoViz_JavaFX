@@ -90,6 +90,7 @@ public class Node extends Circle {
             setCenterX(event.getX() + dragDelta.x);
             setCenterY(event.getY() + dragDelta.y);
             
+            // TODO: bind this using textProperty
             if (coordsInfo != null) {
                 updateCoordsInfo();
             }
@@ -161,6 +162,12 @@ public class Node extends Circle {
         this.setOnMouseExited(e -> {
             setNewBorderColor(BORDER_COLOR.invert());
         });
+    }
+    
+    public void setCurrentState() {
+        NodeState stateToSet = nodeStates.get(WorkerController.currentStateIndex);
+        this.setNodeColor(stateToSet.getState() >= 1 ?
+                INFORMED_COLOR : UNINFORMED_COLOR);
     }
     
     public void highlight() {

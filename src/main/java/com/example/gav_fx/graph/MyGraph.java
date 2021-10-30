@@ -41,7 +41,7 @@ public class MyGraph implements GraphObservable {
             observers.forEach(obs -> obs.edgeRemoved(event));
         }
         @Override public void edgeAdded(GraphEdgeChangeEvent<Node, Edge> event) {
-            System.out.println(" -> Edge add <-");
+            //System.out.println(" -> Edge add <-");
             Edge e = event.getEdge();
             // This is needed due to FileGraphImport is is working with default ede constructors
             // (therefore field Line in Edge.class doesn't get set)
@@ -55,11 +55,11 @@ public class MyGraph implements GraphObservable {
             observers.forEach(obs -> obs.edgeAdded(event));
         }
         @Override public void vertexAdded(GraphVertexChangeEvent<Node> event) {
-            System.out.println(" -> Node add <-");
+            //System.out.println(" -> Node add <-");
             observers.forEach(obs -> obs.vertexAdded(event));
         }
         @Override public void vertexRemoved(GraphVertexChangeEvent<Node> event) {
-            System.out.println(" -> Node rmv <-");
+            //System.out.println(" -> Node rmv <-");
             observers.forEach(obs -> obs.vertexRemoved(event));
         }
     };
@@ -192,7 +192,7 @@ public class MyGraph implements GraphObservable {
     
     public synchronized void addNode(Node n) {
         this.graph.addVertex(n);
-        System.out.println("ADDED NODE: " + n);
+        //System.out.println("ADDED NODE: " + n);
         numOfNodes++;
         
         n.toFront(); // draw last
@@ -214,7 +214,7 @@ public class MyGraph implements GraphObservable {
             //throw new RuntimeException("Couldn't add edge to graph, edge:" + e + " for nodes: " + n1 + ", " + n2);
         //}
         
-        System.out.println("ADDED EDGE: " + e);
+        //System.out.println("ADDED EDGE: " + e);
         return true;
     }
     

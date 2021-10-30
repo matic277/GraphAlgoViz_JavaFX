@@ -10,6 +10,12 @@ public class LOG {
         LogTab.logText(logText, outType.getColor());
     }
     
+    public static void out(String msg, OutputType outType) {
+        String logText = "["+Thread.currentThread().getName()+"]: " + msg;
+        System.out.println(logText);
+        LogTab.logText(logText, outType.getColor());
+    }
+    
     public static void out(String msg) {
         String logText = "["+Thread.currentThread().getName()+"]: " + msg;
         System.out.println(logText);

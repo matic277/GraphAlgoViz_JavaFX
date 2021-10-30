@@ -9,6 +9,7 @@ public class Vertex {
     Node node;
     
     // Wrapper class for Node
+    // This is what is exposed to the user on Algorithm implementation
     public Vertex(Node node) {
         this.node = node;
     }
