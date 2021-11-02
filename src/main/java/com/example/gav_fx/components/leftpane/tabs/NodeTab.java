@@ -50,7 +50,7 @@ public class NodeTab extends TabContentComponent {
                 LOG.out("", "Can't find node by id \"" + nodeIdText + "\".", OutputType.ERROR);
             }
         };
-    
+        
         TextField input = new TextField();
         input.setOnKeyPressed(event -> {
             if (event.getCode() != KeyCode.ENTER) return;
@@ -76,7 +76,7 @@ public class NodeTab extends TabContentComponent {
     
     private VBox getNodeDrawingOptionsComponent() {
         HBox titleContainer = getTitleContainer("Node drawing options");
-    
+        
         CheckBox drawIds = new CheckBox("Draw IDs");
         drawIds.setOnAction(e -> {
             Consumer<Node> f = drawIds.isSelected() ? Node::showIdInfo : Node::hideIdInfo;
@@ -94,7 +94,7 @@ public class NodeTab extends TabContentComponent {
             Consumer<Node> f = drawNeighbours.isSelected() ? Node::showNeighboursInfo : Node::hideNeighboursInfo;
             MyGraph.getInstance().getNodes().forEach(f);
         });
-    
+        
         CheckBox drawStates = new CheckBox("Draw states");
         drawStates.setOnAction(e -> {
             Consumer<Node> f = drawStates.isSelected() ? Node::showStatesInfo : Node::hideStatesInfo;

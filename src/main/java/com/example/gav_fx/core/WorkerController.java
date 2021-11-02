@@ -56,6 +56,7 @@ public class WorkerController implements Runnable, StateObservable, GraphChangeO
     
     public static void doOneRoundOfWork() {
         System.out.println("one round of work start");
+        WorkerController.currentStateIndex = WorkerController.totalStates - 1;
         synchronized (WorkerController.PAUSE_LOCK) {
             NEXT_ROUND_BUTTON_PRESSED.compareAndSet(false, true);
             //WorkerController.PAUSE.compareAndSet(true, false);
