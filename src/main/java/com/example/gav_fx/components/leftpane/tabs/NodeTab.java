@@ -95,10 +95,16 @@ public class NodeTab extends TabContentComponent {
             MyGraph.getInstance().getNodes().forEach(f);
         });
     
+        CheckBox drawStates = new CheckBox("Draw states");
+        drawStates.setOnAction(e -> {
+            Consumer<Node> f = drawStates.isSelected() ? Node::showStatesInfo : Node::hideStatesInfo;
+            MyGraph.getInstance().getNodes().forEach(f);
+        });
+        
         VBox contentContainer = new VBox();
         contentContainer.setPadding(new Insets(5, 5, 5, 5));
         contentContainer.setSpacing(5);
-        contentContainer.getChildren().addAll(drawIds, drawCoords, drawNeighbours);
+        contentContainer.getChildren().addAll(drawIds, drawCoords, drawNeighbours, drawStates);
         
         return getMainContainer(titleContainer, contentContainer);
     }

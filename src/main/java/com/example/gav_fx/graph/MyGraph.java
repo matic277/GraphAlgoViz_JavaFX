@@ -177,8 +177,8 @@ public class MyGraph implements GraphObservable {
         
         // delete future history
         graph.vertexSet().forEach(n -> {
-            if (n.nodeStates.size() > WorkerController.totalStates) {
-                n.nodeStates.subList(WorkerController.totalStates, n.nodeStates.size()).clear();
+            if (n.states.size() > WorkerController.totalStates) {
+                n.states.subList(WorkerController.totalStates, n.states.size()).clear();
             }
         });
         

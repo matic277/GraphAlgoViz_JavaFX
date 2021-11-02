@@ -203,8 +203,8 @@ public class TopPane extends FlowPane {
             //   same lambda is in deleteNodeBtn action method!
             // clear future history of states of nodes
             this.graph.getNodes().forEach(n -> {
-                if (n.nodeStates.size() > WorkerController.totalStates) {
-                    n.nodeStates.subList(WorkerController.totalStates, n.nodeStates.size()).clear();
+                if (n.states.size() > WorkerController.totalStates) {
+                    n.states.subList(WorkerController.totalStates, n.states.size()).clear();
                 }
             });
             

@@ -5,11 +5,7 @@ import com.example.gav_fx.core.WorkerController;
 import com.example.gav_fx.core.NodeState;
 import com.example.gav_fx.core.Tools;
 import com.example.gav_fx.components.GraphPane;
-import com.sun.javafx.binding.StringConstant;
-import javafx.beans.Observable;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ObservableStringValue;
-import javafx.beans.value.ObservableValue;
+import javafx.application.Platform;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -34,7 +30,7 @@ public class Node extends Circle {
     
     public int info = 0;
     //    public Set<Node> neighbors;
-    public List<NodeState> nodeStates;
+    public List<NodeState> states;
     public WorkBatch workBatch; // tells which batch this node is in, for faster removing on node delete
     
     private Color color;
@@ -66,6 +62,8 @@ public class Node extends Circle {
     private boolean coordsShowing = false;
     private Label neighboursInfo;
     private boolean neighboursShowing = false;
+    private Label statesInfo;
+    private boolean statesShowing = false;
     
     private static Node HIGHLIGHTED_NODE = null; // only one highlighted node at a time for now...
     
@@ -77,8 +75,8 @@ public class Node extends Circle {
         this.setRadius(NODE_RADIUS);
         this.setFill(UNINFORMED_COLOR);
         
-        nodeStates = new ArrayList<>(10);
-        nodeStates.add(new NodeState(0)); // uninformed on initialize
+        states = new ArrayList<>(10);
+        states.add(new NodeState(0)); // uninformed on initialize
         
         // border
         setStroke(BORDER_COLOR);
@@ -169,9 +167,10 @@ public class Node extends Circle {
     }
     
     public void setCurrentState() {
-        NodeState stateToSet = nodeStates.get(WorkerController.currentStateIndex);
+        NodeState stateToSet = states.get(WorkerController.currentStateIndex);
         this.setNodeColor(stateToSet.getState() >= 1 ?
                 INFORMED_COLOR : UNINFORMED_COLOR);
+        updateStatesInfo();
     }
     
     public void highlight() {
@@ -238,6 +237,55 @@ public class Node extends Circle {
     }
     public boolean areNeighboursShowing() { return neighboursShowing; }
     
+    public void showStatesInfo() {
+        if (statesShowing) return;
+        statesShowing = true;
+        statesInfo = new Label();
+        statesInfo.setFont(INFO_FONT);
+        updateStatesInfo();
+        
+        statesInfo.layoutXProperty().bind(centerXProperty().add(radiusProperty()).add(10));
+        statesInfo.layoutYProperty().bind(centerYProperty().subtract(radiusProperty()).add(3*(EXTRA_INFO_VERTICAL_SPACING + INFO_FONT_SIZE)));
+        GraphPane.INSTANCE.addNodeLabel(statesInfo);
+    }
+    public void hideStatesInfo() {
+        statesShowing = false;
+        if (statesInfo == null) return; // shouldn't really happen
+        GraphPane.INSTANCE.removeNodeLabel(statesInfo);
+    }
+    public void updateStatesInfo() {
+        if (!statesShowing) return;
+        Platform.runLater(() -> statesInfo.setText(getStatesInfoString()));
+    }
+    public String getStatesInfoString() {
+        if (WorkerController.totalStates == 1) return "[" + states.get(0).toString() + "]";
+        
+        StringBuilder sb = new StringBuilder();
+        sb.append("[");
+        int i = 0;
+        
+        // current state is last state
+        if (WorkerController.currentStateIndex == WorkerController.totalStates - 1) {
+            for (; i<WorkerController.totalStates-1; i++) {
+                sb.append(states.get(i).toString()).append(", ");
+            }
+            sb.append("|").append(states.get(i)).append("|]");
+            return sb.toString();
+        }
+        
+        // current state is somewhere in between
+        for (; i<WorkerController.currentStateIndex; i++) {
+            sb.append(states.get(i).toString()).append(", ");
+        }
+        sb.append("|").append(states.get(i++).toString()).append("|, ");
+        for (; i<WorkerController.totalStates-1; i++) {
+            sb.append(states.get(i).toString()).append(", ");
+        }
+        sb.append(states.get(i).toString()).append("]");
+        return sb.toString();
+    }
+    public boolean areStatesShowing() { return statesShowing; }
+    
     // Circle.setRadius() method is for some reason final ???
     public void setNewRadius(double newRadius) {
         NODE_RADIUS = newRadius;
@@ -271,11 +319,13 @@ public class Node extends Circle {
     
     public int getNodeId() { return this.id; }
     
-    public NodeState getState() { return this.nodeStates.get(WorkerController.currentStateIndex); }
+    public NodeState getState() { return this.states.get(WorkerController.currentStateIndex); }
     
     public void addState(NodeState nodeState) {
-        this.nodeStates.add(nodeState);
+        this.states.add(nodeState);
     }
+    
+    public List<NodeState> getStates() { return this.states; }
     
     public static void setPosition(Node node, Point2D point2D) {
         node.setCenterX(point2D.getX());

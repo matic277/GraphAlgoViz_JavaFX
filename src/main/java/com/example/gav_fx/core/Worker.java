@@ -78,7 +78,7 @@ public class Worker extends Thread {
         if (newState.getState() >= 1) n.setFill(Node.INFORMED_COLOR);
         
         if (newState.getState() >= 1 &&
-                n.nodeStates.get(WorkerController.currentStateIndex).getState() == 0) {
+                n.states.get(WorkerController.currentStateIndex).getState() == 0) {
             MyGraph.getInstance().signalNewInformedNode();
         }
         //LOG.out("  ->", "Algo done on node     " + n + ".");

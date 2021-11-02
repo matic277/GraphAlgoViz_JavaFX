@@ -115,7 +115,9 @@ public class WorkerController implements Runnable, StateObservable, GraphChangeO
             
             // All workers done, do some processing
             incrementState();
-    
+            
+            MyGraph.getInstance().getNodes().forEach(Node::updateStatesInfo);
+            
             // switch references around to re-add work
             // work_batches should be empty at this point, and processed_batches should be full
             var tmpRef = WORK_BATCHES;
@@ -133,7 +135,7 @@ public class WorkerController implements Runnable, StateObservable, GraphChangeO
             
             Tools.sleep(TIMEOUT_BETWEEN_ROUNDS);
         }
-    
+        
         synchronized (Worker.WORKER_LOCK) { Worker.WORKER_LOCK.notifyAll(); }
         LOG.out("", "AlgorithmController thread terminated.", outputType);
     }

@@ -14,7 +14,7 @@ public class NodeState {
         this(0);
     }
     
-    public int getState() {
+    public Integer getState() {
         return info;
     }
     
