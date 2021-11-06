@@ -141,6 +141,11 @@ public class WorkerController implements Runnable, StateObservable, GraphChangeO
         LOG.out("", "AlgorithmController thread terminated.", outputType);
     }
     
+    public void setCurrentStateToIndex(int newCurrentStateIndex) {
+        currentStateIndex = newCurrentStateIndex;
+        observers.forEach(StateObserver::onStateChange);
+    }
+    
     private void incrementState() {
         System.out.println("INCREMENTING");
         totalStates++;
@@ -232,6 +237,8 @@ public class WorkerController implements Runnable, StateObservable, GraphChangeO
     @Override
     public void vertexAdded(GraphVertexChangeEvent<Node> e) {
         Node newNode = e.getVertex();
+        this.addObserver(newNode);
+        
         // since we are using Deque, finding a random
         // WorkBatch isn't scalable
         // So create a new one, and keep filling it until its full

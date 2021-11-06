@@ -1,8 +1,7 @@
 package com.example.gav_fx.components.bottompane.tabs;
 
-import com.example.gav_fx.core.WorkerController;
-import com.example.gav_fx.core.StateObserver;
-import com.example.gav_fx.core.Tools;
+import com.example.gav_fx.core.*;
+import com.example.gav_fx.graph.Edge;
 import com.example.gav_fx.graph.MyGraph;
 import com.example.gav_fx.graph.Node;
 import javafx.application.Platform;
@@ -10,11 +9,13 @@ import javafx.geometry.Dimension2D;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.layout.*;
+import org.jgrapht.event.GraphEdgeChangeEvent;
+import org.jgrapht.event.GraphVertexChangeEvent;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class StateHistoryTab extends Pane implements StateObserver {
+public class StateHistoryTab extends Pane implements StateObserver, GraphChangeObserver {
     
     FlowPane buttonsContainer;
     
@@ -23,6 +24,7 @@ public class StateHistoryTab extends Pane implements StateObserver {
     private Button highlightedButton; // indicating current state index
     
     public StateHistoryTab() {
+        MyGraph.getInstance().addObserver(this);
         this.setPrefHeight(200);
         
         buttonsContainer = new FlowPane();
@@ -31,16 +33,20 @@ public class StateHistoryTab extends Pane implements StateObserver {
         buttonsContainer.setVgap(5);                                           // insets
         buttonsContainer.prefWrapLengthProperty().bind(this.widthProperty().subtract(20));
         //buttonsContainer.prefWidthProperty().bind(this.widthProperty());
+    
+        initOnGraphImport();
         
-        highlightedButton = getNewStateButton(0);
-        highlightedButton.setEffect(Tools.SHADOW_EFFECT_STATE_BTN);
-        stateButtons.add(highlightedButton);
-        
-        buttonsContainer.getChildren().add(highlightedButton);
         this.getChildren().add(buttonsContainer);
         
         //this.setBackground(new Background(new BackgroundFill(Color.RED, CornerRadii.EMPTY, Insets.EMPTY)));
         //buttonsContainer.setBackground(new Background(new BackgroundFill(Color.BLUEVIOLET, CornerRadii.EMPTY, Insets.EMPTY)));
+    }
+    
+    public void initOnGraphImport() {
+        highlightedButton = getNewStateButton(0);
+        highlightedButton.setEffect(Tools.SHADOW_EFFECT_STATE_BTN);
+        stateButtons.add(highlightedButton);
+        buttonsContainer.getChildren().add(highlightedButton);
     }
     
     @Override
@@ -64,6 +70,10 @@ public class StateHistoryTab extends Pane implements StateObserver {
     }
     
     private void highlightButton(Button b) {
+        if (highlightedButton == null) {
+            LOG.error("HighlightedButton is null!");
+            return;
+        }
         highlightedButton.setEffect(null);
         highlightedButton = b;
         highlightedButton.setEffect(Tools.SHADOW_EFFECT_STATE_BTN);
@@ -75,10 +85,49 @@ public class StateHistoryTab extends Pane implements StateObserver {
         btn.setOnAction(event -> {
             WorkerController.currentStateIndex = stateIndex;
             highlightButton(btn);
-            
-            // TODO setState in Node to index
-            MyGraph.getInstance().getNodes().forEach(Node::setCurrentState);
         });
         return btn;
+    }
+    
+    @Override
+    public void onGraphClear() {
+        buttonsContainer.getChildren().clear();
+        stateButtons.clear();
+        highlightedButton = null;
+    }
+    
+    @Override
+    public void onGraphImport() {
+        initOnGraphImport();
+    }
+    
+    @Override
+    public void onNewInformedNode() {
+    
+    }
+    
+    @Override
+    public void onNewUninformedNode() {
+    
+    }
+    
+    @Override
+    public void edgeAdded(GraphEdgeChangeEvent<Node, Edge> e) {
+    
+    }
+    
+    @Override
+    public void edgeRemoved(GraphEdgeChangeEvent<Node, Edge> e) {
+    
+    }
+    
+    @Override
+    public void vertexAdded(GraphVertexChangeEvent<Node> e) {
+    
+    }
+    
+    @Override
+    public void vertexRemoved(GraphVertexChangeEvent<Node> e) {
+    
     }
 }

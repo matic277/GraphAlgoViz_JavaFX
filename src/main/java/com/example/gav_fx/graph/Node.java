@@ -1,9 +1,6 @@
 package com.example.gav_fx.graph;
 
-import com.example.gav_fx.core.WorkBatch;
-import com.example.gav_fx.core.WorkerController;
-import com.example.gav_fx.core.NodeState;
-import com.example.gav_fx.core.Tools;
+import com.example.gav_fx.core.*;
 import com.example.gav_fx.components.GraphPane;
 import javafx.application.Platform;
 import javafx.scene.control.Label;
@@ -24,7 +21,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.jgrapht.alg.drawing.model.Point2D;
 
-public class Node extends Circle {
+public class Node extends Circle implements StateObserver {
     
     public int id;
     
@@ -166,7 +163,7 @@ public class Node extends Circle {
         });
     }
     
-    public void setCurrentState() {
+    public void reflectCurrentStateIndex() {
         NodeState stateToSet = states.get(WorkerController.currentStateIndex);
         this.setNodeColor(stateToSet.getState() >= 1 ?
                 INFORMED_COLOR : UNINFORMED_COLOR);
@@ -315,6 +312,16 @@ public class Node extends Circle {
     public void setNodeColor(Color newColor) {
         color = newColor;
         this.setFill(color);
+    }
+    
+    @Override
+    public void onStateChange() {
+        reflectCurrentStateIndex();
+    }
+    
+    @Override
+    public void onNewState() {
+        // Do nothing
     }
     
     public int getNodeId() { return this.id; }

@@ -156,7 +156,7 @@ public class TopPane extends FlowPane {
         btn.setGraphic(mainShape);
         
         btn.setOnMouseClicked(event -> {
-        
+            workerController.setCurrentStateToIndex(Math.max(0, WorkerController.currentStateIndex-1));
         });
         
         return btn;

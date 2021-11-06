@@ -115,7 +115,7 @@ public class MyGraph implements GraphObservable {
         
         // TODO
         //setListener();
-        //onGraphClear();
+        onGraphClear();
     }
     
     public void onInformedNodesChange() {
