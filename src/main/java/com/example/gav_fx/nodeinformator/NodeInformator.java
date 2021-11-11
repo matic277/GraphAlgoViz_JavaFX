@@ -1,5 +1,6 @@
 package com.example.gav_fx.nodeinformator;
 
+import com.example.gav_fx.core.LOG;
 import com.example.gav_fx.core.Tools;
 import com.example.gav_fx.graph.MyGraph;
 
@@ -37,7 +38,7 @@ public class NodeInformator implements Runnable {
         if (properties.getTotalNodesToInform() != null) {
             int totalNodesToInform = properties.getTotalNodesToInform();
             Set<Integer> alreadyInformed = new HashSet<>(properties.getTotalNodesToInform());
-            System.out.println("Informator running based on total nodes to inform: " + totalNodesToInform);
+            LOG.out("Informator running based on total nodes to inform: " + totalNodesToInform);
     
             while (totalNodesToInform > 0) {
                 int randId = Tools.RAND.nextInt(graph.getNodes().size());
@@ -53,7 +54,7 @@ public class NodeInformator implements Runnable {
             this.totalInformed = properties.getTotalNodesToInform();
         }
         else {
-            System.out.println("Informator running based on informed probability: " + properties.getInformedProbability());
+            LOG.out("Informator running based on informed probability: " + properties.getInformedProbability());
             graph.getNodes().forEach(n -> {
                 boolean inform = Tools.RAND.nextInt(100) <= properties.getInformedProbability();
                 if (inform) this.totalInformed++;

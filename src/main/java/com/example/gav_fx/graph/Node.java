@@ -339,6 +339,13 @@ public class Node extends Circle implements StateObserver {
         node.setCenterY(point2D.getY());
     }
     
+    public static void setPositionSync(Node node, Point2D point2D) {
+        Platform.runLater(() -> {
+            node.setCenterX(point2D.getX());
+            node.setCenterY(point2D.getY());
+        });
+    }
+    
     public void setBatchParent(WorkBatch workBatch) { this.workBatch = workBatch; }
     public WorkBatch getBatchParent() { return workBatch; }
     

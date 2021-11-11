@@ -47,7 +47,7 @@ public abstract class GraphBuilder {
         layout.layout(MyGraph.getInstance().getGraph(), model);
         
         // set positions from model to nodes
-        model.collect().forEach(Node::setPosition);
+        model.collect().forEach(Node::setPositionSync);
     }
     
     public static void frLayout() {
@@ -59,7 +59,7 @@ public abstract class GraphBuilder {
         layout.layout(MyGraph.getInstance().getGraph(), model);
         
         // set positions from model to nodes
-        model.collect().forEach(Node::setPosition);
+        model.collect().forEach(Node::setPositionSync);
     }
     
     public static void medianGreedyBipartiteLayout() {
@@ -71,7 +71,7 @@ public abstract class GraphBuilder {
         layout.layout(MyGraph.getInstance().getGraph(), model);
         
         // set positions from model to nodes
-        model.collect().forEach(Node::setPosition);
+        model.collect().forEach(Node::setPositionSync);
     }
     
     public static void barycenterGreedyBipartiteLayout() {
@@ -83,7 +83,7 @@ public abstract class GraphBuilder {
         layout.layout(MyGraph.getInstance().getGraph(), model);
         
         // set positions from model to nodes
-        model.collect().forEach(Node::setPosition);
+        model.collect().forEach(Node::setPositionSync);
     }
     
     public static void twoLayeredBipartiteLayout() {
@@ -95,7 +95,7 @@ public abstract class GraphBuilder {
         layout.layout(MyGraph.getInstance().getGraph(), model);
         
         // set positions from model to nodes
-        model.collect().forEach(Node::setPosition);
+        model.collect().forEach(Node::setPositionSync);
     }
     
     public static void randomLayout() {
@@ -104,7 +104,7 @@ public abstract class GraphBuilder {
         layout.layout(MyGraph.getInstance().getGraph(), model);
         
         // set positions from model to nodes
-        model.collect().forEach(Node::setPosition);
+        model.collect().forEach(Node::setPositionSync);
     }
     
     public static void circularLayout() {
@@ -113,7 +113,7 @@ public abstract class GraphBuilder {
         layout.layout(MyGraph.getInstance().getGraph(), model);
 
         // set positions from model to nodes
-        model.collect().forEach(Node::setPosition);
+        model.collect().forEach(Node::setPositionSync);
     }
     
     public void arrangeNodesInGridLayout(int columns) {

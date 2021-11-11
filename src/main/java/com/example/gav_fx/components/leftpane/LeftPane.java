@@ -1,9 +1,6 @@
 package com.example.gav_fx.components.leftpane;
 
-import com.example.gav_fx.components.leftpane.tabs.LogTab;
-import com.example.gav_fx.components.leftpane.tabs.NodeTab;
-import com.example.gav_fx.components.leftpane.tabs.EdgeTab;
-import com.example.gav_fx.components.leftpane.tabs.SimulationTab;
+import com.example.gav_fx.components.leftpane.tabs.*;
 import javafx.geometry.Side;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -39,8 +36,18 @@ public class LeftPane extends TabPane {
         logTab.setText(lTab.getTabName());
         logTab.setContent(lTab);
         
-        this.getTabs().addAll(nodeTab, edgesTab, simulationTab, logTab);
+        Tab graphTab = new Tab();
+        graphTab.setClosable(false);
+        GraphTab gTab = new GraphTab();
+        graphTab.setText(gTab.getTabName());
+        graphTab.setContent(gTab);
         
+        this.getTabs().addAll(
+                nodeTab,
+                edgesTab,
+                simulationTab,
+                graphTab,
+                logTab);
         
         selectedTab = edgesTab;
         
