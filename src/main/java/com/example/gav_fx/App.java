@@ -27,7 +27,7 @@ public class App extends Application {
     public static Algorithm algo; // temporary
     
     Thread controllerThread;
-    WorkerController algoController;
+    WorkerController workerController;
     
     // Mouse tracking at all times, enabling bind-able coords
     public static final MouseLocation MOUSE_LOCATION = new MouseLocation();
@@ -70,16 +70,16 @@ public class App extends Application {
             return new NodeState(newStateInfo);
         };
         
-        this.algoController = new WorkerController(MyGraph.getInstance());
+        this.workerController = new WorkerController(MyGraph.getInstance());
 //        this.algoController.addObserver(this.mainPanel.getTopPanel().getSimulationPanel());
 //        this.algoController.addObserver();
-        this.controllerThread = new Thread(algoController);
+        this.controllerThread = new Thread(workerController);
         this.controllerThread.start();
         
         
         
         // TOP
-        TopPane topPane = new TopPane(algoController);
+        TopPane topPane = new TopPane(workerController);
         
         // MIDDLE
         LeftPane leftPane = new LeftPane();
@@ -115,7 +115,8 @@ public class App extends Application {
     
         // BOTTOM
         BottomPane bottomPane = new BottomPane();
-        algoController.addObserver(bottomPane.getStateHistoryTab());
+        workerController.addObserver(bottomPane.getStateHistoryTab());
+        bottomPane.getStateHistoryTab().setWorkerController(workerController);
         
         // MAIN CONTAINER
         SplitPane root = new SplitPane();
@@ -141,9 +142,9 @@ public class App extends Application {
         
         // Needed because controller thread is still alive after closing
         stage.setOnCloseRequest(event -> {
-            algoController.signalShutDown();
+            workerController.signalShutDown();
         });
-        algoController.setAlgorithm(algo);
+        workerController.setAlgorithm(algo);
         
         leftPane.setMaxWidth(Integer.MAX_VALUE); // make it unlimited again
     

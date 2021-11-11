@@ -320,7 +320,7 @@ public class Node extends Circle implements StateObserver {
     }
     
     @Override
-    public void onNewState() {
+    public void onNewState(RoundStatisticsData roundStats) {
         // Do nothing
     }
     

@@ -48,7 +48,7 @@ public class Tools {
     
     public static final Color HIGHLIGHT_COLOR = Color.rgb(255, 255, 0);
     public static final Effect SHADOW_EFFECT_SEARCH = new DropShadow(35, HIGHLIGHT_COLOR);
-    public static final Effect SHADOW_EFFECT_STATE_BTN = new DropShadow(10, HIGHLIGHT_COLOR);
+    public static final Effect SHADOW_EFFECT_COMPONENT = new DropShadow(10, HIGHLIGHT_COLOR);
     
     public static final Random RAND = new Random();
     

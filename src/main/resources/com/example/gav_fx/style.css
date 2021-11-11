@@ -120,6 +120,18 @@
     -fx-border-insets:  3;
 }
 
+.round-stats-component {
+    -fx-background-color: derive(fx-bg, 8%);
+    -fx-border-color: border-clr;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-padding: 5;
+}
+.round-stats-component:hover {
+   -fx-background-color: derive(fx-bg, 16%);
+}
+
+
 
 
 .import-component {

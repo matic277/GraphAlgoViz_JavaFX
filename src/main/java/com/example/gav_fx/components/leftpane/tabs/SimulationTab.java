@@ -56,7 +56,7 @@ public class SimulationTab extends TabContentComponent {
             // TODO actual impl
             onThreadsChange(intVal);
         });
-    
+        
         HBox inputContainer = new HBox();
         inputContainer.setSpacing(5);
         inputContainer.setPadding(new Insets(5, 5, 5, 5));

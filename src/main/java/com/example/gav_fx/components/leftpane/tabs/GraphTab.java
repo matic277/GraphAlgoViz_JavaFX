@@ -19,8 +19,6 @@ import java.util.concurrent.CompletableFuture;
 
 public class GraphTab extends TabContentComponent {
     
-    private boolean doingLayout = false;
-    
     private Button applyBtn;
     private VBox contentContainer;
     
@@ -51,7 +49,7 @@ public class GraphTab extends TabContentComponent {
     
     private void doGraphLayout(LayoutType selectedlayout) {
         Label infoLbl = new Label("Doing layout...");
-        infoLbl.setTextFill(Color.GREEN);
+        infoLbl.setTextFill(Color.GREEN.brighter().brighter());
         
         CompletableFuture
                 .runAsync(() -> {
@@ -61,7 +59,7 @@ public class GraphTab extends TabContentComponent {
                         Platform.runLater(() -> infoLbl.setText("Done!"));
                     } catch (Exception e) {
                         Platform.runLater(() -> {
-                            infoLbl.setTextFill(Color.RED);
+                            infoLbl.setTextFill(Color.RED.brighter().brighter());
                             infoLbl.setText(e.getLocalizedMessage());
                         });
                         LOG.error("Error doing layout:\n" + e);

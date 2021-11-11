@@ -16,6 +16,8 @@ public class Worker extends Thread {
     public String name;
     OutputType outputType = OutputType.ALGO_EXECUTOR;
     
+    private long timeElapsed = -1;
+    
     private static final ThreadMXBean THREAD_MX_BEAN = ManagementFactory.getThreadMXBean();
     //private ThreadCPUTimeObservable info;
     
@@ -40,7 +42,8 @@ public class Worker extends Thread {
             
             // Management by controller is done. Processing can continue
             LOG.warning("Worker waken up");
-            processWork();
+            
+            doWork();
             
             // Signal that your work is done... waiting for others
             try { WorkerController.BARRIER.await(); }
@@ -51,13 +54,15 @@ public class Worker extends Thread {
         LOG.out(" - ", "Thread " + name + " shutting down.", outputType);
     }
     
-    public void processWork() {
+    public void doWork() {
         LOG.out("Processing batches.", outputType);
         if (algorithm == null) {
             LOG.out(" -> ", "Algorithm == null, returning.", outputType);
             //WorkerController.PROCESSED_BATCHES.add(WorkerController.WORK_BATCHES.pop());
             return;
         }
+        
+        long startTime = System.currentTimeMillis();
         
         int processedBatches = 0;
         WorkBatch workBatch;
@@ -67,6 +72,11 @@ public class Worker extends Thread {
             WorkerController.PROCESSED_BATCHES.add(workBatch);
             processedBatches++;
         }
+    
+        long endTime = System.currentTimeMillis();
+        timeElapsed = endTime - startTime;
+        System.out.println("time elapsed: " + timeElapsed);
+        
         LOG.out("Done processing, processed  " + processedBatches + " batches.", outputType);
     }
     
@@ -84,6 +94,7 @@ public class Worker extends Thread {
         //LOG.out("  ->", "Algo done on node     " + n + ".");
     }
     
+    public long getTimeElapsedProcessingWorkBatches() { return timeElapsed; }
     
     //public String stateToString() { return name + " -> " + nodesToProcess.size(); }
     

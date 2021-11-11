@@ -43,6 +43,8 @@ public class WorkerController implements Runnable, StateObservable, GraphChangeO
     public static final Object PAUSE_LOCK = new Object();
     public static int TIMEOUT_BETWEEN_ROUNDS = 100;
     
+    private RoundStatisticsData currentRoundStats;
+    
     public WorkerController(MyGraph graph /*, Algorithm algo */) {
         this.graph = graph;
         //this.algo = algo;
@@ -112,6 +114,8 @@ public class WorkerController implements Runnable, StateObservable, GraphChangeO
             catch (InterruptedException | BrokenBarrierException e) { e.printStackTrace(); }
             LOG.warning("ALL WORKERS DONE; BARRIER TIPPED");
             
+            processRoundStatistics();
+            
             if (STOP_THREAD.get()) break;
             
             // All workers done, do some processing
@@ -141,6 +145,17 @@ public class WorkerController implements Runnable, StateObservable, GraphChangeO
         LOG.out("", "AlgorithmController thread terminated.", outputType);
     }
     
+    // This method must be called BEFORE notifying observers about new state!
+    private void processRoundStatistics() {
+        long totalTimeElapsed = WORKERS.stream()
+                .map(Worker::getTimeElapsedProcessingWorkBatches)
+                .reduce(1L, Long::sum);
+        currentRoundStats = new RoundStatisticsData(
+                currentStateIndex,
+                totalTimeElapsed,
+                WORKERS.size());
+    }
+    
     public void setCurrentStateToIndex(int newCurrentStateIndex) {
         currentStateIndex = newCurrentStateIndex;
         observers.forEach(StateObserver::onStateChange);
@@ -150,7 +165,7 @@ public class WorkerController implements Runnable, StateObservable, GraphChangeO
         System.out.println("INCREMENTING");
         totalStates++;
         currentStateIndex++;
-        observers.forEach(StateObserver::onNewState);
+        observers.forEach(obs -> obs.onNewState(currentRoundStats));
         observers.forEach(StateObserver::onStateChange);
     }
     
