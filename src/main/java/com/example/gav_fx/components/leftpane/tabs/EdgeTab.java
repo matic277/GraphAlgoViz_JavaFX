@@ -1,5 +1,6 @@
 package com.example.gav_fx.components.leftpane.tabs;
 
+import com.example.gav_fx.components.BoxUIComponent;
 import com.example.gav_fx.core.LOG;
 import com.example.gav_fx.core.OutputType;
 import com.example.gav_fx.core.Tools;
@@ -47,7 +48,8 @@ public class EdgeTab extends TabContentComponent {
     private VBox getAddRemoveSearchEdgeComponent() {
         final int maxWidth = 215;
         final int maxInputField = 100; // TODO unnecessary
-        HBox titleContainer = getTitleContainer("Add or remove edge");
+        BoxUIComponent cmp = new BoxUIComponent();
+        cmp.getTitleLabel().setText("Add or remove edge");
         
         Label n1Text = new Label("Node 1 ID:");
         TextField n1Input = new TextField();
@@ -121,15 +123,17 @@ public class EdgeTab extends TabContentComponent {
         btnContainer.setSpacing(0);
         btnContainer.setAlignment(Pos.BASELINE_RIGHT);
         
-        VBox contentContainer = new VBox(titleContainer, nContainer, info, btnContainer);
+        VBox contentContainer = new VBox(nContainer, info, btnContainer);
         contentContainer.setPadding(new Insets(5, 5, 5, 5));
         contentContainer.setSpacing(5);
         
-        return getMainContainer(titleContainer, contentContainer);
+        cmp.getMainContainer().getChildren().add(contentContainer);
+        return cmp;
     }
     
     private VBox getOpacityComponent() {
-        HBox titleContainer = getTitleContainer("Set edge opacity");
+        BoxUIComponent cmp = new BoxUIComponent();
+        cmp.getTitleLabel().setText("Set edge opacity");
         
         Slider slider = new Slider();
         slider.setShowTickLabels(true);
@@ -145,11 +149,13 @@ public class EdgeTab extends TabContentComponent {
         contentContainer.setPadding(new Insets(5, 5, 5, 5));
         contentContainer.setSpacing(5);
         
-        return getMainContainer(titleContainer, contentContainer);
+        cmp.getMainContainer().getChildren().add(contentContainer);
+        return cmp;
     }
     
     private VBox getEdgeWidthComponent() {
-        HBox titleContainer = getTitleContainer("Set edge width");
+        BoxUIComponent cmp = new BoxUIComponent();
+        cmp.getTitleLabel().setText("Set edge width");
         
         Slider slider = new Slider();
         slider.setShowTickLabels(true);
@@ -165,12 +171,14 @@ public class EdgeTab extends TabContentComponent {
         VBox contentContainer = new VBox(slider);
         contentContainer.setPadding(new Insets(5, 5, 5, 5));
         contentContainer.setSpacing(5);
-        
-        return getMainContainer(titleContainer, contentContainer);
+    
+        cmp.getMainContainer().getChildren().add(contentContainer);
+        return cmp;
     }
     
     private VBox getEdgeColorComponent() {
-        HBox titleContainer = getTitleContainer("Set edge color");
+        BoxUIComponent cmp = new BoxUIComponent();
+        cmp.getTitleLabel().setText("Set edge color");
         
         ColorPicker clrPicker = new ColorPicker();
         clrPicker.setOnAction(event -> {
@@ -181,8 +189,9 @@ public class EdgeTab extends TabContentComponent {
         contentContainer.setPadding(new Insets(5, 5, 5, 5));
         contentContainer.setSpacing(5);
         contentContainer.setAlignment(Pos.CENTER);
-    
-        return getMainContainer(titleContainer, contentContainer);
+        
+        cmp.getMainContainer().getChildren().add(contentContainer);
+        return cmp;
     }
     
     private Tuple1<Node> getNodesById(String id1Str, String id2Str, Label info) {

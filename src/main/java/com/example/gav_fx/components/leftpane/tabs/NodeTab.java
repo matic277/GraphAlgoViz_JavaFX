@@ -1,5 +1,6 @@
 package com.example.gav_fx.components.leftpane.tabs;
 
+import com.example.gav_fx.components.BoxUIComponent;
 import com.example.gav_fx.core.LOG;
 import com.example.gav_fx.core.OutputType;
 import com.example.gav_fx.graph.MyGraph;
@@ -39,7 +40,8 @@ public class NodeTab extends TabContentComponent {
     }
     
     private VBox getSearchComponent() {
-        HBox titleContainer = getTitleContainer("Search for node");
+        BoxUIComponent cmp = new BoxUIComponent();
+        cmp.getTitleLabel().setText("Search for node");
         
         Consumer<String> searchFunction = nodeIdText -> {
             try {
@@ -71,11 +73,13 @@ public class NodeTab extends TabContentComponent {
         contentContainer.setPadding(new Insets(5, 5, 5, 5));
         contentContainer.setSpacing(5);
         
-        return getMainContainer(titleContainer, contentContainer);
+        cmp.getMainContainer().getChildren().add(contentContainer);
+        return cmp;
     }
     
     private VBox getNodeDrawingOptionsComponent() {
-        HBox titleContainer = getTitleContainer("Node drawing options");
+        BoxUIComponent cmp = new BoxUIComponent();
+        cmp.getTitleLabel().setText("Node drawing options");
         
         CheckBox drawIds = new CheckBox("Draw IDs");
         drawIds.setOnAction(e -> {
@@ -106,11 +110,13 @@ public class NodeTab extends TabContentComponent {
         contentContainer.setSpacing(5);
         contentContainer.getChildren().addAll(drawIds, drawCoords, drawNeighbours, drawStates);
         
-        return getMainContainer(titleContainer, contentContainer);
+        cmp.getMainContainer().getChildren().add(contentContainer);
+        return cmp;
     }
     
     private VBox getNodeRadiusComponent() {
-        HBox titleContainer = getTitleContainer("Set node radius");
+        BoxUIComponent cmp = new BoxUIComponent();
+        cmp.getTitleLabel().setText("Set node radius");
         
         Slider slider = new Slider();
         slider.setShowTickLabels(true);
@@ -126,11 +132,13 @@ public class NodeTab extends TabContentComponent {
         contentContainer.setPadding(new Insets(5, 5, 5, 5));
         contentContainer.setSpacing(5);
         
-        return getMainContainer(titleContainer, contentContainer);
+        cmp.getMainContainer().getChildren().add(contentContainer);
+        return cmp;
     }
     
     private VBox getBorderColorComponent() {
-        HBox titleContainer = getTitleContainer("Set border color");
+        BoxUIComponent cmp = new BoxUIComponent();
+        cmp.getTitleLabel().setText("Set border color");
         
         ColorPicker clrPicker = new ColorPicker();
         // TODO can all these be binds instead of listening?
@@ -143,12 +151,14 @@ public class NodeTab extends TabContentComponent {
         contentContainer.setPadding(new Insets(5, 5, 5, 5));
         contentContainer.setSpacing(5);
         contentContainer.setAlignment(Pos.CENTER);
-    
-        return getMainContainer(titleContainer, contentContainer);
+        
+        cmp.getMainContainer().getChildren().add(contentContainer);
+        return cmp;
     }
     
     private VBox getOpacityComponent() {
-        HBox titleContainer = getTitleContainer("Set node opacity");
+        BoxUIComponent cmp = new BoxUIComponent();
+        cmp.getTitleLabel().setText("Set node opacity");
         
         Slider slider = new Slider();
         slider.setShowTickLabels(true);
@@ -164,11 +174,13 @@ public class NodeTab extends TabContentComponent {
         contentContainer.setPadding(new Insets(5, 5, 5, 5));
         contentContainer.setSpacing(5);
         
-        return getMainContainer(titleContainer, contentContainer);
+        cmp.getMainContainer().getChildren().add(contentContainer);
+        return cmp;
     }
     
     private VBox getBorderWidthComponent() {
-        HBox titleContainer = getTitleContainer("Set border width");
+        BoxUIComponent cmp = new BoxUIComponent();
+        cmp.getTitleLabel().setText("Set border width");
         
         Slider slider = new Slider();
         slider.setShowTickLabels(true);
@@ -186,7 +198,8 @@ public class NodeTab extends TabContentComponent {
         contentContainer.setSpacing(5);
         contentContainer.setAlignment(Pos.CENTER);
         
-        return getMainContainer(titleContainer, contentContainer);
+        cmp.getMainContainer().getChildren().add(contentContainer);
+        return cmp;
     }
     
     @Override

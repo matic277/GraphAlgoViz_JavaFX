@@ -1,6 +1,7 @@
 package com.example.gav_fx.components.optionpanes;
 
 import com.example.gav_fx.core.ImportType;
+import com.example.gav_fx.core.LOG;
 import com.example.gav_fx.graphbuilder.GraphBuilder;
 import com.example.gav_fx.nodeinformator.NodeInformatorProperties;
 import javafx.scene.control.TextField;
@@ -42,12 +43,17 @@ public class RandomGraphOptionPanel extends OptionPane {
         return importType -> {
             int nodesToInform = -1; // Not ideal
             double informProb = -1;
-            try { nodesToInform = Integer.parseInt(informInput.getText()); }
-            catch (Exception e) { System.out.println("error parsing int value " + informInput.getText()); }
             
+            String textToParse = informInput.getText().trim();
+            
+            if (textToParse.endsWith("%"))
+            try { nodesToInform = Integer.parseInt(textToParse); }
+            catch (Exception e) { /* do nothing */  }
+    
+            textToParse = textToParse.replace("%", "");
             if (nodesToInform == -1) {
-                try { informProb = Double.parseDouble(informInput.getText()); }
-                catch (Exception e) { System.out.println("error parsing double value " + informInput.getText()); }
+                try { informProb = Double.parseDouble(textToParse); }
+                catch (Exception e) { LOG.error("error parsing value " + textToParse); }
             }
             
             // TODO

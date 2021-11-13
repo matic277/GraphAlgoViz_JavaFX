@@ -123,11 +123,10 @@ public class App extends Application {
         root.setOrientation(Orientation.VERTICAL);
         root.getItems().addAll(topContainer, bottomPane);
         //root.setDividerPosition(0, 500);
-
+        
         
         Scene scene = new Scene(root, 1400, 1000);
         scene.getStylesheets().add(getClass().getResource("style.css").toExternalForm());
-        
         
         
         middlePane.setOnMouseMoved(event -> {

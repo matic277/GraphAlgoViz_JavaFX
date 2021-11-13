@@ -1,5 +1,6 @@
 package com.example.gav_fx.components.leftpane.tabs;
 
+import com.example.gav_fx.components.BoxUIComponent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -22,7 +23,8 @@ public class SimulationTab extends TabContentComponent {
     private VBox getThreadsComponent() {
         int cores = Runtime.getRuntime().availableProcessors();
         
-        HBox titleContainer = getTitleContainer("Number of processors");
+        BoxUIComponent cmp = new BoxUIComponent();
+        cmp.getTitleLabel().setText("Number of processors");
         
         Label inputLbl = new Label("Set custom amount:");
         
@@ -68,7 +70,8 @@ public class SimulationTab extends TabContentComponent {
         contentContainer.setSpacing(5);
         contentContainer.setAlignment(Pos.CENTER);
         
-        return getMainContainer(titleContainer, contentContainer);
+        cmp.getMainContainer().getChildren().add(contentContainer);
+        return cmp;
     }
     
     public void onThreadsChange(int threads) {

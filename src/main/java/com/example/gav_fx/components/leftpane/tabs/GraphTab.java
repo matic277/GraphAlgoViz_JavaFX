@@ -1,5 +1,6 @@
 package com.example.gav_fx.components.leftpane.tabs;
 
+import com.example.gav_fx.components.BoxUIComponent;
 import com.example.gav_fx.core.LOG;
 import com.example.gav_fx.core.LayoutType;
 import com.example.gav_fx.core.Tools;
@@ -10,7 +11,6 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
@@ -28,8 +28,9 @@ public class GraphTab extends TabContentComponent {
     }
     
     public VBox getLayoutComponent() {
-        HBox titleContainer = getTitleContainer("Set layout");
-    
+        BoxUIComponent cmp = new BoxUIComponent();
+        cmp.getTitleLabel().setText("Set layout");
+        
         ComboBox<LayoutType> dropdown = new ComboBox<>();
         dropdown.setItems(FXCollections.observableList(Arrays.stream(LayoutType.values()).toList()));
         
@@ -44,7 +45,8 @@ public class GraphTab extends TabContentComponent {
         contentContainer.setSpacing(5);
         contentContainer.setAlignment(Pos.CENTER_RIGHT);
         
-        return getMainContainer(titleContainer, contentContainer);
+        cmp.getMainContainer().getChildren().add(contentContainer);
+        return cmp;
     }
     
     private void doGraphLayout(LayoutType selectedlayout) {

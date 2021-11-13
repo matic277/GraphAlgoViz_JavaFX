@@ -1,5 +1,6 @@
 package com.example.gav_fx.components.bottompane.tabs;
 
+import com.example.gav_fx.components.BoxUIComponent;
 import com.example.gav_fx.core.*;
 import com.example.gav_fx.graph.Edge;
 import com.example.gav_fx.graph.MyGraph;
@@ -29,7 +30,7 @@ public class StateHistoryTab extends Pane implements StateObserver, GraphChangeO
         
         contentContainer = new FlowPane();
         contentContainer.setPadding(new Insets(10, 10, 10, 15));
-        contentContainer.setHgap(5);
+        contentContainer.setHgap(10);
         contentContainer.setVgap(5);                                           // insets
         contentContainer.prefWrapLengthProperty().bind(this.widthProperty().subtract(20));
         //buttonsContainer.prefWidthProperty().bind(this.widthProperty());
@@ -44,9 +45,9 @@ public class StateHistoryTab extends Pane implements StateObserver, GraphChangeO
     
     public void initOnGraphImport() {
         RoundStatisticsComponent.highlightedComponent = new RoundStatisticsComponent(new RoundStatisticsData(0, 0,0));
-        RoundStatisticsComponent.highlightedComponent.setEffect(Tools.SHADOW_EFFECT_COMPONENT);
+        RoundStatisticsComponent.highlightedComponent.getUIComponent().setEffect(Tools.SHADOW_EFFECT_COMPONENT);
         components.add(RoundStatisticsComponent.highlightedComponent);
-        contentContainer.getChildren().add(RoundStatisticsComponent.highlightedComponent);
+        contentContainer.getChildren().add(RoundStatisticsComponent.highlightedComponent.getUIComponent());
     }
     
     public void setWorkerController(WorkerController wc) { workerController = wc; }
@@ -67,7 +68,7 @@ public class StateHistoryTab extends Pane implements StateObserver, GraphChangeO
         RoundStatisticsComponent newComponent = new RoundStatisticsComponent(roundStats);
         components.add(newComponent);
         newComponent.highlight();
-        Platform.runLater(() -> contentContainer.getChildren().add(newComponent));
+        Platform.runLater(() -> contentContainer.getChildren().add(newComponent.getUIComponent()));
     }
     
     @Override
@@ -89,30 +90,37 @@ public class StateHistoryTab extends Pane implements StateObserver, GraphChangeO
     @Override public void vertexAdded(GraphVertexChangeEvent<Node> e) {}
     @Override public void vertexRemoved(GraphVertexChangeEvent<Node> e) {}
     
-    public class RoundStatisticsComponent extends VBox {
+    public class RoundStatisticsComponent {
         private static RoundStatisticsComponent highlightedComponent; // indicating current state index
         private static final Dimension2D BUTTON_SIZE = new Dimension2D(40, 30);
         private static final int paddedStrLen = 20;
-        final RoundStatisticsData statsData;
-        final Label timeInfo;
-        final Label roundInfo;
-        final Label threadInfo;
+        private final RoundStatisticsData statsData;
+        private final BoxUIComponent uiComponent;
+        private final Label timeInfo;
+        private final Label roundInfo;
+        private final Label threadInfo;
         
         public RoundStatisticsComponent(RoundStatisticsData statsData) {
             this.statsData = statsData;
             timeInfo = new Label(StringUtils.rightPad("Time elapsed: " + statsData.getTotalTimeElapsed(), paddedStrLen));
             roundInfo = new Label(StringUtils.rightPad("Round number: " + statsData.getRoundNumber(), paddedStrLen));
             threadInfo = new Label(StringUtils.rightPad("Threads used: " + statsData.getThreadCount(), paddedStrLen));
-            this.setOnMouseClicked(event -> {
+
+            //this.getStyleClass().add("round-stats-component");
+            uiComponent = new BoxUIComponent();
+            uiComponent.getTitleLabel().setText(statsData.getRoundNumber() + "");
+            uiComponent.setOnMouseClicked(event -> {
                 System.out.println("SETTING TO " + statsData.getRoundNumber());
                 StateHistoryTab.this.workerController.setCurrentStateToIndex(statsData.getRoundNumber());
                 highlight();
             });
-            this.getStyleClass().add("round-stats-component");
-            this.getChildren().addAll(
-                    roundInfo,
-                    timeInfo,
-                    threadInfo);
+            
+            VBox content = new VBox(
+                roundInfo,
+                timeInfo,
+                threadInfo);
+            content.setPadding(new Insets(5));
+            uiComponent.getMainContainer().getChildren().add(content);
         }
     
         public void highlight() {
@@ -120,9 +128,13 @@ public class StateHistoryTab extends Pane implements StateObserver, GraphChangeO
                 LOG.error("HighlightedComponent is null!");
                 return;
             }
-            highlightedComponent.setEffect(null);
+            highlightedComponent.getUIComponent().setEffect(null);
             highlightedComponent = this;
-            highlightedComponent.setEffect(Tools.SHADOW_EFFECT_COMPONENT);
+            uiComponent.setEffect(Tools.SHADOW_EFFECT_COMPONENT);
+        }
+        
+        public Pane getUIComponent() {
+            return uiComponent;
         }
     }
 }

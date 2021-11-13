@@ -3,6 +3,7 @@ package com.example.gav_fx.nodeinformator;
 import com.example.gav_fx.core.LOG;
 import com.example.gav_fx.core.Tools;
 import com.example.gav_fx.graph.MyGraph;
+import com.example.gav_fx.graph.Node;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -46,7 +47,9 @@ public class NodeInformator implements Runnable {
                 if (alreadyInformed.contains(randId)) continue;
                 
                 alreadyInformed.add(randId);
-                graph.getNodeById(randId).getStates().get(0).setState(1); // This always mutates state[0]...
+                Node n = graph.getNodeById(randId);
+                n.getStates().get(0).setState(1); // This always mutates state[0]...
+                n.reflectCurrentStateIndex();
                 totalNodesToInform--;
             }
             
@@ -59,6 +62,7 @@ public class NodeInformator implements Runnable {
                 boolean inform = Tools.RAND.nextInt(100) <= properties.getInformedProbability();
                 if (inform) this.totalInformed++;
                 n.getState().setState(inform ? 1 : 0);
+                n.reflectCurrentStateIndex();
             });
         }
     }

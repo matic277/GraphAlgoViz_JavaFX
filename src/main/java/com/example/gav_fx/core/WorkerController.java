@@ -264,7 +264,7 @@ public class WorkerController implements Runnable, StateObservable, GraphChangeO
         // Bind them
         newNode.setBatchParent(batchBuffer);
         batchBuffer.addMoreWork(newNode);
-    
+        
         WorkerController.totalStates = WorkerController.currentStateIndex + 1;
     }
     
