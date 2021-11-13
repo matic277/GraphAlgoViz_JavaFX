@@ -3,8 +3,6 @@ package com.example.gav_fx.core;
 import com.example.gav_fx.graph.MyGraph;
 import com.example.gav_fx.graph.Node;
 
-import java.lang.management.ManagementFactory;
-import java.lang.management.ThreadMXBean;
 import java.util.concurrent.BrokenBarrierException;
 
 public class Worker extends Thread {
@@ -17,9 +15,6 @@ public class Worker extends Thread {
     OutputType outputType = OutputType.ALGO_EXECUTOR;
     
     private long timeElapsed = -1;
-    
-    private static final ThreadMXBean THREAD_MX_BEAN = ManagementFactory.getThreadMXBean();
-    //private ThreadCPUTimeObservable info;
     
     public Worker(Algorithm algorithm, String threadName) {
         this.algorithm = algorithm;
@@ -72,7 +67,7 @@ public class Worker extends Thread {
             WorkerController.PROCESSED_BATCHES.add(workBatch);
             processedBatches++;
         }
-    
+        
         long endTime = System.currentTimeMillis();
         timeElapsed = endTime - startTime;
         System.out.println("time elapsed: " + timeElapsed);
@@ -88,7 +83,7 @@ public class Worker extends Thread {
         if (newState.getState() >= 1) n.setFill(Node.INFORMED_COLOR);
         
         if (newState.getState() >= 1 &&
-                n.states.get(WorkerController.currentStateIndex).getState() == 0) {
+            n.states.get(WorkerController.currentStateIndex).getState() == 0) {
             MyGraph.getInstance().signalNewInformedNode();
         }
         //LOG.out("  ->", "Algo done on node     " + n + ".");

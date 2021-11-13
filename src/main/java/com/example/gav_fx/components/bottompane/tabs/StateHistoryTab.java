@@ -9,6 +9,7 @@ import javafx.geometry.Dimension2D;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
+import org.apache.commons.lang3.StringUtils;
 import org.jgrapht.event.GraphEdgeChangeEvent;
 import org.jgrapht.event.GraphVertexChangeEvent;
 
@@ -91,6 +92,7 @@ public class StateHistoryTab extends Pane implements StateObserver, GraphChangeO
     public class RoundStatisticsComponent extends VBox {
         private static RoundStatisticsComponent highlightedComponent; // indicating current state index
         private static final Dimension2D BUTTON_SIZE = new Dimension2D(40, 30);
+        private static final int paddedStrLen = 20;
         final RoundStatisticsData statsData;
         final Label timeInfo;
         final Label roundInfo;
@@ -98,9 +100,9 @@ public class StateHistoryTab extends Pane implements StateObserver, GraphChangeO
         
         public RoundStatisticsComponent(RoundStatisticsData statsData) {
             this.statsData = statsData;
-            timeInfo = new Label("Time elapsed: " + statsData.getTotalTimeElapsed());
-            roundInfo = new Label("Round number: " + statsData.getRoundNumber());
-            threadInfo = new Label("Threads used: " + statsData.getThreadCount());
+            timeInfo = new Label(StringUtils.rightPad("Time elapsed: " + statsData.getTotalTimeElapsed(), paddedStrLen));
+            roundInfo = new Label(StringUtils.rightPad("Round number: " + statsData.getRoundNumber(), paddedStrLen));
+            threadInfo = new Label(StringUtils.rightPad("Threads used: " + statsData.getThreadCount(), paddedStrLen));
             this.setOnMouseClicked(event -> {
                 System.out.println("SETTING TO " + statsData.getRoundNumber());
                 StateHistoryTab.this.workerController.setCurrentStateToIndex(statsData.getRoundNumber());

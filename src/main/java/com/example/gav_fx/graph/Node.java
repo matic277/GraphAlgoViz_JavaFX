@@ -283,6 +283,15 @@ public class Node extends Circle implements StateObserver {
     }
     public boolean areStatesShowing() { return statesShowing; }
     
+    public void flipInform() {
+        NodeState state = states.get(WorkerController.currentStateIndex);
+        state.setState(state.getState() >= 1 ? 0 : 1);
+        reflectCurrentStateIndex();
+    }
+    public boolean isInformed() {
+        return states.get(WorkerController.currentStateIndex).getState() >= 1;
+    }
+    
     // Circle.setRadius() method is for some reason final ???
     public void setNewRadius(double newRadius) {
         NODE_RADIUS = newRadius;

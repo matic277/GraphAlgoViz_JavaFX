@@ -61,10 +61,15 @@ public class GraphPane extends Pane implements GraphChangeObserver {
     private final MenuItem coordsItem = new MenuItem();
     private final MenuItem neighboursItem = new MenuItem();
     private final MenuItem statesItem = new MenuItem();
+    private final MenuItem inform = new MenuItem();
     private final ContextMenu nodeMenu = new ContextMenu(); {
         MenuItem del = new MenuItem("Delete");
         del.setOnAction(e -> {
             MyGraph.getInstance().deleteNode((Node)clickedObjectSource);
+            clickedObjectSource = null;
+        });
+        inform.setOnAction(e -> {
+            ((Node)clickedObjectSource).flipInform();
             clickedObjectSource = null;
         });
         idItem.setOnAction(e -> {
@@ -91,7 +96,7 @@ public class GraphPane extends Pane implements GraphChangeObserver {
             else n.showStatesInfo();
             clickedObjectSource = null;
         });
-        nodeMenu.getItems().addAll(del, idItem, coordsItem, neighboursItem, statesItem);
+        nodeMenu.getItems().addAll(del, inform, idItem, coordsItem, neighboursItem, statesItem);
     }
     
     public GraphPane() {
@@ -156,6 +161,7 @@ public class GraphPane extends Pane implements GraphChangeObserver {
         coordsItem.setText((n.areCoordsShowing() ? "Hide" : "Show") + " coordinates");
         neighboursItem.setText((n.areNeighboursShowing() ? "Hide" : "Show") + " neighbours");
         statesItem.setText((n.areStatesShowing() ? "Hide" : "Show") + " states");
+        inform.setText((n.isInformed() ? "Uninform" : "Inform"));
         
         nodeMenu.show(this, e.getScreenX(), e.getScreenY());
     }

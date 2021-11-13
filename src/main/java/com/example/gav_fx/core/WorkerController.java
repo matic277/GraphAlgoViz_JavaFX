@@ -151,7 +151,7 @@ public class WorkerController implements Runnable, StateObservable, GraphChangeO
                 .map(Worker::getTimeElapsedProcessingWorkBatches)
                 .reduce(1L, Long::sum);
         currentRoundStats = new RoundStatisticsData(
-                currentStateIndex,
+                Math.max(1, currentStateIndex), // todo broken
                 totalTimeElapsed,
                 WORKERS.size());
     }
@@ -171,7 +171,7 @@ public class WorkerController implements Runnable, StateObservable, GraphChangeO
     
     private void initProcessors() {
         for (int i=0; i<PROCESSORS; i++) {
-            WORKERS.add(new Worker(algo, "PR-"+i));
+            WORKERS.add(new Worker(algo, "W-"+i));
         }
     }
     

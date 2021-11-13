@@ -49,7 +49,7 @@ public class NodeInformator implements Runnable {
                 graph.getNodeById(randId).states.get(0).setState(1); // This always mutates state[0]...
                 totalNodesToInform--;
             }
-    
+            
             // this should be the same... no point in counting in while
             this.totalInformed = properties.getTotalNodesToInform();
         }
