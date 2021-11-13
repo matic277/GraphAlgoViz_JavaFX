@@ -1,5 +1,6 @@
 package com.example.gav_fx.graph;
 
+import com.example.gav_fx.core.NodeState;
 import com.example.gav_fx.core.WorkerController;
 import com.example.gav_fx.core.GraphChangeObserver;
 import com.example.gav_fx.core.GraphObservable;
@@ -60,6 +61,7 @@ public class MyGraph implements GraphObservable {
         }
         @Override public void vertexRemoved(GraphVertexChangeEvent<Node> event) {
             //System.out.println(" -> Node rmv <-");
+            event.getVertex();
             observers.forEach(obs -> obs.vertexRemoved(event));
         }
     };
@@ -75,8 +77,6 @@ public class MyGraph implements GraphObservable {
         
         clearGraph();
         builder.buildGraph();
-        
-        //this.graph
         
         this.observers.forEach(GraphChangeObserver::onGraphImport);
     }
@@ -141,12 +141,10 @@ public class MyGraph implements GraphObservable {
     public boolean connectById(int n1Id, int n2Id) {
         Optional<Node> n1 = this.graph.vertexSet().stream().filter(n -> n.id == n1Id).findFirst();
         Optional<Node> n2 = this.graph.vertexSet().stream().filter(n -> n.id == n2Id).findFirst();
-        
         if (n1.isPresent() && n2.isPresent()) {
             return addEdge(n1.get(), n2.get());
-        } else {
-            throw new RuntimeException("Nodes not found by id: " + n1Id + ", " + n2Id + ".");
         }
+        throw new RuntimeException("Nodes not found by id: " + n1Id + ", " + n2Id + ".");
     }
     
     public synchronized void deleteNode(Node node) {
@@ -177,8 +175,9 @@ public class MyGraph implements GraphObservable {
         
         // delete future history
         graph.vertexSet().forEach(n -> {
-            if (n.states.size() > WorkerController.totalStates) {
-                n.states.subList(WorkerController.totalStates, n.states.size()).clear();
+            List<NodeState> states = n.getStates();
+            if (states.size() > WorkerController.totalStates) {
+                states.subList(WorkerController.totalStates, states.size()).clear();
             }
         });
         
@@ -207,7 +206,7 @@ public class MyGraph implements GraphObservable {
         n1.updateNeighboursInfo();
         n2.updateNeighboursInfo();
         
-        // Maybe don't check this since edges arent added in case of:
+        // Maybe don't check this since edges aren't added in case of:
         // node1 -----> node2
         // Adding edge : node2 ---> node1 : returns false (since graph is undirected)
         //if (!added) {

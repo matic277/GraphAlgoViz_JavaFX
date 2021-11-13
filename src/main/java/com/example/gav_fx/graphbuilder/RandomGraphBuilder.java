@@ -32,5 +32,4 @@ public class RandomGraphBuilder extends GraphBuilder {
         this.getNodeInformator().run();
         this.layoutType.getLayoutExecutor().run();
     }
-    
 }

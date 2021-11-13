@@ -17,6 +17,8 @@ import javafx.scene.shape.SVGPath;
 import javafx.scene.shape.Shape;
 import javafx.scene.transform.Transform;
 
+import java.util.List;
+
 public class TopPane extends FlowPane {
     
     private final MyGraph graph = MyGraph.getInstance();
@@ -203,8 +205,9 @@ public class TopPane extends FlowPane {
             //   same lambda is in deleteNodeBtn action method!
             // clear future history of states of nodes
             this.graph.getNodes().forEach(n -> {
-                if (n.states.size() > WorkerController.totalStates) {
-                    n.states.subList(WorkerController.totalStates, n.states.size()).clear();
+                List<NodeState> states = n.getStates();
+                if (states.size() > WorkerController.totalStates) {
+                    states.subList(WorkerController.totalStates, states.size()).clear();
                 }
             });
             

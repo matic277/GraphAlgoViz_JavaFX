@@ -27,7 +27,7 @@ public class Node extends Circle implements StateObserver {
     
     public int info = 0;
     //    public Set<Node> neighbors;
-    public List<NodeState> states;
+    private List<NodeState> states;
     public WorkBatch workBatch; // tells which batch this node is in, for faster removing on node delete
     
     private Color color;

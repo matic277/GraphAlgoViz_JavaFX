@@ -272,6 +272,7 @@ public class WorkerController implements Runnable, StateObservable, GraphChangeO
     public void vertexRemoved(GraphVertexChangeEvent<Node> e) {
         WorkerController.totalStates = WorkerController.currentStateIndex + 1;
         Node nodeToRemove = e.getVertex();
+        observers.remove(nodeToRemove); // CRUCIAL! reference to node needs to get removed!!!
         boolean removed = nodeToRemove.getBatchParent().getNodesToProcess().remove(nodeToRemove);
         if (!removed) {
             String errorMsg = "Node " + nodeToRemove + " not found and wasn't removed from any WorkBatch!";
