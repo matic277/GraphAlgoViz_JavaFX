@@ -10,7 +10,7 @@ public class BoxUIComponent extends VBox {
     
     private static final int CORNER_RADII = 5;
     private static final Color TITLE_COLOR =
-            Color.BLACK
+            Color.rgb(25, 25, 25)
             //Color.rgb(76, 80, 82);
             ;
     

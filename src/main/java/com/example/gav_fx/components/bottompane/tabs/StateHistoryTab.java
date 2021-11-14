@@ -97,13 +97,11 @@ public class StateHistoryTab extends Pane implements StateObserver, GraphChangeO
         private final RoundStatisticsData statsData;
         private final BoxUIComponent uiComponent;
         private final Label timeInfo;
-        private final Label roundInfo;
         private final Label threadInfo;
         
         public RoundStatisticsComponent(RoundStatisticsData statsData) {
             this.statsData = statsData;
             timeInfo = new Label(StringUtils.rightPad("Time elapsed: " + statsData.getTotalTimeElapsed(), paddedStrLen));
-            roundInfo = new Label(StringUtils.rightPad("Round number: " + statsData.getRoundNumber(), paddedStrLen));
             threadInfo = new Label(StringUtils.rightPad("Threads used: " + statsData.getThreadCount(), paddedStrLen));
 
             //this.getStyleClass().add("round-stats-component");
@@ -116,7 +114,6 @@ public class StateHistoryTab extends Pane implements StateObserver, GraphChangeO
             });
             
             VBox content = new VBox(
-                roundInfo,
                 timeInfo,
                 threadInfo);
             content.setPadding(new Insets(5));

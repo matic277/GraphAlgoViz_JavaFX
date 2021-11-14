@@ -151,7 +151,7 @@ public class WorkerController implements Runnable, StateObservable, GraphChangeO
                 .map(Worker::getTimeElapsedProcessingWorkBatches)
                 .reduce(1L, Long::sum);
         currentRoundStats = new RoundStatisticsData(
-                Math.max(1, currentStateIndex), // todo broken
+                currentStateIndex+1,
                 totalTimeElapsed,
                 WORKERS.size());
     }
